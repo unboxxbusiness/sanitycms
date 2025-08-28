@@ -18,6 +18,7 @@ export default {
       },
       boxShadow: {
         'inset-2xs': 'inset 0 0 0 1px var(--tw-shadow-color)',
+        'glow': '0 0 150px -30px hsl(var(--primary)/.5)',
       },
       colors: {
         background: 'hsl(var(--background))',
@@ -117,7 +118,7 @@ export default {
         'accordion-up': 'accordion-up 0.2s ease-out',
         'fade-in': 'fade-in 0.8s ease-out forwards',
         'fade-in-up': 'fade-in-up 0.8s ease-out forwards',
-        'scale-in': 'scale-in 0.5s ease-out forwards',
+        'scale-in': 'scale-in 1s ease-out forwards',
       },
     },
   },

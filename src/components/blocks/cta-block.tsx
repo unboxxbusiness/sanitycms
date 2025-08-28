@@ -43,7 +43,7 @@ export function CtaBlock({ heading, supportingText, buttons, className }: CtaBlo
                 </Button>
             )}
             
-            <div className="pointer-events-none absolute inset-0 rounded-2xl shadow-[0_0_150px_-30px_hsl(var(--primary)/.5)] opacity-0 animate-[scale-in_1s_ease-out_forwards] [animation-delay:700ms]" />
+            <div className="pointer-events-none absolute inset-0 rounded-2xl shadow-glow opacity-0 animate-scale-in [animation-delay:700ms]" />
        </div>
     </section>
   )
