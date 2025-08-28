@@ -115,12 +115,12 @@ export function VideoBlock({ heading, subheading, youtubeUrl, thumbnail, showCta
                   animate={animationVariants['from-center'].animate}
                   exit={animationVariants['from-center'].exit}
                   transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                  className="relative w-full max-w-4xl aspect-video mx-4 md:mx-0"
+                  className="relative w-11/12 max-w-4xl aspect-video"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <button
                     onClick={() => setIsVideoOpen(false)}
-                    className="absolute -top-10 right-0 text-white text-xl bg-neutral-900/50 ring-1 backdrop-blur-md rounded-full p-2 dark:bg-neutral-100/50 dark:text-black"
+                    className="absolute -top-2 -right-2 md:-top-4 md:-right-4 text-white text-xl bg-neutral-900/50 ring-1 backdrop-blur-md rounded-full p-2 dark:bg-neutral-100/50 dark:text-black z-20"
                   >
                     <X className="size-5" />
                     <span className="sr-only">Close video</span>
