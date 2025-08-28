@@ -1,6 +1,9 @@
 // src/components/blocks/cta-block.tsx
+'use client'
+
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { cn } from "@/lib/utils"
 
 interface ButtonProps {
     text: string;
@@ -11,22 +14,37 @@ interface CtaBlockProps {
     heading: string;
     supportingText?: string;
     buttons: ButtonProps[];
+    className?: string
 }
 
-export function CtaBlock({ heading, supportingText, buttons }: CtaBlockProps) {
+export function CtaBlock({ heading, supportingText, buttons, className }: CtaBlockProps) {
+  const primaryAction = buttons && buttons[0];
+
   return (
-    <section id="cta" className="py-20 md:py-32 bg-primary text-primary-foreground">
-      <div className="container mx-auto px-4 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold">{heading}</h2>
-        {supportingText && <p className="text-lg md:text-xl mt-4 max-w-3xl mx-auto text-primary-foreground/80">{supportingText}</p>}
-        <div className="flex justify-center gap-4 mt-8">
-            {buttons.map((button, index) => (
-                <Button key={index} asChild size="lg" variant={index === 0 ? 'secondary' : 'outline'} className={index === 0 ? "bg-primary-foreground text-primary hover:bg-primary-foreground/90" : "border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"}>
-                    <Link href={button.link}>{button.text}</Link>
+    <section className={cn("overflow-hidden pt-0 md:pt-0", className)}>
+        <div className="relative mx-auto flex max-w-5xl flex-col items-center gap-6 px-8 py-20 text-center sm:gap-8 md:py-28">
+            <h2 className="text-3xl font-bold sm:text-5xl opacity-0 animate-fade-in-up [animation-delay:200ms]">
+                {heading}
+            </h2>
+
+            {supportingText && (
+                <p className="text-muted-foreground opacity-0 animate-fade-in-up [animation-delay:300ms]">
+                    {supportingText}
+                </p>
+            )}
+
+            {primaryAction && (
+                <Button
+                    size="lg"
+                    className="opacity-0 animate-fade-in-up [animation-delay:500ms]"
+                    asChild
+                >
+                    <Link href={primaryAction.link}>{primaryAction.text}</Link>
                 </Button>
-            ))}
-        </div>
-      </div>
+            )}
+            
+            <div className="pointer-events-none absolute inset-0 rounded-2xl shadow-[0_0_150px_-30px_hsl(var(--primary)/.5)] opacity-0 animate-[scale-in_1s_ease-out_forwards] [animation-delay:700ms]" />
+       </div>
     </section>
-  );
+  )
 }
