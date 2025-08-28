@@ -11,6 +11,7 @@ import { client } from '@/lib/sanity'
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { urlFor } from '@/lib/sanity-image';
 import Image from 'next/image';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 
 interface NavLink {
@@ -61,7 +62,7 @@ export function Header() {
                 className="fixed z-20 w-full px-2 group">
                 <div className={cn('mx-auto mt-2 max-w-6xl px-6 transition-all duration-300 lg:px-12', isScrolled && 'bg-background/50 max-w-4xl rounded-2xl border backdrop-blur-lg lg:px-5')}>
                     <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
-                        <div className="flex w-full justify-between lg:w-auto">
+                        <div className="relative z-30 flex w-full justify-between lg:w-auto">
                             <Link
                                 href="/"
                                 aria-label="home"
@@ -93,19 +94,21 @@ export function Header() {
                                 ))}
                             </ul>
                         </div>
-                        <div className={cn("w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border bg-background p-6 shadow-2xl shadow-zinc-300/20 dark:shadow-none md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent", menuState ? "flex flex-col lg:flex-row" : "hidden lg:flex")}>
-                            <ul className="flex flex-col space-y-6 text-base lg:hidden">
+                        <div className={cn("fixed inset-0 z-20 flex-col items-center justify-center gap-6 bg-background p-6 shadow-2xl shadow-zinc-300/20 dark:shadow-none lg:static lg:w-fit lg:flex-row lg:gap-0 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent", menuState ? "flex" : "hidden lg:flex")}>
+                           <ul className="flex flex-col items-center space-y-6 text-base lg:hidden">
                                 {navLinks.map((item, index) => (
                                     <li key={index}>
                                         <Link
                                             href={item.link}
+                                            onClick={() => setMenuState(false)}
                                             className="text-muted-foreground hover:text-accent-foreground block duration-150">
                                             <span>{item.text}</span>
                                         </Link>
                                     </li>
                                 ))}
                             </ul>
-                            <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
+                            <div className="flex w-full flex-col space-y-3 sm:w-fit sm:flex-row sm:items-center sm:gap-3 sm:space-y-0">
+                                <ThemeToggle />
                                 {settings?.headerCta?.link && (
                                     <Button
                                         asChild
