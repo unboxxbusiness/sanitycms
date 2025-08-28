@@ -3,7 +3,7 @@
 
 import { Copy, Facebook, Linkedin, Mail, Share2, Twitter } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Dock, DockIcon } from "@/components/ui/dock";
 import {
@@ -30,9 +30,15 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
 export function SocialShare() {
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
-  
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
-  const shareTitle = typeof document !== 'undefined' ? document.title : 'AmulyaX India';
+  const [currentUrl, setCurrentUrl] = useState("");
+  const [shareTitle, setShareTitle] = useState("");
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    setCurrentUrl(window.location.href);
+    setShareTitle(document.title || "AmulyaX India");
+  }, []);
 
   const socialLinks = [
     { name: "Facebook", icon: Facebook, href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}` },
@@ -58,6 +64,10 @@ export function SocialShare() {
         toast({ title: "Share not supported", description: "Your browser does not support native sharing.", variant: "destructive" });
     }
   };
+  
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
@@ -76,32 +86,36 @@ export function SocialShare() {
                     </Tooltip>
                 </DockIcon>
                 
-                {socialLinks.map((link) => (
-                    <DockIcon key={link.name}>
+                {isOpen && (
+                  <>
+                    {socialLinks.map((link) => (
+                        <DockIcon key={link.name}>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Link href={link.href} target="_blank" rel="noopener noreferrer">
+                                        <link.icon className="size-5" />
+                                    </Link>
+                                </TooltipTrigger>
+                                <TooltipContent side="left">
+                                    <p>Share on {link.name}</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </DockIcon>
+                    ))}
+                    <DockIcon onClick={handleCopy}>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Link href={link.href} target="_blank" rel="noopener noreferrer">
-                                    <link.icon className="size-5" />
-                                </Link>
+                                <button>
+                                    <Copy className="size-5" />
+                                </button>
                             </TooltipTrigger>
                             <TooltipContent side="left">
-                                <p>Share on {link.name}</p>
+                                <p>Copy Link</p>
                             </TooltipContent>
                         </Tooltip>
                     </DockIcon>
-                ))}
-                 <DockIcon onClick={handleCopy}>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <button>
-                                <Copy className="size-5" />
-                            </button>
-                        </TooltipTrigger>
-                        <TooltipContent side="left">
-                            <p>Copy Link</p>
-                        </TooltipContent>
-                    </Tooltip>
-                </DockIcon>
+                  </>
+                )}
             </Dock>
         </TooltipProvider>
     </div>
