@@ -48,6 +48,38 @@ export default defineType({
         group: 'footer',
     }),
     defineField({
+      name: 'showMembershipCta',
+      title: 'Show Membership CTA',
+      type: 'boolean',
+      initialValue: true,
+      group: 'footer',
+      description: 'If enabled, shows the membership popup button in the newsletter section.'
+    }),
+    defineField({
+        name: 'membershipCtaText',
+        title: 'Membership CTA Text',
+        type: 'string',
+        initialValue: 'Join for Free',
+        group: 'footer',
+        hidden: ({parent}) => !parent?.showMembershipCta,
+    }),
+    defineField({
+        name: 'membershipDialogTitle',
+        title: 'Membership Dialog Title',
+        type: 'string',
+        initialValue: 'Join Our Community',
+        group: 'footer',
+        hidden: ({parent}) => !parent?.showMembershipCta,
+    }),
+    defineField({
+        name: 'membershipDialogDescription',
+        title: 'Membership Dialog Description',
+        type: 'text',
+        initialValue: 'Become a member for free to get the latest updates, resources, and opportunities from AmulyaX India.',
+        group: 'footer',
+        hidden: ({parent}) => !parent?.showMembershipCta,
+    }),
+    defineField({
         name: 'newsletterHeadline',
         title: 'Newsletter Headline',
         type: 'string',

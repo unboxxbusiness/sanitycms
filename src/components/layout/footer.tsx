@@ -34,6 +34,10 @@ interface Settings {
   newsletterHeadline?: string;
   newsletterSupportingText?: string;
   copyrightText?: string;
+  showMembershipCta?: boolean;
+  membershipCtaText?: string;
+  membershipDialogTitle?: string;
+  membershipDialogDescription?: string;
 }
 
 const iconMap = {
@@ -76,7 +80,11 @@ export function Footer() {
         socialLinks,
         newsletterHeadline,
         newsletterSupportingText,
-        copyrightText
+        copyrightText,
+        showMembershipCta,
+        membershipCtaText,
+        membershipDialogTitle,
+        membershipDialogDescription
       }`;
       const data = await client.fetch(query);
       setSettings(data);
@@ -137,7 +145,13 @@ export function Footer() {
           <div>
             <h3 className="font-semibold mb-4">{settings?.newsletterHeadline || "Stay Updated"}</h3>
             <p className="text-sm text-muted-foreground mb-4">{settings?.newsletterSupportingText || "Subscribe to our newsletter to get the latest updates."}</p>
-            <MembershipDialog />
+            {settings?.showMembershipCta && (
+              <MembershipDialog
+                ctaText={settings.membershipCtaText}
+                dialogTitle={settings.membershipDialogTitle}
+                dialogDescription={settings.membershipDialogDescription}
+              />
+            )}
           </div>
         </div>
         <div className="mt-8 border-t pt-8 flex flex-col md:flex-row justify-between items-center">

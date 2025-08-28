@@ -18,7 +18,13 @@ const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
 })
 
-export function MembershipDialog() {
+interface MembershipDialogProps {
+    ctaText?: string;
+    dialogTitle?: string;
+    dialogDescription?: string;
+}
+
+export function MembershipDialog({ ctaText, dialogTitle, dialogDescription }: MembershipDialogProps) {
   const { toast } = useToast()
   const [open, setOpen] = useState(false);
   const [state, formAction, isPending] = useActionState(subscribeToNewsletter, { status: 'idle' });
@@ -54,13 +60,13 @@ export function MembershipDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-            <Button variant="default">Join for Free</Button>
+            <Button variant="default">{ctaText || "Join for Free"}</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-                <DialogTitle>Join Our Community</DialogTitle>
+                <DialogTitle>{dialogTitle || "Join Our Community"}</DialogTitle>
                 <DialogDescription>
-                    Become a member for free to get the latest updates, resources, and opportunities from AmulyaX India.
+                    {dialogDescription || "Become a member for free to get the latest updates, resources, and opportunities from AmulyaX India."}
                 </DialogDescription>
             </DialogHeader>
             <Form {...form}>
@@ -95,7 +101,7 @@ export function MembershipDialog() {
                   )}
                 />
                 <Button type="submit" className="w-full" disabled={isPending}>
-                    {isPending ? 'Joining...' : 'Join for Free'}
+                    {isPending ? 'Joining...' : (ctaText || "Join for Free")}
                 </Button>
               </form>
             </Form>
