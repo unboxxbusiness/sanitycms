@@ -56,7 +56,7 @@ export function Header() {
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
     return (
-        <header>
+        <header key="header">
             <nav
                 className="fixed z-50 group w-full px-2">
                 <div className={cn('mx-auto mt-2 max-w-6xl px-6 transition-all duration-300 lg:px-12', isScrolled && 'bg-background/50 max-w-4xl rounded-2xl border backdrop-blur-lg lg:px-5')}>
@@ -76,7 +76,7 @@ export function Header() {
                                 <ThemeToggle />
                                 <Sheet>
                                     <SheetTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="relative z-20 -m-2.5 block cursor-pointer p-2.5 lg:hidden">
+                                        <Button variant="ghost" size="icon" className="relative z-40 -m-2.5 block cursor-pointer p-2.5 lg:hidden">
                                             <Menu className="m-auto size-6" />
                                             <span className="sr-only">Open Menu</span>
                                         </Button>
