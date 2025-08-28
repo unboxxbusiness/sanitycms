@@ -6,6 +6,8 @@ import { Footer } from '@/components/layout/footer';
 import { BlockRenderer } from '@/components/block-renderer';
 import type { Metadata } from 'next';
 
+export const revalidate = 30 // revalidate at most every 30 seconds
+
 interface PageData {
   _id: string;
   title: string;
@@ -71,9 +73,7 @@ async function getPageData(slug: string): Promise<PageData> {
     }
   }`;
 
-  const data = await client.fetch(query, { slug }, {
-    next: { revalidate: 60 }
-  });
+  const data = await client.fetch(query, { slug });
   return data;
 }
 

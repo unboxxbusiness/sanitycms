@@ -6,6 +6,8 @@ import { client } from '@/lib/sanity';
 import { notFound } from 'next/navigation';
 import { BlockRenderer } from '@/components/block-renderer';
 
+export const revalidate = 30 // revalidate at most every 30 seconds
+
 export interface HomePageData {
   _id: string;
   title: string;
@@ -57,9 +59,7 @@ async function getHomePageData(): Promise<HomePageData> {
       }
     }
   }`;
-  const data = await client.fetch(query, {}, {
-    next: { revalidate: 60 }
-  });
+  const data = await client.fetch(query);
   return data;
 }
 
