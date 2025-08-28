@@ -35,6 +35,14 @@ export default defineType({
       }),
     }),
     defineField({
+        name: 'thumbnail',
+        title: 'Video Thumbnail',
+        type: 'image',
+        group: 'content',
+        description: 'Image to display before the video is played.',
+        validation: (Rule) => Rule.required(),
+    }),
+    defineField({
         name: 'showCtaButton',
         title: 'Show CTA Button',
         type: 'boolean',
@@ -60,11 +68,13 @@ export default defineType({
     select: {
       title: 'heading',
       subtitle: 'youtubeUrl',
+      media: 'thumbnail',
     },
-    prepare({title, subtitle}) {
+    prepare({title, subtitle, media}) {
       return {
         title: title || 'Video Block',
         subtitle: subtitle || 'No URL provided',
+        media: media,
       }
     },
   },
