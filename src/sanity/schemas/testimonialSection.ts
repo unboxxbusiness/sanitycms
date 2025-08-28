@@ -9,7 +9,7 @@ export default defineType({
       name: 'testimonials',
       title: 'Testimonials',
       type: 'array',
-      of: [{type: 'reference', to: {type: 'testimonial'}}],
+      of: [{type: 'reference', to: [{type: 'testimonial'}]}],
     }),
   ],
   preview: {

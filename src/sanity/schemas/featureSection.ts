@@ -9,7 +9,7 @@ export default defineType({
       name: 'features',
       title: 'Features',
       type: 'array',
-      of: [{type: 'reference', to: {type: 'feature'}}],
+      of: [{type: 'reference', to: [{type: 'feature'}]}],
     }),
   ],
   preview: {

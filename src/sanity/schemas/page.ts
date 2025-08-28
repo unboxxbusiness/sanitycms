@@ -25,28 +25,12 @@ export default defineType({
       title: 'Page Builder',
       type: 'array',
       of: [
-        { type: 'reference', to: [{type: 'about'}] },
-        { type: 'reference', to: [{type: 'cta'}] },
-        { 
-          title: 'Features',
-          type: 'reference', 
-          to: [{type: 'featureSection'}] 
-        },
-        { 
-          title: 'Impact',
-          type: 'reference', 
-          to: [{type: 'impactSection'}] 
-        },
-        { 
-          title: 'Partners',
-          type: 'reference', 
-          to: [{type: 'partnerSection'}] 
-        },
-        { 
-          title: 'Testimonials',
-          type: 'reference', 
-          to: [{type: 'testimonialSection'}] 
-        },
+        { type: 'reference', to: {type: 'about'} },
+        { type: 'reference', to: {type: 'cta'} },
+        { type: 'reference', to: {type: 'featureSection'} },
+        { type: 'reference', to: {type: 'impactSection'} },
+        { type: 'reference', to: {type: 'partnerSection'} },
+        { type: 'reference', to: {type: 'testimonialSection'} },
         { type: 'richTextBlock' },
         { type: 'contactForm' },
       ],

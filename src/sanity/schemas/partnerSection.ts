@@ -9,7 +9,7 @@ export default defineType({
       name: 'partners',
       title: 'Partners',
       type: 'array',
-      of: [{type: 'reference', to: {type: 'partner'}}],
+      of: [{type: 'reference', to: [{type: 'partner'}]}],
     }),
   ],
   preview: {

@@ -9,7 +9,7 @@ export default defineType({
       name: 'impact',
       title: 'Impact',
       type: 'array',
-      of: [{type: 'reference', to: {type: 'impact'}}],
+      of: [{type: 'reference', to: [{type: 'impact'}]}],
     }),
   ],
   preview: {
