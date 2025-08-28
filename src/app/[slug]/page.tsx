@@ -46,11 +46,13 @@ async function getPageData(slug: string): Promise<PageData> {
             ...,
             asset->
           }
-        },
+        }
       },
       _type == 'programCardsBlock' => {
         ...,
-        "programs": programs[]->,
+        "programs": programs[]->{
+          ...
+        }
       },
       _type == 'partnerLogoBlock' => {
         ...,
@@ -64,7 +66,7 @@ async function getPageData(slug: string): Promise<PageData> {
       },
       _type == 'impactMetricsBlock' => {
         ...,
-        "metrics": metrics[]->,
+        "metrics": metrics[]->
       }
     }
   }`;

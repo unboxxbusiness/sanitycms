@@ -37,7 +37,9 @@ async function getHomePageData(): Promise<HomePageData> {
       },
       _type == "programCardsBlock" => {
         ...,
-        "programs": programs[]->,
+        "programs": programs[]->{
+          ...
+        }
       },
       _type == "partnerLogoBlock" => {
         ...,
@@ -51,7 +53,7 @@ async function getHomePageData(): Promise<HomePageData> {
       },
       _type == "impactMetricsBlock" => {
         ...,
-        "metrics": metrics[]->,
+        "metrics": metrics[]->
       }
     }
   }`;
