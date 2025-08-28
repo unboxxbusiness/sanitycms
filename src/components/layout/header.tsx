@@ -3,7 +3,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { Menu, X } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Logo } from '@/components/logo';
@@ -12,6 +12,7 @@ import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { urlFor } from '@/lib/sanity-image';
 import Image from 'next/image';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 
 
 interface NavLink {
@@ -32,7 +33,6 @@ interface Settings {
 }
 
 export function Header() {
-    const [menuState, setMenuState] = React.useState(false)
     const [isScrolled, setIsScrolled] = React.useState(false)
     const [settings, setSettings] = React.useState<Settings | null>(null);
 
@@ -58,7 +58,6 @@ export function Header() {
     return (
         <header>
             <nav
-                data-state={menuState ? 'active' : 'inactive'}
                 className="fixed z-50 group w-full px-2">
                 <div className={cn('mx-auto mt-2 max-w-6xl px-6 transition-all duration-300 lg:px-12', isScrolled && 'bg-background/50 max-w-4xl rounded-2xl border backdrop-blur-lg lg:px-5')}>
                     <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
@@ -75,16 +74,47 @@ export function Header() {
                             </Link>
                             <div className="flex items-center lg:hidden">
                                 <ThemeToggle />
-                                <button
-                                    onClick={() => setMenuState(!menuState)}
-                                    aria-label={menuState ? 'Close Menu' : 'Open Menu'}
-                                    className="relative z-20 -m-2.5 block cursor-pointer p-2.5 lg:hidden">
-                                    <Menu className={cn("m-auto size-6 transition-transform duration-300", menuState && "rotate-90 scale-0")} />
-                                    <X className={cn("absolute inset-0 m-auto size-6 transition-transform duration-300", !menuState && "-rotate-90 scale-0")} />
-                                </button>
+                                <Sheet>
+                                    <SheetTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="relative z-20 -m-2.5 block cursor-pointer p-2.5 lg:hidden">
+                                            <Menu className="m-auto size-6" />
+                                            <span className="sr-only">Open Menu</span>
+                                        </Button>
+                                    </SheetTrigger>
+                                    <SheetContent side="left" className="w-full max-w-xs bg-background p-6">
+                                        <div className="flex flex-col h-full">
+                                            <div className="flex-1">
+                                                <ul className="flex flex-col items-start space-y-6 text-base mt-8">
+                                                    {navLinks.map((item) => (
+                                                        <li key={item._key}>
+                                                            <SheetClose asChild>
+                                                                <Link
+                                                                    href={item.link}
+                                                                    className="text-foreground/80 hover:text-foreground block duration-150">
+                                                                    <span>{item.text}</span>
+                                                                </Link>
+                                                            </SheetClose>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                            {settings?.headerCta?.link && (
+                                                <div className="mt-auto">
+                                                    <SheetClose asChild>
+                                                        <Button asChild size="lg" className="w-full">
+                                                            <Link href={settings.headerCta.link}>
+                                                                <span>{settings.headerCta.text || 'Get Started'}</span>
+                                                            </Link>
+                                                        </Button>
+                                                    </SheetClose>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </SheetContent>
+                                </Sheet>
                             </div>
                         </div>
-                        <div className={cn("fixed inset-0 z-20 w-full flex-col items-center justify-center gap-6 bg-background p-6 shadow-2xl shadow-zinc-300/20 dark:shadow-none lg:static lg:w-fit lg:flex-row lg:gap-0 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent", menuState ? "flex" : "hidden lg:flex")}>
+                        <div className={cn("hidden w-full flex-col items-center justify-center gap-6 bg-background p-6 shadow-2xl shadow-zinc-300/20 dark:shadow-none lg:static lg:w-fit lg:flex-row lg:gap-0 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent lg:flex")}>
                             <div className="absolute inset-0 m-auto hidden size-fit lg:block">
                                 <ul className="flex gap-8 text-sm">
                                     {navLinks.map((item, index) => (
@@ -98,18 +128,7 @@ export function Header() {
                                     ))}
                                 </ul>
                             </div>
-                            <ul className="flex flex-col items-center space-y-6 text-base lg:hidden">
-                                {navLinks.map((item, index) => (
-                                    <li key={index}>
-                                        <Link
-                                            href={item.link}
-                                            onClick={() => setMenuState(false)}
-                                            className="text-foreground/80 hover:text-foreground block duration-150">
-                                            <span>{item.text}</span>
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
+                            
                             <div className="flex w-full flex-col space-y-3 sm:w-fit sm:flex-row sm:items-center sm:gap-3 sm:space-y-0">
                                 <div className="hidden lg:flex items-center gap-3">
                                     <ThemeToggle />
