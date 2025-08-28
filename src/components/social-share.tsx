@@ -21,12 +21,12 @@ interface SocialCardProps {
 
 // Components
 const SocialBox = ({ href, icon, className, delay, name }: SocialBoxProps) => (
-  <Link 
+  <Link
     href={href}
-    target="_blank" 
-    rel="noopener noreferrer" 
-    aria-label={`Share on ${name}`} 
-    className={`social-box ${className}`} 
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label={`Share on ${name}`}
+    className={`social-box ${className}`}
     style={{ transitionDelay: delay }}
   >
     <span className="social-icon">{icon}</span>
