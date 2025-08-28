@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
+import { SocialShare } from '@/components/social-share';
 
 export const metadata: Metadata = {
   title: 'AmulyaX India',
@@ -30,6 +31,7 @@ export default function RootLayout({
         >
           {children}
           <Toaster />
+          <SocialShare />
         </ThemeProvider>
       </body>
     </html>

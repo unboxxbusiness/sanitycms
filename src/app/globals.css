@@ -82,3 +82,98 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Social Share Component Styles */
+.social-card {
+  width: fit-content;
+  height: fit-content;
+  background-color: hsl(var(--card));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 25px 25px;
+  gap: 20px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.055);
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  border: 1px solid hsl(var(--border));
+}
+
+.social-background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, hsl(var(--primary) / 0.1) 0%, hsl(var(--background)) 80%);
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.social-card:hover .social-background {
+  opacity: 1;
+}
+
+.social-logo {
+  font-size: 16px;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  z-index: 1;
+  transition: all 0.3s ease-in-out;
+}
+
+.social-box {
+  display: block;
+  width: 45px;
+  height: 45px;
+  background-color: hsl(var(--background));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.5s ease-in-out;
+  z-index: 1;
+  border: 1px solid hsl(var(--border));
+}
+
+.social-icon {
+  color: hsl(var(--muted-foreground));
+  transition: all 0.3s ease-in-out;
+}
+
+.social-box:hover {
+  background-color: hsl(var(--primary));
+  transform: translateY(-5px);
+  box-shadow: 0px 5px 15px hsl(var(--primary) / 0.3);
+}
+
+.social-box:hover .social-icon {
+  color: hsl(var(--primary-foreground));
+}
+
+.social-card .social-box {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.social-card:hover .social-box {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.social-card:hover .social-logo {
+  transform: translateX(calc(-100% - 20px));
+}
+
+.box4 {
+  width: 0;
+  height: 45px;
+  background-color: transparent;
+  border-radius: 10px;
+  transition: all 0.5s ease-in-out;
+  z-index: 1;
+}
+
+.social-card:hover .box4 {
+  width: 45px;
+}
