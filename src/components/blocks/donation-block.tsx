@@ -68,6 +68,7 @@ export function DonationBlock({
     }, [donationTiers]);
 
     const activeTier = useMemo(() => {
+        // Find the first tier where the donation amount is less than or equal to the tier's max.
         return sortedTiers.find(tier => donationAmount <= tier.maxAmount) || sortedTiers[sortedTiers.length - 1];
     }, [donationAmount, sortedTiers]);
 
