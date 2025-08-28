@@ -73,13 +73,16 @@ export function Header() {
                                     <Logo />
                                 )}
                             </Link>
-                            <button
-                                onClick={() => setMenuState(!menuState)}
-                                aria-label={menuState ? 'Close Menu' : 'Open Menu'}
-                                className="relative z-20 -m-2.5 -mr-4 block cursor-pointer p-2.5 lg:hidden">
-                                <Menu className={cn("m-auto size-6 transition-transform duration-300", menuState && "rotate-90 scale-0")} />
-                                <X className={cn("absolute inset-0 m-auto size-6 transition-transform duration-300", !menuState && "-rotate-90 scale-0")} />
-                            </button>
+                            <div className="flex items-center lg:hidden">
+                                <ThemeToggle />
+                                <button
+                                    onClick={() => setMenuState(!menuState)}
+                                    aria-label={menuState ? 'Close Menu' : 'Open Menu'}
+                                    className="relative z-20 -m-2.5 block cursor-pointer p-2.5 lg:hidden">
+                                    <Menu className={cn("m-auto size-6 transition-transform duration-300", menuState && "rotate-90 scale-0")} />
+                                    <X className={cn("absolute inset-0 m-auto size-6 transition-transform duration-300", !menuState && "-rotate-90 scale-0")} />
+                                </button>
+                            </div>
                         </div>
                         <div className="absolute inset-0 m-auto hidden size-fit lg:block">
                             <ul className="flex gap-8 text-sm">
@@ -108,7 +111,9 @@ export function Header() {
                                 ))}
                             </ul>
                             <div className="flex w-full flex-col space-y-3 sm:w-fit sm:flex-row sm:items-center sm:gap-3 sm:space-y-0">
-                                <ThemeToggle />
+                                <div className="hidden lg:flex items-center gap-3">
+                                    <ThemeToggle />
+                                </div>
                                 {settings?.headerCta?.link && (
                                     <Button
                                         asChild
