@@ -1,11 +1,16 @@
 // src/components/blocks/program-cards-block.tsx
-import { Cpu, Fingerprint, Goal, HeartHandshake, IndianRupee, Languages, Leaf, MapPin, Pencil, Settings2, Sparkles, Users, Zap } from 'lucide-react';
+import { Cpu, Fingerprint, Goal, HeartHandshake, IndianRupee, Languages, Leaf, MapPin, Pencil, Settings2, Sparkles, Users, Zap, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import React from 'react';
+import { cn } from '@/lib/utils';
 
 interface Program {
     _id: string;
     icon: string;
     title: string;
     description: string;
+    buttonText?: string;
+    buttonLink?: string;
 }
 
 interface ProgramCardsBlockProps {
@@ -15,21 +20,91 @@ interface ProgramCardsBlockProps {
     programs: Program[];
 }
 
-const iconMap: { [key: string]: React.ReactNode } = {
-  'Zap': <Zap className="size-4" />,
-  'Cpu': <Cpu className="size-4" />,
-  'Fingerprint': <Fingerprint className="size-4" />,
-  'Pencil': <Pencil className="size-4" />,
-  'Settings2': <Settings2 className="size-4" />,
-  'Sparkles': <Sparkles className="size-4" />,
-  'MapPin': <MapPin className="size-4" />,
-  'Languages': <Languages className="size-4" />,
-  'IndianRupee': <IndianRupee className="size-4" />,
-  'HeartHandshake': <HeartHandshake className="size-4" />,
-  'Users': <Users className="size-4" />,
-  'Leaf': <Leaf className="size-4" />,
-  'Goal': <Goal className="size-4" />,
+const iconMap: { [key: string]: React.ComponentType<React.SVGProps<SVGSVGElement>> } = {
+  'Zap': Zap,
+  'Cpu': Cpu,
+  'Fingerprint': Fingerprint,
+  'Pencil': Pencil,
+  'Settings2': Settings2,
+  'Sparkles': Sparkles,
+  'MapPin': MapPin,
+  'Languages': Languages,
+  'IndianRupee': IndianRupee,
+  'HeartHandshake': HeartHandshake,
+  'Users': Users,
+  'Leaf': Leaf,
+  'Goal': Goal,
 };
+
+function GridPattern({ 	width, 	height, 	x, 	y, 	squares, 	...props }: React.ComponentProps<'svg'> & { width: number; height: number; x: string; y: string; squares?: number[][] }) { 	
+    const patternId = React.useId();  	
+    return ( 		
+        <svg aria-hidden="true" {...props}> 			
+            <defs> 				
+                <pattern id={patternId} width={width} height={height} patternUnits="userSpaceOnUse" x={x} y={y}> 					
+                    <path d={`M.5 ${height}V.5H${width}`} fill="none" /> 				
+                </pattern> 			
+            </defs> 			
+            <rect width="100%" height="100%" strokeWidth={0} fill={`url(#${patternId})`} /> 			
+            {squares && ( 				
+                <svg x={x} y={y} className="overflow-visible"> 					
+                    {squares.map(([x, y], index) => ( 						
+                        <rect strokeWidth="0" key={index} width={width + 1} height={height + 1} x={x * width} y={y * height} /> 					
+                    ))} 				
+                </svg> 			
+            )} 		
+        </svg> 	
+    ); 
+}
+
+function genRandomPattern(length?: number): number[][] {
+    length = length ?? 5;
+    return Array.from({ length }, () => [
+        Math.floor(Math.random() * 4) + 7, // random x between 7 and 10
+        Math.floor(Math.random() * 6) + 1, // random y between 1 and 6
+    ]);
+}
+
+interface FeatureCardProps extends React.ComponentProps<'div'> {
+    program: Program;
+}
+
+function FeatureCard({ program, className, ...props }: FeatureCardProps) {
+    const p = React.useMemo(() => genRandomPattern(), []);
+    const Icon = iconMap[program.icon] || Zap;
+
+    const cardContent = (
+        <div className={cn('relative overflow-hidden p-6 h-full group', className)} {...props}>
+            <div className="pointer-events-none absolute top-0 left-1/2 -mt-2 -ml-20 h-full w-full [mask-image:linear-gradient(white,transparent)]">
+                <div className="from-foreground/5 to-foreground/1 absolute inset-0 bg-gradient-to-r [mask-image:radial-gradient(farthest-side_at_top,white,transparent)] opacity-100">
+                    <GridPattern
+                        width={20}
+                        height={20}
+                        x="-12"
+                        y="4"
+                        squares={p}
+                        className="fill-foreground/5 stroke-foreground/25 absolute inset-0 h-full w-full mix-blend-overlay"
+                    />
+                </div>
+            </div>
+            <Icon className="text-foreground/75 size-6" strokeWidth={1} aria-hidden />
+            <h3 className="mt-10 text-sm md:text-base font-medium">{program.title}</h3>
+            <p className="text-muted-foreground relative z-20 mt-2 text-sm">{program.description}</p>
+            {program.buttonText && program.buttonLink && (
+                <div className="relative z-20 mt-4 text-sm font-medium text-primary inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+                    {program.buttonText}
+                    <ArrowRight className="size-4" />
+                </div>
+            )}
+        </div>
+    );
+
+    if (program.buttonLink) {
+        return <Link href={program.buttonLink}>{cardContent}</Link>;
+    }
+
+    return cardContent;
+}
 
 export function ProgramCardsBlock({ _key, heading, subheading, programs }: ProgramCardsBlockProps) {
   return (
@@ -38,19 +113,13 @@ export function ProgramCardsBlock({ _key, heading, subheading, programs }: Progr
             {heading && (
                 <div className="relative z-10 mx-auto max-w-xl space-y-6 text-center md:space-y-12">
                     <h2 className="text-balance text-4xl font-medium lg:text-5xl">{heading}</h2>
-                    {subheading && <p>{subheading}</p>}
+                    {subheading && <p className="text-muted-foreground">{subheading}</p>}
                 </div>
             )}
              
-            <div className="relative mx-auto grid max-w-2xl lg:max-w-4xl divide-x divide-y border *:p-12 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="relative mx-auto grid max-w-2xl lg:max-w-5xl divide-x divide-y border sm:grid-cols-2 lg:grid-cols-3">
                 {programs?.map((program) => (
-                    <div key={program._id} className="space-y-3">
-                        <div className="flex items-center gap-2">
-                            {iconMap[program.icon] || <Zap className="size-4" />}
-                            <h3 className="text-sm font-medium">{program.title}</h3>
-                        </div>
-                        <p className="text-sm text-muted-foreground">{program.description}</p>
-                    </div>
+                    <FeatureCard key={program._id} program={program} />
                 ))}
             </div>
         </div>
