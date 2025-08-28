@@ -159,7 +159,7 @@ export function PartnerLogoBlock({ heading, partners }: PartnerLogoBlockProps) {
                   <h2 className="text-3xl md:text-4xl font-bold">{heading}</h2>
               </div>
           )}
-          <LogoCarousel logos={formattedLogos} />
+          <LogoCarousel logos={formattedLogos} columns={4} />
         </div>
       </section>
     );
