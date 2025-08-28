@@ -83,7 +83,7 @@ const LogoColumn: React.FC<LogoColumnProps> = React.memo(
 
     return (
       <motion.div
-        className="relative h-20 w-36 overflow-hidden md:h-32 md:w-56"
+        className="relative h-24 w-48 overflow-hidden md:h-32 md:w-64"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
@@ -124,8 +124,8 @@ const LogoColumn: React.FC<LogoColumnProps> = React.memo(
             <Image 
               src={currentLogo.src}
               alt={currentLogo.name}
-              width={160}
-              height={80}
+              width={200}
+              height={100}
               className="h-auto w-auto max-h-[80%] max-w-[80%] object-contain dark:invert"
             />
           </motion.div>
@@ -183,7 +183,7 @@ export function PartnerLogoBlock({ heading, partners }: PartnerLogoBlockProps) {
     const formattedLogos: Logo[] = partners.map((partner) => ({
         id: partner._id,
         name: partner.name,
-        src: urlFor(partner.logo).height(80).url(),
+        src: urlFor(partner.logo).height(100).url(),
     }));
 
     return (
