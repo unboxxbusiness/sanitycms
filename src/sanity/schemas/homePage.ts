@@ -24,6 +24,7 @@ export default defineType({
         {type: 'testimonialsBlock'},
         {type: 'partnerLogoBlock'},
         {type: 'ctaBlock'},
+        {type: 'textBlock'},
       ],
     }),
   ],

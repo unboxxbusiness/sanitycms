@@ -5,6 +5,7 @@ import { ProgramCardsBlock } from '@/components/blocks/program-cards-block';
 import { ImpactMetricsBlock } from '@/components/blocks/impact-metrics-block';
 import { TestimonialsBlock } from '@/components/blocks/testimonials-block';
 import { PartnerLogoBlock } from '@/components/blocks/partner-logo-block';
+import { TextBlock } from '@/components/blocks/text-block';
 
 // Add other block components here
 // import { SomeOtherBlock } from '@/components/blocks/some-other-block';
@@ -16,6 +17,7 @@ const componentMap: { [key: string]: React.ComponentType<any> } = {
   impactMetricsBlock: ImpactMetricsBlock,
   testimonialsBlock: TestimonialsBlock,
   partnerLogoBlock: PartnerLogoBlock,
+  textBlock: TextBlock,
   // Add other block mappings here
   // someOtherBlock: SomeOtherBlock,
 };
