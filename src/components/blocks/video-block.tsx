@@ -8,7 +8,6 @@ import { urlFor } from '@/lib/sanity-image';
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { Button } from '../ui/button';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
 
 interface VideoBlockProps {
   heading?: string;
@@ -129,7 +128,7 @@ export function VideoBlock({ heading, subheading, youtubeUrl, thumbnail, showCta
                   {...selectedAnimation}
                   transition={{ type: "spring", damping: 30, stiffness: 300 }}
                   onClick={(e) => e.stopPropagation()}
-                  className="relative w-full max-w-4xl"
+                  className="relative w-11/12 max-w-6xl"
                 >
                   <div className="aspect-video">
                     <iframe
