@@ -7,7 +7,7 @@ import { urlFor } from '@/lib/sanity-image';
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { Button } from '../ui/button';
 import Link from 'next/link';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 interface VideoBlockProps {
   heading?: string;
@@ -109,6 +109,9 @@ export function VideoBlock({ heading, subheading, youtubeUrl, thumbnail, showCta
                 </div>
             </DialogTrigger>
             <DialogContent className="max-w-4xl w-11/12 p-0 bg-transparent border-0">
+                <DialogHeader>
+                  <DialogTitle className="sr-only">{heading || 'Video Player'}</DialogTitle>
+                </DialogHeader>
                 <div className="aspect-video">
                   {isVideoOpen && (
                       <iframe
