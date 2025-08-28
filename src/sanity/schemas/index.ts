@@ -5,5 +5,8 @@ import cta from './cta'
 import partner from './partner'
 import impact from './impact'
 import about from './about'
+import page from './page'
+import richTextBlock from './richTextBlock'
+import contactForm from './contactForm'
 
-export const schemaTypes = [homePage, feature, testimonial, cta, partner, impact, about]
+export const schemaTypes = [homePage, feature, testimonial, cta, partner, impact, about, page, richTextBlock, contactForm]
