@@ -1,3 +1,4 @@
+// src/components/layout/footer.tsx
 'use client'
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -15,6 +16,7 @@ import { client } from "@/lib/sanity"
 import { SanityImageSource } from "@sanity/image-url/lib/types/types"
 import Image from "next/image"
 import { urlFor } from "@/lib/sanity-image"
+import { AnimatedGroup } from "../ui/animated-group"
 
 const formSchema = z.object({
   email: z.string().email({
@@ -29,7 +31,7 @@ interface NavLink {
 }
 
 interface SocialLink {
-  _key: string;
+  _key:string;
   platform: 'github' | 'twitter' | 'linkedin';
   url: string;
 }
@@ -49,6 +51,26 @@ const iconMap = {
   github: <Github className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />,
   twitter: <Twitter className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />,
   linkedin: <Linkedin className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />,
+}
+
+const transitionVariants = {
+    item: {
+        hidden: {
+            opacity: 0,
+            filter: 'blur(12px)',
+            y: 12,
+        },
+        visible: {
+            opacity: 1,
+            filter: 'blur(0px)',
+            y: 0,
+            transition: {
+                type: 'spring',
+                bounce: 0.3,
+                duration: 1,
+            },
+        },
+    },
 }
 
 export function Footer() {
@@ -91,7 +113,20 @@ export function Footer() {
 
   return (
     <footer id="contact" className="bg-secondary/50">
-      <div className="container py-12">
+       <AnimatedGroup 
+        variants={{
+            container: {
+                visible: {
+                    transition: {
+                        staggerChildren: 0.1,
+                        delayChildren: 0.2,
+                    },
+                },
+            },
+            ...transitionVariants
+        }}
+        className="container py-12"
+      >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="space-y-4">
             {settings?.logo ? (
@@ -157,7 +192,7 @@ export function Footer() {
                 ))}
             </div>
         </div>
-      </div>
+      </AnimatedGroup>
     </footer>
   )
 }
