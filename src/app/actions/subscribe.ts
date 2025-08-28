@@ -59,6 +59,13 @@ export async function subscribeToNewsletter(
                 Email: {
                     email: parsed.data.email,
                 },
+                // This assumes you have a "Subscribed At" property of type "Date".
+                // This is case-sensitive.
+                "Subscribed At": {
+                    date: {
+                        start: new Date().toISOString(),
+                    }
+                }
             },
         });
         
