@@ -16,17 +16,35 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'amount',
-      title: 'Donation Amount (in ₹)',
+      name: 'maxAmount',
+      title: 'Maximum Donation Amount in this Tier (in ₹)',
       type: 'number',
+      description: 'The upper limit for this donation tier. The next tier will start from this amount.',
       validation: (Rule) => Rule.required().positive(),
     }),
     defineField({
-      name: 'description',
-      title: 'Impact Description',
-      type: 'text',
-      description: 'Describe what this donation will accomplish (e.g., "Funds one year of a student\'s education").',
-      validation: (Rule) => Rule.required(),
+      name: 'impactPerUnit',
+      title: 'Students Impacted per Unit',
+      type: 'number',
+      description: 'How many students are impacted per unit of currency (defined below).',
+      initialValue: 1,
+      validation: (Rule) => Rule.required().positive(),
+    }),
+    defineField({
+        name: 'impactUnitAmount',
+        title: 'Impact Unit Amount (in ₹)',
+        type: 'number',
+        description: 'The amount in rupees that equals one unit of impact (e.g., 10000).',
+        initialValue: 10000,
+        validation: (Rule) => Rule.required().positive(),
+    }),
+    defineField({
+        name: 'impactUnitLabel',
+        title: 'Impact Unit Label',
+        type: 'string',
+        description: 'The label for the impact calculation (e.g., "students educated").',
+        initialValue: 'students educated',
+        validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'icon',
@@ -49,7 +67,13 @@ export default defineType({
   preview: {
     select: {
       title: 'title',
-      subtitle: 'description',
+      subtitle: 'maxAmount',
     },
+    prepare({title, subtitle}) {
+        return {
+            title,
+            subtitle: `Up to ₹${(subtitle || 0).toLocaleString()}`
+        }
+    }
   },
 })

@@ -1,41 +1,39 @@
 // src/components/blocks/donation-block.tsx
 'use client'
 
-import { Award, BookOpenCheck, GraduationCap, HandCoins, HeartHandshake, Leaf, Users, Goal } from 'lucide-react';
+import React, { useState, useMemo } from "react";
+import { Award, BookOpenCheck, GraduationCap, HandCoins, HeartHandshake, Leaf, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Slider } from "@/components/ui/slider"
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 
 interface DonationTier {
     _id: string;
     title: string;
-    amount: number;
-    description: string;
+    maxAmount: number;
+    impactPerUnit: number;
+    impactUnitAmount: number;
+    impactUnitLabel: string;
     icon: string;
 }
 
 interface DonationBlockProps {
     heading: string;
     subheading?: string;
-    fundingGoal: number;
-    currentAmountRaised: number;
+    minAmount: number;
+    maxAmount: number;
     donationTiers: DonationTier[];
     primaryCtaText?: string;
     primaryCtaLink?: string;
-    secondaryCtaText?: string;
-    secondaryCtaLink?: string;
 }
 
 const iconMap: { [key: string]: React.ReactNode } = {
-    'HeartHandshake': <HeartHandshake className="h-8 w-8 text-primary" />,
-    'Users': <Users className="h-8 w-8 text-primary" />,
-    'Leaf': <Leaf className="h-8 w-8 text-primary" />,
-    'Goal': <Goal className="h-8 w-8 text-primary" />,
-    'Award': <Award className="h-8 w-8 text-primary" />,
-    'BookOpenCheck': <BookOpenCheck className="h-8 w-8 text-primary" />,
-    'GraduationCap': <GraduationCap className="h-8 w-8 text-primary" />,
+    'HeartHandshake': <HeartHandshake className="h-10 w-10 text-primary" />,
+    'Users': <Users className="h-10 w-10 text-primary" />,
+    'Leaf': <Leaf className="h-10 w-10 text-primary" />,
+    'Award': <Award className="h-10 w-10 text-primary" />,
+    'BookOpenCheck': <BookOpenCheck className="h-10 w-10 text-primary" />,
+    'GraduationCap': <GraduationCap className="h-10 w-10 text-primary" />,
 };
 
 const formatCurrency = (amount: number) => {
@@ -49,78 +47,78 @@ const formatCurrency = (amount: number) => {
 export function DonationBlock({
     heading,
     subheading,
-    fundingGoal,
-    currentAmountRaised,
+    minAmount = 1000,
+    maxAmount = 1000000,
     donationTiers,
-    primaryCtaText,
-    primaryCtaLink,
-    secondaryCtaText,
-    secondaryCtaLink
+    primaryCtaText = "Donate Now",
+    primaryCtaLink = "#",
 }: DonationBlockProps) {
-    const [progress, setProgress] = useState(0);
+    const [donationAmount, setDonationAmount] = useState(minAmount);
 
-    useEffect(() => {
-        const calculatedProgress = (currentAmountRaised / fundingGoal) * 100;
-        const timer = setTimeout(() => setProgress(calculatedProgress), 500);
-        return () => clearTimeout(timer);
-    }, [currentAmountRaised, fundingGoal]);
+    const sortedTiers = useMemo(() => {
+        return [...(donationTiers || [])].sort((a, b) => a.maxAmount - b.maxAmount);
+    }, [donationTiers]);
+
+    const activeTier = useMemo(() => {
+        return sortedTiers.find(tier => donationAmount <= tier.maxAmount) || sortedTiers[sortedTiers.length - 1];
+    }, [donationAmount, sortedTiers]);
+
+    const studentsImpacted = useMemo(() => {
+        if (!activeTier) return 0;
+        const impact = (donationAmount / activeTier.impactUnitAmount) * activeTier.impactPerUnit;
+        return Math.floor(impact);
+    }, [donationAmount, activeTier]);
+    
+    const ctaLinkWithAmount = `${primaryCtaLink}${primaryCtaLink.includes('?') ? '&' : '?'}amount=${donationAmount}`;
+
+    if (!donationTiers || donationTiers.length === 0) {
+        return null;
+    }
 
     return (
         <section className="py-20 md:py-28 bg-secondary/20">
             <div className="container mx-auto px-4">
                 <div className="text-center max-w-4xl mx-auto">
                     <h2 className="text-3xl md:text-4xl font-bold">{heading}</h2>
-                    {subheading && <p className="text-muted-foreground mt-4">{subheading}</p>}
+                    {subheading && <p className="text-muted-foreground mt-4 text-lg">{subheading}</p>}
                 </div>
 
-                <Card className="max-w-4xl mx-auto mt-12 bg-card">
-                    <CardHeader className="text-center">
-                        <CardTitle className="text-2xl font-bold">Fundraising Progress</CardTitle>
-                        <div className="flex justify-between items-end mt-2">
-                            <div className="text-left">
-                                <p className="text-sm text-muted-foreground">Raised</p>
-                                <p className="text-2xl font-bold text-primary">{formatCurrency(currentAmountRaised)}</p>
+                <div className="max-w-4xl mx-auto mt-12 bg-card rounded-2xl shadow-lg p-8 md:p-12">
+                    <div className="grid md:grid-cols-2 gap-8 items-center">
+                        <div className="text-center md:text-left">
+                            <div className="mb-4">
+                                {activeTier?.icon && (
+                                   <div className="mx-auto md:mx-0 bg-primary/10 p-4 rounded-full w-fit mb-4 transition-all duration-300">
+                                       {iconMap[activeTier.icon] || <HandCoins className="h-10 w-10 text-primary" />}
+                                   </div>
+                                )}
+                                <p className="text-sm font-semibold uppercase tracking-wider text-primary">{activeTier?.title || 'Supporter'}</p>
+                                <p className="text-4xl md:text-5xl font-bold text-foreground mt-2">{formatCurrency(donationAmount)}</p>
                             </div>
-                            <div className="text-right">
-                                <p className="text-sm text-muted-foreground">Goal</p>
-                                <p className="text-2xl font-bold">{formatCurrency(fundingGoal)}</p>
+                            <div className="mt-4 text-muted-foreground text-lg">
+                                Your contribution can provide <span className="font-bold text-primary">{studentsImpacted}</span> {activeTier?.impactUnitLabel || 'students with support'}.
                             </div>
                         </div>
-                    </CardHeader>
-                    <CardContent>
-                        <Progress value={progress} className="w-full h-4" />
-                        <p className="text-center text-sm text-muted-foreground mt-2">{progress.toFixed(2)}% of goal raised</p>
-                    </CardContent>
-                </Card>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12 max-w-6xl mx-auto">
-                    {donationTiers.map((tier) => (
-                        <Card key={tier._id} className="text-center flex flex-col">
-                            <CardHeader>
-                                <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit mb-4">
-                                    {iconMap[tier.icon] || <HandCoins className="h-8 w-8 text-primary" />}
-                                </div>
-                                <CardTitle>{tier.title}</CardTitle>
-                                <p className="text-2xl font-bold text-primary">{formatCurrency(tier.amount)}</p>
-                            </CardHeader>
-                            <CardContent className="flex-grow">
-                                <CardDescription>{tier.description}</CardDescription>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
-                
-                <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
-                    {primaryCtaText && primaryCtaLink && (
-                        <Button asChild size="lg">
-                            <Link href={primaryCtaLink}>{primaryCtaText}</Link>
-                        </Button>
-                    )}
-                    {secondaryCtaText && secondaryCtaLink && (
-                         <Button asChild size="lg" variant="outline">
-                            <Link href={secondaryCtaLink}>{secondaryCtaText}</Link>
-                        </Button>
-                    )}
+                        <div className="flex flex-col justify-center h-full">
+                           <Slider
+                                value={[donationAmount]}
+                                onValueChange={(value) => setDonationAmount(value[0])}
+                                min={minAmount}
+                                max={maxAmount}
+                                step={(maxAmount - minAmount) / 100}
+                                className="w-full"
+                            />
+                            <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                                <span>{formatCurrency(minAmount)}</span>
+                                <span>{formatCurrency(maxAmount)}</span>
+                            </div>
+
+                            <Button asChild size="lg" className="w-full mt-8">
+                                <Link href={ctaLinkWithAmount}>{primaryCtaText}</Link>
+                            </Button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>

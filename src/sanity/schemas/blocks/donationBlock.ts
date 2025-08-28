@@ -20,22 +20,25 @@ export default defineType({
       type: 'text',
     }),
     defineField({
-      name: 'fundingGoal',
-      title: 'Funding Goal (in ₹)',
+      name: 'minAmount',
+      title: 'Minimum Donation Amount (in ₹)',
       type: 'number',
-      validation: (Rule) => Rule.required().positive(),
+      initialValue: 1000,
+      validation: (Rule) => Rule.required().min(0),
     }),
     defineField({
-      name: 'currentAmountRaised',
-      title: 'Current Amount Raised (in ₹)',
+      name: 'maxAmount',
+      title: 'Maximum Donation Amount (in ₹)',
       type: 'number',
-      validation: (Rule) => Rule.required().min(0),
+      initialValue: 1000000,
+      validation: (Rule) => Rule.required().positive(),
     }),
     defineField({
       name: 'donationTiers',
       title: 'Donation Tiers',
       type: 'array',
       of: [{type: 'reference', to: [{type: 'donationTier'}]}],
+      description: 'Tiers should be ordered from the lowest max amount to the highest.',
       validation: (Rule) => Rule.required().min(1),
     }),
     defineField({
@@ -48,17 +51,7 @@ export default defineType({
       name: 'primaryCtaLink',
       title: 'Primary CTA Link',
       type: 'string',
-    }),
-    defineField({
-      name: 'secondaryCtaText',
-      title: 'Secondary CTA Text',
-      type: 'string',
-      initialValue: 'Sponsor a Student',
-    }),
-    defineField({
-      name: 'secondaryCtaLink',
-      title: 'Secondary CTA Link',
-      type: 'string',
+      description: 'The link for the donation page. The selected amount will be added as a query parameter (e.g., /donate?amount=50000).'
     }),
   ],
   preview: {
