@@ -57,7 +57,13 @@ const distributeLogos = (allLogos: Logo[], columnCount: number): Logo[][] => {
   const maxLength = Math.max(...columns.map((col) => col.length))
   columns.forEach((col) => {
     while (col.length > 0 && col.length < maxLength) {
-      col.push(shuffled[Math.floor(Math.random() * shuffled.length)])
+      let attempt = 0;
+      let randomLogo;
+      do {
+        randomLogo = shuffled[Math.floor(Math.random() * shuffled.length)];
+        attempt++;
+      } while (col.includes(randomLogo) && attempt < shuffled.length)
+      col.push(randomLogo);
     }
   })
 
@@ -77,7 +83,7 @@ const LogoColumn: React.FC<LogoColumnProps> = React.memo(
 
     return (
       <motion.div
-        className="relative h-14 w-24 overflow-hidden md:h-24 md:w-48"
+        className="relative h-20 w-36 overflow-hidden md:h-32 md:w-56"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
@@ -119,7 +125,7 @@ const LogoColumn: React.FC<LogoColumnProps> = React.memo(
               src={currentLogo.src}
               alt={currentLogo.name}
               width={160}
-              height={60}
+              height={80}
               className="h-auto w-auto max-h-[80%] max-w-[80%] object-contain dark:invert"
             />
           </motion.div>
