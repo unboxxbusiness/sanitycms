@@ -31,7 +31,7 @@ export function MembershipDialog() {
     },
   });
 
-  const { handleSubmit, control, reset } = form;
+  const { control, reset } = form;
 
   useEffect(() => {
     if (state.status === 'success') {
@@ -41,21 +41,14 @@ export function MembershipDialog() {
       });
       reset();
       setOpen(false); // Close the dialog on success
-    } else if (state.status === 'error') {
+    } else if (state.status === 'error' && state.message) {
         toast({
             title: "Something went wrong",
-            description: state.message || "Could not subscribe. Please try again.",
+            description: state.message,
             variant: "destructive"
         })
     }
   }, [state, toast, reset]);
-  
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    const formData = new FormData();
-    formData.append('name', data.name);
-    formData.append('email', data.email);
-    formAction(formData);
-  };
 
 
   return (
@@ -72,7 +65,7 @@ export function MembershipDialog() {
             </DialogHeader>
             <Form {...form}>
               <form
-                onSubmit={handleSubmit(onSubmit)}
+                action={formAction}
                 className="space-y-4"
               >
                 <FormField
