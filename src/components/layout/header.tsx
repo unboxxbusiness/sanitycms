@@ -93,7 +93,7 @@ export function Header() {
                                 ))}
                             </ul>
                         </div>
-                        <div className={cn("mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border bg-background p-6 shadow-2xl shadow-zinc-300/20 dark:shadow-none md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent", menuState ? "block" : "hidden")}>
+                        <div className={cn("mb-6 w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border bg-background p-6 shadow-2xl shadow-zinc-300/20 dark:shadow-none md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent", menuState ? "flex" : "hidden lg:flex")}>
                             <div className="lg:hidden">
                                 <ul className="space-y-6 text-base">
                                     {navLinks.map((item, index) => (
@@ -111,8 +111,7 @@ export function Header() {
                                 {settings?.headerCta?.link && (
                                     <Button
                                         asChild
-                                        size="sm"
-                                        className={cn(isScrolled ? 'lg:inline-flex' : 'hidden')}>
+                                        size="sm">
                                         <Link href={settings.headerCta.link}>
                                             <span>{settings.headerCta.text || 'Get Started'}</span>
                                         </Link>
