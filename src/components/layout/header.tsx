@@ -2,20 +2,35 @@
 
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/logo';
+import { client } from '@/lib/sanity';
 
-const navLinks = [
-  { href: '/#features', label: 'Features' },
-  { href: '/#testimonials', label: 'Testimonials' },
-  { href: '/about-us', label: 'About Us' },
-  { href: '/contact-us', label: 'Contact' },
-  { href: '/studio', label: 'Go to Studio' },
-];
+interface NavLink {
+  _key: string;
+  text: string;
+  link: string;
+}
+
+interface Settings {
+  mainNavigation: NavLink[];
+}
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [settings, setSettings] = useState<Settings | null>(null);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const query = `*[_type == "settings"][0]{ mainNavigation }`;
+      const data = await client.fetch(query);
+      setSettings(data);
+    };
+    fetchSettings();
+  }, []);
+
+  const navLinks = settings?.mainNavigation || [];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -31,11 +46,11 @@ export function Header() {
           <nav className="hidden md:flex md:items-center md:gap-6 text-sm">
             {navLinks.map((link) => (
               <Link
-                key={link.href}
-                href={link.href}
+                key={link._key}
+                href={link.link}
                 className="font-medium text-foreground/60 transition-colors hover:text-foreground/80"
               >
-                {link.label}
+                {link.text}
               </Link>
             ))}
           </nav>
@@ -61,12 +76,12 @@ export function Header() {
              <nav className="flex flex-col gap-4">
                 {navLinks.map((link) => (
                   <Link
-                    key={link.href}
-                    href={link.href}
+                    key={link._key}
+                    href={link.link}
                     className="font-medium text-foreground/60 transition-colors hover:text-foreground/80"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    {link.label}
+                    {link.text}
                   </Link>
                 ))}
              </nav>

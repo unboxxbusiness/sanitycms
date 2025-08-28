@@ -1,6 +1,7 @@
 // src/sanity/schemas/index.ts
 import page from './page'
 import homePage from './homePage'
+import settings from './settings'
 
 // Block Schemas
 import ctaBlock from './blocks/ctaBlock'
@@ -25,6 +26,7 @@ export const schemaTypes = [
     testimonial,
     program,
     impactMetric,
+    settings,
 
     // Block Schemas
     ctaBlock,

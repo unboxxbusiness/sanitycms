@@ -10,6 +10,8 @@ import { Logo } from '@/components/logo'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import Link from "next/link"
 import { Github, Twitter, Linkedin } from "lucide-react"
+import { useEffect, useState } from "react"
+import { client } from "@/lib/sanity"
 
 const formSchema = z.object({
   email: z.string().email({
@@ -17,8 +19,44 @@ const formSchema = z.object({
   }),
 })
 
+interface NavLink {
+  _key: string;
+  text: string;
+  link: string;
+}
+
+interface SocialLink {
+  _key: string;
+  platform: 'github' | 'twitter' | 'linkedin';
+  url: string;
+}
+
+interface Settings {
+  footerProductLinks: NavLink[];
+  footerCompanyLinks: NavLink[];
+  footerLegalLinks: NavLink[];
+  socialLinks: SocialLink[];
+}
+
+const iconMap = {
+  github: <Github className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />,
+  twitter: <Twitter className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />,
+  linkedin: <Linkedin className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />,
+}
+
 export function Footer() {
   const { toast } = useToast()
+  const [settings, setSettings] = useState<Settings | null>(null);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const query = `*[_type == "settings"][0]{ footerProductLinks, footerCompanyLinks, footerLegalLinks, socialLinks }`;
+      const data = await client.fetch(query);
+      setSettings(data);
+    };
+    fetchSettings();
+  }, []);
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -43,26 +81,28 @@ export function Footer() {
             <Logo />
             <p className="text-sm text-muted-foreground">Innovative Solutions for India's future.</p>
             <div className="flex space-x-4">
-                <Link href="#" aria-label="Github"><Github className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" /></Link>
-                <Link href="#" aria-label="Twitter"><Twitter className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" /></Link>
-                <Link href="#" aria-label="Linkedin"><Linkedin className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" /></Link>
+                {settings?.socialLinks?.map(social => (
+                  <Link key={social._key} href={social.url} aria-label={social.platform} target="_blank" rel="noopener noreferrer">
+                    {iconMap[social.platform] || <Github className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />}
+                  </Link>
+                ))}
             </div>
           </div>
           <div className="grid grid-cols-2 gap-8">
             <div>
               <h3 className="font-semibold mb-4">Product</h3>
               <ul className="space-y-2">
-                <li><Link href="/#features" className="text-sm text-muted-foreground hover:text-primary transition-colors">Features</Link></li>
-                <li><Link href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">Pricing</Link></li>
-                <li><Link href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">FAQ</Link></li>
+                {settings?.footerProductLinks?.map(link => (
+                  <li key={link._key}><Link href={link.link} className="text-sm text-muted-foreground hover:text-primary transition-colors">{link.text}</Link></li>
+                ))}
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Company</h3>
+              <h3 className="fontsemibold mb-4">Company</h3>
               <ul className="space-y-2">
-                <li><Link href="/about-us" className="text-sm text-muted-foreground hover:text-primary transition-colors">About Us</Link></li>
-                <li><Link href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">Careers</Link></li>
-                <li><Link href="/contact-us" className="text-sm text-muted-foreground hover:text-primary transition-colors">Contact</Link></li>
+                {settings?.footerCompanyLinks?.map(link => (
+                  <li key={link._key}><Link href={link.link} className="text-sm text-muted-foreground hover:text-primary transition-colors">{link.text}</Link></li>
+                ))}
               </ul>
             </div>
           </div>
@@ -92,8 +132,9 @@ export function Footer() {
         <div className="mt-8 border-t pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} AmulyaX India. All rights reserved.</p>
             <div className="flex gap-4 mt-4 md:mt-0">
-                <Link href="/privacy-policy" className="text-sm text-muted-foreground hover:text-primary transition-colors">Privacy Policy</Link>
-                <Link href="/terms-of-service" className="text-sm text-muted-foreground hover:text-primary transition-colors">Terms of Service</Link>
+                {settings?.footerLegalLinks?.map(link => (
+                  <Link key={link._key} href={link.link} className="text-sm text-muted-foreground hover:text-primary transition-colors">{link.text}</Link>
+                ))}
             </div>
         </div>
       </div>

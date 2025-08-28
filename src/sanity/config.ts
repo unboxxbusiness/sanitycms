@@ -8,7 +8,7 @@ const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!
 
 const singletonActions = new Set(["publish", "discardChanges", "restore"])
-const singletonTypes = new Set(["homePage"])
+const singletonTypes = new Set(["homePage", "settings"])
 
 // The document types that should not be included in the main navigation list
 const hiddenDocTypes = ['partner', 'testimonial', 'program', 'impactMetric']
@@ -17,6 +17,17 @@ export const structure: StructureResolver = (S) =>
   S.list()
     .title('Content')
     .items([
+      S.listItem()
+        .title('Site Settings')
+        .id('settings')
+        .child(
+          S.document()
+            .schemaType('settings')
+            .documentId('settings')
+        ),
+      
+      S.divider(),
+
       // Singleton for the Home Page
       S.listItem()
         .title('Home Page')
