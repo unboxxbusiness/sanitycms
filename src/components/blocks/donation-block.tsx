@@ -11,9 +11,8 @@ import { cn } from "@/lib/utils";
 interface DonationTier {
     _id: string;
     title: string;
-    maxAmount: number;
-    impactPerUnit: number;
-    impactUnitAmount: number;
+    amount: number;
+    impact: number;
     impactUnitLabel: string;
     icon: string;
 }
@@ -55,30 +54,53 @@ export function DonationBlock({
     primaryCtaLink = "#",
 }: DonationBlockProps) {
     const [donationAmount, setDonationAmount] = useState(minAmount);
-    const presetAmounts = [10000, 50000, 100000].filter(a => a >= minAmount && a <= maxAmount);
     
     // Defer state initialization to client-side to avoid hydration mismatch
     useEffect(() => {
         setDonationAmount(minAmount);
     }, [minAmount]);
 
-
     const sortedTiers = useMemo(() => {
-        return [...(donationTiers || [])].sort((a, b) => a.maxAmount - b.maxAmount);
+        return [...(donationTiers || [])].sort((a, b) => a.amount - b.amount);
     }, [donationTiers]);
 
+    const presetAmounts = useMemo(() => {
+        return sortedTiers.map(tier => tier.amount).filter(a => a >= minAmount && a <= maxAmount).slice(0, 3);
+    }, [sortedTiers, minAmount, maxAmount]);
+
     const activeTier = useMemo(() => {
-        // Find the first tier where the donation amount is less than or equal to the tier's max.
-        return sortedTiers.find(tier => donationAmount <= tier.maxAmount) || sortedTiers[sortedTiers.length - 1];
+      return sortedTiers.find(tier => donationAmount <= tier.amount) || sortedTiers[sortedTiers.length - 1] || null;
     }, [donationAmount, sortedTiers]);
 
     const studentsImpacted = useMemo(() => {
-        if (!activeTier || !activeTier.impactUnitAmount || activeTier.impactUnitAmount <= 0) {
-            return 0;
+        if (!activeTier || sortedTiers.length === 0) return 0;
+        
+        const lowerBoundTier = [...sortedTiers].reverse().find(tier => donationAmount >= tier.amount) || { amount: 0, impact: 0 };
+        const upperBoundTier = sortedTiers.find(tier => donationAmount <= tier.amount) || sortedTiers[sortedTiers.length - 1];
+
+        if (!upperBoundTier) return 0;
+
+        if (donationAmount >= upperBoundTier.amount) {
+            return Math.floor(upperBoundTier.impact);
         }
-        const impact = (donationAmount / activeTier.impactUnitAmount) * (activeTier.impactPerUnit || 0);
-        return Math.floor(impact);
-    }, [donationAmount, activeTier]);
+
+        const lowerAmount = lowerBoundTier.amount;
+        const upperAmount = upperBoundTier.amount;
+        const lowerImpact = lowerBoundTier.impact;
+        const upperImpact = upperBoundTier.impact;
+
+        if (upperAmount === lowerAmount) {
+            return Math.floor(upperImpact);
+        }
+        
+        const amountRange = upperAmount - lowerAmount;
+        const impactRange = upperImpact - lowerImpact;
+        
+        const amountRatio = (donationAmount - lowerAmount) / amountRange;
+        const calculatedImpact = lowerImpact + (amountRatio * impactRange);
+
+        return Math.floor(calculatedImpact);
+    }, [donationAmount, activeTier, sortedTiers]);
     
     const ctaLinkWithAmount = `${primaryCtaLink}${primaryCtaLink && primaryCtaLink.includes('?') ? '&' : '?'}amount=${donationAmount}`;
 

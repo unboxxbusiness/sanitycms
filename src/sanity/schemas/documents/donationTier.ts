@@ -16,27 +16,18 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'maxAmount',
-      title: 'Maximum Donation Amount in this Tier (in ₹)',
+      name: 'amount',
+      title: 'Donation Amount (in ₹)',
       type: 'number',
-      description: 'The upper limit for this donation tier. Tiers must be ordered from lowest to highest max amount. For example, Tier 1 could be 50,000, Tier 2 could be 250,000, and so on.',
+      description: 'The specific donation amount for this tier. Tiers must be created in order from lowest to highest amount.',
       validation: (Rule) => Rule.required().positive(),
     }),
     defineField({
-      name: 'impactPerUnit',
-      title: 'Students Impacted per Unit',
+      name: 'impact',
+      title: 'Students Impacted',
       type: 'number',
-      description: 'The number of students impacted for the cost defined below. Example: If every ₹10,000 impacts 1 student, enter "1". If it impacts 5 students, enter "5".',
-      initialValue: 1,
+      description: 'The number of students directly impacted by the donation amount above.',
       validation: (Rule) => Rule.required().positive(),
-    }),
-    defineField({
-        name: 'impactUnitAmount',
-        title: 'Impact Unit Amount (in ₹)',
-        type: 'number',
-        description: 'The cost in rupees for one unit of impact. Example: If every ₹10,000 impacts students, enter "10000". This is the denominator in the calculation.',
-        initialValue: 10000,
-        validation: (Rule) => Rule.required().positive(),
     }),
     defineField({
         name: 'impactUnitLabel',
@@ -67,12 +58,13 @@ export default defineType({
   preview: {
     select: {
       title: 'title',
-      subtitle: 'maxAmount',
+      amount: 'amount',
+      impact: 'impact',
     },
-    prepare({title, subtitle}) {
+    prepare({title, amount, impact}) {
         return {
             title,
-            subtitle: `Up to ₹${(subtitle || 0).toLocaleString()}`
+            subtitle: `₹${(amount || 0).toLocaleString()} impacts ${impact || 0} student(s)`
         }
     }
   },
