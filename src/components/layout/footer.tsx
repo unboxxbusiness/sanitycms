@@ -12,6 +12,9 @@ import Link from "next/link"
 import { Github, Twitter, Linkedin } from "lucide-react"
 import { useEffect, useState } from "react"
 import { client } from "@/lib/sanity"
+import { SanityImageSource } from "@sanity/image-url/lib/types/types"
+import Image from "next/image"
+import { urlFor } from "@/lib/sanity-image"
 
 const formSchema = z.object({
   email: z.string().email({
@@ -32,6 +35,7 @@ interface SocialLink {
 }
 
 interface Settings {
+  logo: SanityImageSource;
   footerProductLinks: NavLink[];
   footerCompanyLinks: NavLink[];
   footerLegalLinks: NavLink[];
@@ -50,7 +54,7 @@ export function Footer() {
 
   useEffect(() => {
     const fetchSettings = async () => {
-      const query = `*[_type == "settings"][0]{ footerProductLinks, footerCompanyLinks, footerLegalLinks, socialLinks }`;
+      const query = `*[_type == "settings"][0]{ logo, footerProductLinks, footerCompanyLinks, footerLegalLinks, socialLinks }`;
       const data = await client.fetch(query);
       setSettings(data);
     };
@@ -78,7 +82,11 @@ export function Footer() {
       <div className="container py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="space-y-4">
-            <Logo />
+            {settings?.logo ? (
+                <Image src={urlFor(settings.logo).height(20).url()} alt="Logo" width={78} height={20} className="h-5 w-auto" />
+            ) : (
+                <Logo />
+            )}
             <p className="text-sm text-muted-foreground">Innovative Solutions for India's future.</p>
             <div className="flex space-x-4">
                 {settings?.socialLinks?.map(social => (
@@ -98,7 +106,7 @@ export function Footer() {
               </ul>
             </div>
             <div>
-              <h3 className="fontsemibold mb-4">Company</h3>
+              <h3 className="font-semibold mb-4">Company</h3>
               <ul className="space-y-2">
                 {settings?.footerCompanyLinks?.map(link => (
                   <li key={link._key}><Link href={link.link} className="text-sm text-muted-foreground hover:text-primary transition-colors">{link.text}</Link></li>

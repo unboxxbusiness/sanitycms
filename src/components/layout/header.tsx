@@ -7,6 +7,9 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Logo } from '@/components/logo';
 import { client } from '@/lib/sanity'
+import { SanityImageSource } from '@sanity/image-url/lib/types/types';
+import { urlFor } from '@/lib/sanity-image';
+import Image from 'next/image';
 
 
 interface NavLink {
@@ -15,8 +18,15 @@ interface NavLink {
   link: string;
 }
 
+interface Cta {
+    text: string;
+    link: string;
+}
+
 interface Settings {
+  logo: SanityImageSource;
   mainNavigation: NavLink[];
+  headerCta: Cta;
 }
 
 export function Header() {
@@ -26,7 +36,7 @@ export function Header() {
 
     React.useEffect(() => {
         const fetchSettings = async () => {
-          const query = `*[_type == "settings"][0]{ mainNavigation }`;
+          const query = `*[_type == "settings"][0]{ logo, mainNavigation, headerCta }`;
           const data = await client.fetch(query);
           setSettings(data);
         };
@@ -55,7 +65,11 @@ export function Header() {
                                 href="/"
                                 aria-label="home"
                                 className="flex items-center space-x-2">
-                                <Logo />
+                                {settings?.logo ? (
+                                    <Image src={urlFor(settings.logo).height(20).url()} alt="Logo" width={78} height={20} className="h-5 w-auto" />
+                                ) : (
+                                    <Logo />
+                                )}
                             </Link>
                             <button
                                 onClick={() => setMenuState(!menuState)}
@@ -93,14 +107,16 @@ export function Header() {
                                 </ul>
                             </div>
                             <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-                                <Button
-                                    asChild
-                                    size="sm"
-                                    className={cn(isScrolled ? 'lg:inline-flex' : 'hidden')}>
-                                    <Link href="#">
-                                        <span>Get Started</span>
-                                    </Link>
-                                </Button>
+                                {settings?.headerCta?.link && (
+                                    <Button
+                                        asChild
+                                        size="sm"
+                                        className={cn(isScrolled ? 'lg:inline-flex' : 'hidden')}>
+                                        <Link href={settings.headerCta.link}>
+                                            <span>{settings.headerCta.text || 'Get Started'}</span>
+                                        </Link>
+                                    </Button>
+                                )}
                             </div>
                         </div>
                     </div>

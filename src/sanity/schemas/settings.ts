@@ -9,6 +9,11 @@ export default defineType({
   icon: Cog,
   fields: [
     defineField({
+      name: 'logo',
+      title: 'Brand Logo',
+      type: 'image',
+    }),
+    defineField({
       name: 'mainNavigation',
       title: 'Main Navigation',
       type: 'array',
@@ -19,6 +24,15 @@ export default defineType({
           { name: 'link', type: 'string', title: 'Link URL' }
         ]
       }],
+    }),
+    defineField({
+      name: 'headerCta',
+      title: 'Header CTA Button',
+      type: 'object',
+      fields: [
+        { name: 'text', type: 'string', title: 'Button Text' },
+        { name: 'link', type: 'string', title: 'Button Link' }
+      ]
     }),
     defineField({
       name: 'footerProductLinks',
