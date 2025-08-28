@@ -45,9 +45,11 @@ export async function subscribeToNewsletter(
             properties: {
                 // This assumes your Notion database's "Title" property is named "Name".
                 // This is case-sensitive.
-                Name: {
+                'Name': {
+                    type: 'title',
                     title: [
                         {
+                            type: 'text',
                             text: {
                                 content: parsed.data.name,
                             },
@@ -56,12 +58,14 @@ export async function subscribeToNewsletter(
                 },
                 // This assumes you have an "Email" property of type "Email".
                 // This is case-sensitive.
-                Email: {
+                'Email': {
+                    type: 'email',
                     email: parsed.data.email,
                 },
                 // This assumes you have a "Subscribed At" property of type "Date".
                 // This is case-sensitive.
-                "Subscribed At": {
+                'Subscribed At': {
+                    type: 'date',
                     date: {
                         start: new Date().toISOString(),
                     }
