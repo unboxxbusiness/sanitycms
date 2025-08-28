@@ -31,9 +31,22 @@ async function getPageData(slug: string): Promise<PageData> {
     seo,
     pageBuilder[]{
       ...,
+      _type == 'heroBlock' => {
+        ...,
+        image {
+          ...,
+          asset->
+        }
+      },
       _type == 'testimonialsBlock' => {
         ...,
-        "testimonials": testimonials[]->,
+        "testimonials": testimonials[]->{
+          ...,
+          image {
+            ...,
+            asset->
+          }
+        },
       },
       _type == 'programCardsBlock' => {
         ...,
@@ -41,7 +54,13 @@ async function getPageData(slug: string): Promise<PageData> {
       },
       _type == 'partnerLogoBlock' => {
         ...,
-        "partners": partners[]->,
+        "partners": partners[]->{
+          ...,
+          logo {
+            ...,
+            asset->
+          }
+        }
       },
       _type == 'impactMetricsBlock' => {
         ...,
