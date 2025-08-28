@@ -2,15 +2,7 @@
 'use client'
 
 import React, { useEffect, useState } from "react"
-import { useActionState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { useToast } from "@/hooks/use-toast"
 import { Logo } from '@/components/logo'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import Link from "next/link"
 import { Github, Twitter, Linkedin } from "lucide-react"
 import { client } from "@/lib/sanity"
@@ -18,13 +10,7 @@ import { SanityImageSource } from "@sanity/image-url/lib/types/types"
 import Image from "next/image"
 import { urlFor } from "@/lib/sanity-image"
 import { AnimatedGroup } from "../ui/animated-group"
-import { subscribeToNewsletter } from "@/app/actions/subscribe"
-
-const formSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email.",
-  }),
-})
+import { MembershipDialog } from "../membership-dialog"
 
 interface NavLink {
   _key: string;
@@ -74,64 +60,6 @@ const transitionVariants = {
             },
         },
     },
-}
-
-function NewsletterForm({ settings }: { settings: Settings | null }) {
-  const { toast } = useToast();
-  const [state, formAction, isPending] = useActionState(subscribeToNewsletter, { status: 'idle' });
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-    },
-  });
-
-  useEffect(() => {
-    if (state.status === 'success') {
-      toast({
-        title: "Subscribed!",
-        description: "Thanks for subscribing to our newsletter.",
-      });
-      form.reset();
-    } else if (state.status === 'error') {
-        toast({
-            title: "Something went wrong",
-            description: state.message || "Could not subscribe. Please try again.",
-            variant: "destructive"
-        })
-    }
-  }, [state, toast, form]);
-
-  return (
-    <div>
-        <h3 className="font-semibold mb-4">{settings?.newsletterHeadline || "Stay Updated"}</h3>
-        <p className="text-sm text-muted-foreground mb-4">{settings?.newsletterSupportingText || "Subscribe to our newsletter to get the latest updates."}</p>
-        <Form {...form}>
-          <form
-            action={formAction}
-            className="flex gap-2"
-          >
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem className="flex-1">
-                  <FormLabel className="sr-only">Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter your email" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" variant="default" disabled={isPending}>
-                {isPending ? 'Subscribing...' : 'Subscribe'}
-            </Button>
-          </form>
-        </Form>
-    </div>
-  )
 }
 
 export function Footer() {
@@ -206,7 +134,11 @@ export function Footer() {
               </ul>
             </div>
           </div>
-          <NewsletterForm settings={settings} />
+          <div>
+            <h3 className="font-semibold mb-4">{settings?.newsletterHeadline || "Stay Updated"}</h3>
+            <p className="text-sm text-muted-foreground mb-4">{settings?.newsletterSupportingText || "Subscribe to our newsletter to get the latest updates."}</p>
+            <MembershipDialog />
+          </div>
         </div>
         <div className="mt-8 border-t pt-8 flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} {settings?.copyrightText || "AmulyaX India. All rights reserved."}</p>

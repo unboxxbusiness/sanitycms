@@ -5,6 +5,7 @@ import { Client } from '@notionhq/client';
 import { z } from 'zod';
 
 const subscribeSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Invalid email address." }),
 });
 
@@ -25,11 +26,14 @@ export async function subscribeToNewsletter(
     }
 
     const parsed = subscribeSchema.safeParse({
+        name: formData.get('name'),
         email: formData.get('email'),
     });
 
     if (!parsed.success) {
-        return { status: 'error', message: parsed.error.errors[0].message };
+        // Concatenate all error messages
+        const message = parsed.error.errors.map(e => e.message).join(', ');
+        return { status: 'error', message };
     }
     
     try {
@@ -49,10 +53,21 @@ export async function subscribeToNewsletter(
                         },
                     ],
                 },
+                // This assumes you have a "Text" property named "Name".
+                // This is case-sensitive.
+                Name: {
+                    rich_text: [
+                        {
+                            text: {
+                                content: parsed.data.name,
+                            },
+                        },
+                    ],
+                },
             },
         });
         
-        return { status: 'success' };
+        return { status: 'success', message: 'Successfully subscribed!' };
     } catch (error: any) {
         console.error("Failed to add subscriber to Notion:", error);
         // Provide a generic error message to the user for security.
