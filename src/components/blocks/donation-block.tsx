@@ -6,6 +6,7 @@ import { Award, BookOpenCheck, GraduationCap, HandCoins, HeartHandshake, Leaf, U
 import { Button } from '@/components/ui/button';
 import { Slider } from "@/components/ui/slider"
 import Link from 'next/link';
+import { cn } from "@/lib/utils";
 
 interface DonationTier {
     _id: string;
@@ -54,6 +55,7 @@ export function DonationBlock({
     primaryCtaLink = "#",
 }: DonationBlockProps) {
     const [donationAmount, setDonationAmount] = useState(minAmount);
+    const presetAmounts = [10000, 50000, 100000].filter(a => a >= minAmount && a <= maxAmount);
     
     // Defer state initialization to client-side to avoid hydration mismatch
     useEffect(() => {
@@ -109,6 +111,17 @@ export function DonationBlock({
                         </div>
 
                         <div className="flex flex-col justify-center h-full">
+                            <div className="grid grid-cols-3 gap-2 mb-6">
+                                {presetAmounts.map((amount) => (
+                                    <Button
+                                        key={amount}
+                                        variant={donationAmount === amount ? "default" : "outline"}
+                                        onClick={() => setDonationAmount(amount)}
+                                    >
+                                        {formatCurrency(amount)}
+                                    </Button>
+                                ))}
+                            </div>
                            <Slider
                                 value={[donationAmount]}
                                 onValueChange={(value) => setDonationAmount(value[0])}
