@@ -81,7 +81,9 @@ const DockIcon = ({
 }: DockIconProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
-  const distance = useTransform(mouseX || mouseY, (val) => {
+  const motionValue = mouseX || mouseY;
+
+  const distance = useTransform(motionValue, (val: number) => {
     const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, y: 0, width: 0, height: 0 };
     const center = mouseX ? bounds.x + bounds.width / 2 : bounds.y + bounds.height / 2;
     return val - center;
@@ -93,7 +95,7 @@ const DockIcon = ({
   return (
     <motion.div
       ref={ref}
-      style={{ width }}
+      style={motionValue ? { width } : {}}
       className={cn(
         "flex aspect-square items-center justify-center rounded-full bg-neutral-100/50 dark:bg-neutral-800/50",
         className

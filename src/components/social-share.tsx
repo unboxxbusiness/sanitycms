@@ -1,7 +1,7 @@
 // src/components/social-share.tsx
 "use client";
 
-import { Copy, Facebook, Linkedin, Mail, Share2, Twitter, MessageCircle } from "lucide-react";
+import { Copy, Facebook, Linkedin, Mail, Share2, Twitter } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -62,7 +62,7 @@ export function SocialShare() {
   return (
     <div className="fixed bottom-4 right-4 z-50">
         <TooltipProvider>
-            <Dock direction="vertical" className="p-2 gap-2">
+            <Dock direction="vertical" className="p-2 gap-2" data-state={isOpen ? 'open' : 'closed'}>
                 <DockIcon onClick={() => setIsOpen(!isOpen)} className="size-12 rounded-full">
                     <Tooltip>
                         <TooltipTrigger asChild>
@@ -76,36 +76,32 @@ export function SocialShare() {
                     </Tooltip>
                 </DockIcon>
                 
-                {isOpen && (
-                    <>
-                        {socialLinks.map((link) => (
-                            <DockIcon key={link.name}>
-                                <Tooltip>
-                                    <TooltipTrigger asChild>
-                                        <Link href={link.href} target="_blank" rel="noopener noreferrer">
-                                            <link.icon className="size-5" />
-                                        </Link>
-                                    </TooltipTrigger>
-                                    <TooltipContent side="left">
-                                        <p>Share on {link.name}</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </DockIcon>
-                        ))}
-                         <DockIcon onClick={handleCopy}>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <button>
-                                        <Copy className="size-5" />
-                                    </button>
-                                </TooltipTrigger>
-                                <TooltipContent side="left">
-                                    <p>Copy Link</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </DockIcon>
-                    </>
-                )}
+                {socialLinks.map((link) => (
+                    <DockIcon key={link.name}>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Link href={link.href} target="_blank" rel="noopener noreferrer">
+                                    <link.icon className="size-5" />
+                                </Link>
+                            </TooltipTrigger>
+                            <TooltipContent side="left">
+                                <p>Share on {link.name}</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </DockIcon>
+                ))}
+                 <DockIcon onClick={handleCopy}>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <button>
+                                <Copy className="size-5" />
+                            </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="left">
+                            <p>Copy Link</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </DockIcon>
             </Dock>
         </TooltipProvider>
     </div>

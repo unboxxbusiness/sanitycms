@@ -82,3 +82,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+    [data-state='closed'] > :not(:first-child) {
+        display: none;
+    }
+}
