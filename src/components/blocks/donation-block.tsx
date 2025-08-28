@@ -1,7 +1,7 @@
 // src/components/blocks/donation-block.tsx
 'use client'
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Award, BookOpenCheck, GraduationCap, HandCoins, HeartHandshake, Leaf, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from "@/components/ui/slider"
@@ -54,6 +54,12 @@ export function DonationBlock({
     primaryCtaLink = "#",
 }: DonationBlockProps) {
     const [donationAmount, setDonationAmount] = useState(minAmount);
+    
+    // Defer state initialization to client-side to avoid hydration mismatch
+    useEffect(() => {
+        setDonationAmount(minAmount);
+    }, [minAmount]);
+
 
     const sortedTiers = useMemo(() => {
         return [...(donationTiers || [])].sort((a, b) => a.maxAmount - b.maxAmount);
@@ -64,12 +70,14 @@ export function DonationBlock({
     }, [donationAmount, sortedTiers]);
 
     const studentsImpacted = useMemo(() => {
-        if (!activeTier) return 0;
-        const impact = (donationAmount / activeTier.impactUnitAmount) * activeTier.impactPerUnit;
+        if (!activeTier || !activeTier.impactUnitAmount || activeTier.impactUnitAmount <= 0) {
+            return 0;
+        }
+        const impact = (donationAmount / activeTier.impactUnitAmount) * (activeTier.impactPerUnit || 0);
         return Math.floor(impact);
     }, [donationAmount, activeTier]);
     
-    const ctaLinkWithAmount = `${primaryCtaLink}${primaryCtaLink.includes('?') ? '&' : '?'}amount=${donationAmount}`;
+    const ctaLinkWithAmount = `${primaryCtaLink}${primaryCtaLink && primaryCtaLink.includes('?') ? '&' : '?'}amount=${donationAmount}`;
 
     if (!donationTiers || donationTiers.length === 0) {
         return null;
