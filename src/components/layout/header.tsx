@@ -1,3 +1,4 @@
+// src/components/layout/header.tsx
 'use client';
 
 import React from 'react'
@@ -20,7 +21,7 @@ interface NavLink {
 
 interface Cta {
     text: string;
-    link: string;
+    link:string;
 }
 
 interface Settings {
@@ -56,7 +57,7 @@ export function Header() {
     return (
         <header>
             <nav
-                data-state={menuState && 'active'}
+                data-state={menuState ? 'active' : 'inactive'}
                 className="fixed z-20 w-full px-2 group">
                 <div className={cn('mx-auto mt-2 max-w-6xl px-6 transition-all duration-300 lg:px-12', isScrolled && 'bg-background/50 max-w-4xl rounded-2xl border backdrop-blur-lg lg:px-5')}>
                     <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
@@ -92,7 +93,7 @@ export function Header() {
                                 ))}
                             </ul>
                         </div>
-                        <div className="bg-background group-data-[state=active]:block lg:group-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20 md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:shadow-none dark:lg:bg-transparent">
+                        <div className={cn("mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border bg-background p-6 shadow-2xl shadow-zinc-300/20 dark:shadow-none md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent", menuState ? "block" : "hidden")}>
                             <div className="lg:hidden">
                                 <ul className="space-y-6 text-base">
                                     {navLinks.map((item, index) => (
