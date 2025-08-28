@@ -46,7 +46,7 @@ export function PartnerLogoBlock({ heading, partners }: PartnerLogoBlockProps) {
     }
 
     const formattedLogos = partners.map(partner => ({
-        src: urlFor(partner.logo).height(40).url(),
+        src: urlFor(partner.logo).height(60).url(),
         alt: partner.name,
         href: partner.website,
     }));
@@ -84,12 +84,12 @@ export function PartnerLogoBlock({ heading, partners }: PartnerLogoBlockProps) {
                         className="mx-auto grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 items-center justify-center gap-x-12 gap-y-8 transition-all duration-500 group-hover:opacity-50 group-hover:blur-sm"
                     >
                         {formattedLogos.map((logo, index) => (
-                            <div key={index} className="flex h-12 justify-center">
+                            <div key={index} className="flex h-16 justify-center">
                                 <Image
                                     className="mx-auto h-full w-auto object-contain dark:invert"
                                     src={logo.src}
                                     alt={logo.alt}
-                                    height={40}
+                                    height={60}
                                     width={160}
                                 />
                             </div>
