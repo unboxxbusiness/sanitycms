@@ -27,10 +27,26 @@ export default defineType({
       of: [
         { type: 'reference', to: [{type: 'about'}] },
         { type: 'reference', to: [{type: 'cta'}] },
-        { type: 'reference', to: [{type: 'feature'}] },
-        { type: 'reference', to: [{type: 'impact'}] },
-        { type: 'reference', to: [{type: 'partner'}] },
-        { type: 'reference', to: [{type: 'testimonial'}] },
+        { 
+          title: 'Features',
+          type: 'reference', 
+          to: [{type: 'featureSection'}] 
+        },
+        { 
+          title: 'Impact',
+          type: 'reference', 
+          to: [{type: 'impactSection'}] 
+        },
+        { 
+          title: 'Partners',
+          type: 'reference', 
+          to: [{type: 'partnerSection'}] 
+        },
+        { 
+          title: 'Testimonials',
+          type: 'reference', 
+          to: [{type: 'testimonialSection'}] 
+        },
         { type: 'richTextBlock' },
         { type: 'contactForm' },
       ],

@@ -16,8 +16,8 @@ interface HeroSectionProps {
     headline: string;
     description: string;
     callToAction: string;
-    image: SanityImageSource;
-    imageAlt: string;
+    image?: SanityImageSource;
+    imageAlt?: string;
 }
 
 export function HeroSection({ headline, description, callToAction, image, imageAlt }: HeroSectionProps) {
@@ -41,16 +41,18 @@ export function HeroSection({ headline, description, callToAction, image, imageA
               </Button>
             </div>
           </div>
-          <div className="animate-fade-in">
-            <Image
-              src={urlFor(image).width(800).height(600).url()}
-              alt={imageAlt}
-              width={800}
-              height={600}
-              className="rounded-xl shadow-2xl"
-              data-ai-hint="abstract technology"
-            />
-          </div>
+          {image && (
+            <div className="animate-fade-in">
+              <Image
+                src={urlFor(image).width(800).height(600).url()}
+                alt={imageAlt || 'Hero Image'}
+                width={800}
+                height={600}
+                className="rounded-xl shadow-2xl"
+                data-ai-hint="abstract technology"
+              />
+            </div>
+          )}
         </div>
       </div>
     </section>

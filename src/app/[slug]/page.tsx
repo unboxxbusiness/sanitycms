@@ -13,7 +13,6 @@ import { ContactForm } from '@/components/contact-form';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import type { Metadata } from 'next';
-import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
 interface PageData {
   _id: string;
@@ -36,17 +35,15 @@ interface PageProps {
 const componentMap: { [key: string]: React.ComponentType<any> } = {
   about: AboutSection,
   cta: CtaSection,
-  features: FeaturesSection,
-  impact: ImpactSection,
-  partners: PartnersSection,
-  testimonials: TestimonialsSection,
+  featureSection: FeaturesSection,
+  impactSection: ImpactSection,
+  partnerSection: PartnersSection,
+  testimonialSection: TestimonialsSection,
   richTextBlock: RichTextBlock,
   contactForm: ContactForm,
 };
 
 async function getPageData(slug: string): Promise<PageData> {
-  // This query is now much more powerful.
-  // It fetches the page and then expands all the references in the pageBuilder array.
   const query = `*[_type == "page" && slug.current == $slug][0]{
     _id,
     title,
@@ -54,15 +51,20 @@ async function getPageData(slug: string): Promise<PageData> {
     seo,
     pageBuilder[]{
       ...,
-      // This is the key to resolving the references and getting the full content
       _type == 'reference' => @->{
         ...,
-        // If the referenced item itself has references, we expand them too
-        "features": features[]->,
-        "testimonials": testimonials[]->,
-        "impact": impact[]->,
-        "partners": partners[]->,
-        "about": about->
+        _type == 'featureSection' => {
+          "features": features[]->
+        },
+        _type == 'testimonialSection' => {
+          "testimonials": testimonials[]->
+        },
+        _type == 'impactSection' => {
+          "impact": impact[]->
+        },
+        _type == 'partnerSection' => {
+          "partners": partners[]->
+        }
       }
     }
   }`;
@@ -99,30 +101,49 @@ export default async function Page({ params }: PageProps) {
       <Header />
       <main className="flex-1">
         {page.pageBuilder && page.pageBuilder.map((slice: any) => {
-          // The slice could be a direct object (like richTextBlock) or a resolved reference
-          const sliceData = slice._type === 'reference' ? slice.dereferenced : slice;
-          const Component = componentMap[sliceData?._type] || componentMap[slice._type];
+          const sliceType = slice._type === 'reference' ? slice._ref : slice._type;
+          const componentName = slice._type === 'reference' ? (Object.keys(slice).find(k => k !== '_ref' && k !== '_key' && k !== '_type' && k !== 'features' && k !== 'testimonials' && k !== 'impact' && k !== 'partners' && k !== 'about' && k !== 'cta') || sliceType) : slice._type;
           
-          if (!Component) {
-            // It's useful to log when a component is missing
-            console.warn(`No component found for slice type: ${slice._type}`);
-            return null;
+          let Component;
+          let props: any = { ...slice };
+
+          if (slice._type === 'reference' && slice.features) {
+            Component = componentMap['featureSection'];
+            props = { features: slice.features };
+          } else if (slice._type === 'reference' && slice.testimonials) {
+            Component = componentMap['testimonialSection'];
+            props = { testimonials: slice.testimonials };
+          } else if (slice._type === 'reference' && slice.impact) {
+            Component = componentMap['impactSection'];
+            props = { impact: slice.impact };
+          } else if (slice._type === 'reference' && slice.partners) {
+            Component = componentMap['partnerSection'];
+            props = { partners: slice.partners };
+          } else if (slice._type === 'reference') {
+            Component = componentMap[sliceType];
+            props = { ...slice };
+          } else {
+            Component = componentMap[slice._type];
           }
 
-          // We pass the whole slice data as props. The component will know what to do with it.
-          // Note that for sections that were on the homepage, they might expect the data in a specific prop.
-          // e.g., FeaturesSection might expect a 'features' prop.
-          const props = {
-            features: slice.features,
-            testimonials: slice.testimonials,
-            about: slice.about,
-            impact: slice.impact,
-            partners: slice.partners,
-            cta: slice.cta,
-            ...slice
-          };
-          
-          return <Component key={slice._key || slice._id} {...props} />;
+          if (Component) {
+            return <Component key={slice._key || slice._id} {...props} />;
+          }
+
+          if (slice.features) {
+            return <FeaturesSection key={slice._key || slice._id} features={slice.features} />;
+          }
+          if (slice.testimonials) {
+            return <TestimonialsSection key={slice._key || slice._id} testimonials={slice.testimonials} />;
+          }
+          if (slice.impact) {
+            return <ImpactSection key={slice._key || slice._id} impact={slice.impact} />;
+          }
+          if (slice.partners) {
+            return <PartnersSection key={slice._key || slice._id} partners={slice.partners} />;
+          }
+
+          return null;
         })}
       </main>
       <Footer />
