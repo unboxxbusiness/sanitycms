@@ -1,9 +1,13 @@
 // src/components/blocks/partner-logo-block.tsx
-import Image from 'next/image';
-import Link from 'next/link';
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { urlFor } from '@/lib/sanity-image';
 
+// Sanity specific types
 interface Partner {
     _id: string;
     name: string;
@@ -16,29 +20,147 @@ interface PartnerLogoBlockProps {
     partners: Partner[];
 }
 
-export function PartnerLogoBlock({ heading, partners }: PartnerLogoBlockProps) {
+// Carousel specific types
+interface Logo {
+  id: string;
+  name: string;
+  src: string;
+}
+
+interface LogoColumnProps {
+  logos: Logo[];
+  columnIndex: number;
+  currentTime: number;
+}
+
+function LogoColumn({ logos, columnIndex, currentTime }: LogoColumnProps) {
+  const CYCLE_DURATION = 2000;
+  const columnDelay = columnIndex * 200;
+  const adjustedTime = (currentTime + columnDelay) % (CYCLE_DURATION * logos.length);
+  const currentIndex = Math.floor(adjustedTime / CYCLE_DURATION);
+  const currentLogo = logos[currentIndex];
+
+  if (!currentLogo) return null; // Guard against undefined logo
+
   return (
-    <section id="partners" className="py-20 md:py-28 bg-secondary/20">
-      <div className="container mx-auto px-4">
-        {heading && (
-            <div className="text-center space-y-4 mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold">{heading}</h2>
-            </div>
-        )}
-        <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8">
-          {partners.map((partner) => (
-            <Link key={partner._id} href={partner.website || '#'} target="_blank" rel="noopener noreferrer" className="grayscale hover:grayscale-0 transition-all" title={partner.name}>
-                <Image 
-                    src={urlFor(partner.logo).height(60).url()}
-                    alt={`${partner.name} logo`}
-                    width={150}
-                    height={60}
-                    className="object-contain"
-                />
-            </Link>
-          ))}
-        </div>
-      </div>
-    </section>
+    <motion.div
+      className="relative h-14 w-24 overflow-hidden md:h-24 md:w-48"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        delay: columnIndex * 0.1,
+        duration: 0.5,
+        ease: "easeOut",
+      }}
+    >
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={`${currentLogo.id}-${currentIndex}`}
+          className="absolute inset-0 flex items-center justify-center"
+          initial={{ y: "10%", opacity: 0 }}
+          animate={{
+            y: "0%",
+            opacity: 1,
+            transition: {
+              type: "spring",
+              stiffness: 300,
+              damping: 20,
+            },
+          }}
+          exit={{
+            y: "-20%",
+            opacity: 0,
+            transition: { duration: 0.3 },
+          }}
+        >
+          <Image
+            src={currentLogo.src}
+            alt={currentLogo.name}
+            width={120}
+            height={40}
+            className="h-auto w-auto max-h-[80%] max-w-[80%] object-contain grayscale hover:grayscale-0 transition-all"
+          />
+        </motion.div>
+      </AnimatePresence>
+    </motion.div>
   );
 }
+
+interface LogoCarouselProps {
+  columns?: number;
+  logos: Logo[];
+}
+
+function LogoCarousel({ columns = 4, logos }: LogoCarouselProps) {
+  const [logoColumns, setLogoColumns] = useState<Logo[][]>([]);
+  const [time, setTime] = useState(0);
+
+  const distributeLogos = useCallback(
+    (logos: Logo[]) => {
+      if(logos.length === 0) return [];
+      const shuffled = [...logos].sort(() => Math.random() - 0.5);
+      const result: Logo[][] = Array.from({ length: columns }, () => []);
+
+      shuffled.forEach((logo, index) => {
+        result[index % columns].push(logo);
+      });
+
+      const maxLength = Math.max(...result.map((col) => col.length));
+      result.forEach((col) => {
+        while (col.length < maxLength) {
+          col.push(shuffled[Math.floor(Math.random() * shuffled.length)]);
+        }
+      });
+
+      return result;
+    },
+    [columns]
+  );
+
+  useEffect(() => {
+    setLogoColumns(distributeLogos(logos));
+  }, [logos, distributeLogos]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime((prev) => prev + 100);
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
+  
+  if(logoColumns.length === 0) return null
+
+  return (
+    <div className="flex justify-center gap-4 py-8">
+      {logoColumns.map((columnLogos, index) => (
+        <LogoColumn
+          key={index}
+          logos={columnLogos}
+          columnIndex={index}
+          currentTime={time}
+        />
+      ))}
+    </div>
+  );
+}
+
+export function PartnerLogoBlock({ heading, partners }: PartnerLogoBlockProps) {
+    const formattedLogos = partners.map(partner => ({
+        id: partner._id,
+        name: partner.name,
+        src: urlFor(partner.logo).height(80).url()
+    }));
+  
+    return (
+      <section id="partners" className="py-20 md:py-28 bg-secondary/20">
+        <div className="container mx-auto px-4">
+          {heading && (
+              <div className="text-center space-y-4 mb-12">
+                  <h2 className="text-3xl md:text-4xl font-bold">{heading}</h2>
+              </div>
+          )}
+          <LogoCarousel logos={formattedLogos} />
+        </div>
+      </section>
+    );
+  }
