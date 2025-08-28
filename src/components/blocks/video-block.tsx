@@ -115,7 +115,7 @@ export function VideoBlock({ heading, subheading, youtubeUrl, thumbnail, showCta
                   animate={animationVariants['from-center'].animate}
                   exit={animationVariants['from-center'].exit}
                   transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                  className="relative w-11/12 max-w-4xl aspect-video"
+                  className="relative w-11/12 max-w-4xl"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <button
@@ -125,13 +125,15 @@ export function VideoBlock({ heading, subheading, youtubeUrl, thumbnail, showCta
                     <X className="size-5" />
                     <span className="sr-only">Close video</span>
                   </button>
-                  <div className="size-full border-2 border-white rounded-2xl overflow-hidden isolate z-[1] relative">
-                    <iframe
-                      src={embedUrl}
-                      className="size-full rounded-2xl"
-                      allowFullScreen
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    ></iframe>
+                  <div className="aspect-video w-full">
+                    <div className="size-full border-2 border-white rounded-2xl overflow-hidden isolate z-[1] relative">
+                      <iframe
+                        src={embedUrl}
+                        className="size-full rounded-2xl"
+                        allowFullScreen
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      ></iframe>
+                    </div>
                   </div>
                 </motion.div>
               </motion.div>
