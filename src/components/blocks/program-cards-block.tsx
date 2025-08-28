@@ -59,8 +59,7 @@ function GridPattern({ 	width, 	height, 	x, 	y, 	squares, 	...props }: React.Com
     ); 
 }
 
-function genRandomPattern(length?: number): number[][] {
-    length = length ?? 5;
+function genRandomPattern(length: number = 5): number[][] {
     return Array.from({ length }, () => [
         Math.floor(Math.random() * 4) + 7, // random x between 7 and 10
         Math.floor(Math.random() * 6) + 1, // random y between 1 and 6

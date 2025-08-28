@@ -47,32 +47,23 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 }
 
 const distributeLogos = (allLogos: Logo[], columnCount: number): Logo[][] => {
-    const shuffled = shuffleArray([...allLogos]);
-    const columns: Logo[][] = Array.from({ length: columnCount }, () => []);
-    
-    if (shuffled.length === 0) return columns;
+  const columns: Logo[][] = Array.from({ length: columnCount }, () => []);
+  if (allLogos.length === 0) return columns;
 
-    let logoIndex = 0;
-    const addedLogos = new Set<string>();
+  const shuffled = shuffleArray(allLogos);
+  const numRows = Math.ceil(shuffled.length / columnCount) * 2; // Make it longer to ensure smooth looping
 
-    for (let i = 0; i < shuffled.length * columnCount; i++) {
-        const colIndex = i % columnCount;
-        
-        let logo = shuffled[logoIndex % shuffled.length];
-        
-        // Ensure we don't repeat logos in the same "row" if possible
-        let attempts = 0;
-        while(columns[colIndex].find(l => l.id === logo.id) && attempts < shuffled.length) {
-            logoIndex++;
-            logo = shuffled[logoIndex % shuffled.length];
-            attempts++;
-        }
-
-        columns[colIndex].push(logo);
-        logoIndex++;
+  for (let row = 0; row < numRows; row++) {
+    for (let col = 0; col < columnCount; col++) {
+      const logoIndex = (row * columnCount + col) % shuffled.length;
+      columns[col].push(shuffled[logoIndex]);
     }
+  }
 
-    return columns;
+  // Shuffle within each column for more randomness
+  columns.forEach(col => shuffleArray(col));
+
+  return columns;
 };
 
 const LogoColumn: React.FC<LogoColumnProps> = React.memo(
@@ -152,26 +143,23 @@ export function LogoCarousel({ columnCount = 4, logos }: LogoCarouselProps) {
   const [logoSets, setLogoSets] = useState<Logo[][]>([])
   const [currentTime, setCurrentTime] = useState(0)
 
-  const updateTime = useCallback(() => {
-    setCurrentTime((prevTime) => prevTime + 100)
-  }, [])
-
   useEffect(() => {
-    const intervalId = setInterval(updateTime, 100)
-    return () => clearInterval(intervalId)
-  }, [updateTime])
+    const update = () => setCurrentTime(prev => prev + 100);
+    const intervalId = setInterval(update, 100);
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     if (logos.length > 0) {
-      const distributedLogos = distributeLogos(logos, columnCount)
-      setLogoSets(distributedLogos)
+      const distributed = distributeLogos(logos, columnCount)
+      setLogoSets(distributed)
     }
   }, [logos, columnCount])
 
   if (logos.length === 0) return null;
 
   return (
-    <div className={cn("flex justify-center space-x-4")}>
+    <div className="flex justify-center space-x-4">
       {logoSets.map((logos, index) => (
         <LogoColumn
           key={index}
@@ -208,10 +196,10 @@ export function PartnerLogoBlock({ heading, subheading, partners }: PartnerLogoB
                     {heading && <h2 className="text-3xl md:text-4xl font-bold">{heading}</h2>}
                     {subheading && <p className="text-muted-foreground max-w-2xl mx-auto">{subheading}</p>}
                 </div>
-                <div className="hidden md:flex justify-center">
+                <div className="md:flex justify-center">
                     <LogoCarousel logos={formattedLogos} columnCount={4} />
                 </div>
-                <div className="flex md:hidden justify-center">
+                <div className="md:hidden justify-center">
                     <LogoCarousel logos={formattedLogos} columnCount={2} />
                 </div>
             </div>
