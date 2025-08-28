@@ -112,7 +112,7 @@ export function Footer() {
   }
 
   return (
-    <footer id="contact" className="bg-secondary/50">
+    <footer id="contact" className="py-12">
        <AnimatedGroup 
         variants={{
             container: {
@@ -125,7 +125,7 @@ export function Footer() {
             },
             ...transitionVariants
         }}
-        className="container py-12"
+        className="container mx-auto max-w-6xl rounded-2xl bg-secondary/50 p-6 lg:p-12"
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="space-y-4">
