@@ -18,21 +18,31 @@ async function getHomePageData(): Promise<HomePageData> {
     title,
     pageBuilder[]{
       ...,
-      _type == 'testimonialsBlock' => {
+      _type == "testimonialsBlock" => {
         ...,
         "testimonials": testimonials[]->,
       },
-      _type == 'programCardsBlock' => {
+      _type == "programCardsBlock" => {
         ...,
         "programs": programs[]->,
       },
-      _type == 'partnerLogoBlock' => {
+      _type == "partnerLogoBlock" => {
         ...,
-        "partners": partners[]->,
+        "partners": partners[]->{
+          ...,
+          logo {
+            ...,
+            asset->
+          }
+        }
       },
-      _type == 'impactMetricsBlock' => {
+      _type == "impactMetricsBlock" => {
         ...,
         "metrics": metrics[]->,
+      },
+      image {
+        ...,
+        asset->
       }
     }
   }`;
