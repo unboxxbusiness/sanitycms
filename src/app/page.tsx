@@ -18,9 +18,22 @@ async function getHomePageData(): Promise<HomePageData> {
     title,
     pageBuilder[]{
       ...,
+      _type == 'heroBlock' => {
+        ...,
+        image {
+          ...,
+          asset->
+        }
+      },
       _type == "testimonialsBlock" => {
         ...,
-        "testimonials": testimonials[]->,
+        "testimonials": testimonials[]->{
+          ...,
+          image {
+            ...,
+            asset->
+          }
+        }
       },
       _type == "programCardsBlock" => {
         ...,
@@ -39,10 +52,6 @@ async function getHomePageData(): Promise<HomePageData> {
       _type == "impactMetricsBlock" => {
         ...,
         "metrics": metrics[]->,
-      },
-      image {
-        ...,
-        asset->
       }
     }
   }`;
