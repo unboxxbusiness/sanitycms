@@ -1,17 +1,36 @@
-import homePage from './homePage'
-import feature from './feature'
-import testimonial from './testimonial'
-import cta from './cta'
-import partner from './partner'
-import impact from './impact'
-import about from './about'
+// src/sanity/schemas/index.ts
 import page from './page'
-import richTextBlock from './richTextBlock'
-import contactForm from './contactForm'
-import featureSection from './featureSection'
-import impactSection from './impactSection'
-import partnerSection from './partnerSection'
-import testimonialSection from './testimonialSection'
+import homePage from './homePage'
+
+// Block Schemas
+import ctaBlock from './blocks/ctaBlock'
+import heroBlock from './blocks/heroBlock'
+import impactMetricsBlock from './blocks/impactMetricsBlock'
+import partnerLogoBlock from './blocks/partnerLogoBlock'
+import programCardsBlock from './blocks/programCardsBlock'
+import testimonialsBlock from './blocks/testimonialsBlock'
+
+// Document types used by blocks
+import partner from './documents/partner'
+import testimonial from './documents/testimonial'
+import program from './documents/program'
+import impactMetric from './documents/impactMetric'
 
 
-export const schemaTypes = [homePage, feature, testimonial, cta, partner, impact, about, page, richTextBlock, contactForm, featureSection, impactSection, partnerSection, testimonialSection]
+export const schemaTypes = [
+    // Document types
+    page,
+    homePage,
+    partner,
+    testimonial,
+    program,
+    impactMetric,
+
+    // Block Schemas
+    ctaBlock,
+    heroBlock,
+    impactMetricsBlock,
+    partnerLogoBlock,
+    programCardsBlock,
+    testimonialsBlock,
+]

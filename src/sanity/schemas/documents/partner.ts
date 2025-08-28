@@ -1,3 +1,4 @@
+// src/sanity/schemas/documents/partner.ts
 import {defineField, defineType} from 'sanity'
 
 export default defineType({
@@ -9,11 +10,13 @@ export default defineType({
       name: 'name',
       title: 'Name',
       type: 'string',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'logo',
       title: 'Logo',
       type: 'image',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
         name: 'website',

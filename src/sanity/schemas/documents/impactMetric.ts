@@ -1,19 +1,26 @@
+// src/sanity/schemas/documents/impactMetric.ts
 import {defineField, defineType} from 'sanity'
+import { BarChart } from 'lucide-react'
 
 export default defineType({
-  name: 'impact',
-  title: 'Impact',
+  name: 'impactMetric',
+  title: 'Impact Metric',
   type: 'document',
+  icon: BarChart,
   fields: [
     defineField({
-      name: 'stat',
-      title: 'Statistic',
+      name: 'value',
+      title: 'Value',
       type: 'string',
+      description: 'The number or statistic (e.g., "10,000+").',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'description',
-      title: 'Description',
+      name: 'label',
+      title: 'Label',
       type: 'string',
+      description: 'The description for the metric (e.g., "Students Impacted").',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'icon',
@@ -31,8 +38,8 @@ export default defineType({
   ],
   preview: {
     select: {
-      title: 'stat',
-      subtitle: 'description',
+      title: 'value',
+      subtitle: 'label',
     },
   },
 })

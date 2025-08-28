@@ -1,3 +1,4 @@
+// src/sanity/schemas/documents/testimonial.ts
 import {defineField, defineType} from 'sanity'
 
 export default defineType({
@@ -9,15 +10,17 @@ export default defineType({
       name: 'quote',
       title: 'Quote',
       type: 'text',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'author',
       title: 'Author',
       type: 'string',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'title',
-      title: 'Author Title',
+      title: 'Author Title / Role',
       type: 'string',
     }),
     defineField({
