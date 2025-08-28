@@ -12,7 +12,7 @@ import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { urlFor } from '@/lib/sanity-image';
 import Image from 'next/image';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
 
 
 interface NavLink {
@@ -82,6 +82,7 @@ export function Header() {
                                         </Button>
                                     </SheetTrigger>
                                     <SheetContent side="left" className="w-full max-w-xs bg-background p-6">
+                                        <SheetTitle className="sr-only">Menu</SheetTitle>
                                         <div className="flex flex-col h-full">
                                             <div className="flex-1">
                                                 <ul className="flex flex-col items-start space-y-6 text-base mt-8">
