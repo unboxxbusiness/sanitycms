@@ -22,6 +22,7 @@ export async function subscribeToNewsletter(
     formData: FormData
 ): Promise<SubscribeState> {
     if (!process.env.NOTION_API_KEY || !databaseId) {
+        console.error("Notion API credentials are not configured.");
         return { status: 'error', message: 'Notion API is not configured.' };
     }
 
@@ -42,21 +43,10 @@ export async function subscribeToNewsletter(
                 database_id: databaseId,
             },
             properties: {
-                // This assumes your Notion database's "Title" property is named "Email".
-                // This is case-sensitive.
-                Email: {
-                    title: [
-                        {
-                            text: {
-                                content: parsed.data.email,
-                            },
-                        },
-                    ],
-                },
-                // This assumes you have a "Text" property named "Name".
+                // This assumes your Notion database's "Title" property is named "Name".
                 // This is case-sensitive.
                 Name: {
-                    rich_text: [
+                    title: [
                         {
                             text: {
                                 content: parsed.data.name,
@@ -64,12 +54,17 @@ export async function subscribeToNewsletter(
                         },
                     ],
                 },
+                // This assumes you have an "Email" property of type "Email".
+                // This is case-sensitive.
+                Email: {
+                    email: parsed.data.email,
+                },
             },
         });
         
         return { status: 'success', message: 'Successfully subscribed!' };
     } catch (error: any) {
-        console.error("Failed to add subscriber to Notion:", error);
+        console.error("Failed to add subscriber to Notion:", error.body || error);
         // Provide a generic error message to the user for security.
         return { status: 'error', message: 'Could not subscribe. Please try again later.' };
     }
