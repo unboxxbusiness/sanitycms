@@ -90,7 +90,7 @@ export function Header() {
                                     <li key={index}>
                                         <Link
                                             href={item.link}
-                                            className="text-muted-foreground hover:text-accent-foreground block duration-150">
+                                            className="text-foreground/80 hover:text-foreground block duration-150">
                                             <span>{item.text}</span>
                                         </Link>
                                     </li>
@@ -104,7 +104,7 @@ export function Header() {
                                         <Link
                                             href={item.link}
                                             onClick={() => setMenuState(false)}
-                                            className="text-muted-foreground hover:text-accent-foreground block duration-150">
+                                            className="text-foreground/80 hover:text-foreground block duration-150">
                                             <span>{item.text}</span>
                                         </Link>
                                     </li>
