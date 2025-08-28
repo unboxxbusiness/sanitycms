@@ -2,12 +2,13 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { Play } from 'lucide-react';
+import { AnimatePresence, motion } from "framer-motion"
+import { Play, X } from 'lucide-react';
 import { urlFor } from '@/lib/sanity-image';
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { Button } from '../ui/button';
 import Link from 'next/link';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
 
 interface VideoBlockProps {
   heading?: string;
@@ -26,12 +27,19 @@ const getYouTubeId = (url: string): string | null => {
   return (match && match[2].length === 11) ? match[2] : null;
 };
 
+const animationVariants = {
+    "from-center": {
+      initial: { scale: 0.5, opacity: 0 },
+      animate: { scale: 1, opacity: 1 },
+      exit: { scale: 0.5, opacity: 0 },
+    },
+};
+
 export function VideoBlock({ heading, subheading, youtubeUrl, thumbnail, showCtaButton, ctaText, ctaLink }: VideoBlockProps) {
   const [isVideoOpen, setIsVideoOpen] = useState(false);
   const videoId = getYouTubeId(youtubeUrl);
   
-  // We need to use useEffect to avoid hydration errors with the Dialog component
-  // when the dialog is controlled.
+  // We need to use useEffect to avoid hydration errors
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
     setIsMounted(true);
@@ -58,7 +66,7 @@ export function VideoBlock({ heading, subheading, youtubeUrl, thumbnail, showCta
       </section>
     );
   }
-
+  
   if (!thumbnailSrc) {
     return (
         <section className="py-12 md:py-20">
@@ -68,6 +76,8 @@ export function VideoBlock({ heading, subheading, youtubeUrl, thumbnail, showCta
       </section>
     );
   }
+
+  const selectedAnimation = animationVariants["from-center"];
 
   return (
     <section className="py-12 md:py-20 bg-secondary/20">
@@ -79,51 +89,65 @@ export function VideoBlock({ heading, subheading, youtubeUrl, thumbnail, showCta
           </div>
         )}
         <div className="relative max-w-4xl mx-auto">
-          <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
-            <DialogTrigger asChild>
+          <div
+            className="relative cursor-pointer group"
+            onClick={() => setIsVideoOpen(true)}
+          >
+            <img
+              src={thumbnailSrc}
+              alt={heading || "Video thumbnail"}
+              width={1280}
+              height={720}
+              className="w-full transition-all duration-200 group-hover:brightness-[0.8] ease-out rounded-md shadow-lg border"
+            />
+            <div className="absolute inset-0 flex items-center justify-center group-hover:scale-100 scale-[0.9] transition-all duration-200 ease-out rounded-2xl">
+              <div className="bg-primary/10 flex items-center justify-center rounded-full backdrop-blur-md size-28">
                 <div
-                    className="relative cursor-pointer group"
+                  className={`flex items-center justify-center bg-gradient-to-b from-primary/30 to-primary shadow-md rounded-full size-20 transition-all ease-out duration-200 relative group-hover:scale-[1.2] scale-100`}
                 >
-                    <img
-                    src={thumbnailSrc}
-                    alt={heading || "Video thumbnail"}
-                    width={1280}
-                    height={720}
-                    className="w-full transition-all duration-200 group-hover:brightness-[0.8] ease-out rounded-md shadow-lg border"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center group-hover:scale-100 scale-[0.9] transition-all duration-200 ease-out rounded-2xl">
-                    <div className="bg-primary/10 flex items-center justify-center rounded-full backdrop-blur-md size-28">
-                        <div
-                        className={`flex items-center justify-center bg-gradient-to-b from-primary/30 to-primary shadow-md rounded-full size-20 transition-all ease-out duration-200 relative group-hover:scale-[1.2] scale-100`}
-                        >
-                        <Play
-                            className="size-8 text-white fill-white group-hover:scale-105 scale-100 transition-transform duration-200 ease-out"
-                            style={{
-                            filter:
-                                "drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06))",
-                            }}
-                        />
-                        </div>
-                    </div>
-                    </div>
+                  <Play
+                    className="size-8 text-white fill-white group-hover:scale-105 scale-100 transition-transform duration-200 ease-out"
+                    style={{
+                      filter:
+                        "drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06))",
+                    }}
+                  />
                 </div>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl w-11/12 p-0 bg-transparent border-0">
-                <DialogHeader>
-                  <DialogTitle className="sr-only">{heading || 'Video Player'}</DialogTitle>
-                </DialogHeader>
-                <div className="aspect-video">
-                  {isVideoOpen && (
-                      <iframe
-                          src={embedUrl}
-                          className="size-full rounded-lg"
-                          allowFullScreen
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      ></iframe>
-                  )}
-                </div>
-            </DialogContent>
-          </Dialog>
+              </div>
+            </div>
+          </div>
+          <AnimatePresence>
+            {isVideoOpen && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsVideoOpen(false)}
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md p-4"
+              >
+                <motion.div
+                  {...selectedAnimation}
+                  transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="relative w-full max-w-4xl"
+                >
+                  <div className="aspect-video">
+                    <iframe
+                      src={embedUrl}
+                      className="size-full rounded-lg"
+                      allowFullScreen
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    ></iframe>
+                  </div>
+                   <motion.button 
+                    onClick={() => setIsVideoOpen(false)}
+                    className="absolute -top-4 -right-4 text-white text-xl bg-neutral-900/50 ring-1 backdrop-blur-md rounded-full p-2 dark:bg-neutral-100/50 dark:text-black">
+                     <X className="size-5" />
+                   </motion.button>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
         {showCtaButton && ctaText && ctaLink && (
           <div className="mt-8 text-center">
