@@ -11,7 +11,7 @@ const singletonActions = new Set(["publish", "discardChanges", "restore"])
 const singletonTypes = new Set(["homePage", "settings"])
 
 // The document types that should not be included in the main navigation list
-const hiddenDocTypes = ['partner', 'testimonial', 'program', 'impactMetric']
+const hiddenDocTypes = ['partner', 'testimonial', 'program', 'impactMetric', 'donationTier']
 
 export const structure: StructureResolver = (S) =>
   S.list()

@@ -56,6 +56,12 @@ async function getHomePageData(): Promise<HomePageData> {
       _type == 'impactMetricsBlock' => {
         ...,
         "metrics": metrics[]->
+      },
+      _type == 'donationBlock' => {
+        ...,
+        "donationTiers": donationTiers[]->{
+          ...
+        }
       }
     }
   }`;

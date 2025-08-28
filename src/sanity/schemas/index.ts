@@ -12,12 +12,14 @@ import programCardsBlock from './blocks/programCardsBlock'
 import testimonialsBlock from './blocks/testimonialsBlock'
 import textBlock from './blocks/textBlock'
 import videoBlock from './blocks/videoBlock'
+import donationBlock from './blocks/donationBlock'
 
 // Document types used by blocks
 import partner from './documents/partner'
 import testimonial from './documents/testimonial'
 import program from './documents/program'
 import impactMetric from './documents/impactMetric'
+import donationTier from './documents/donationTier'
 
 
 export const schemaTypes = [
@@ -29,6 +31,7 @@ export const schemaTypes = [
     program,
     impactMetric,
     settings,
+    donationTier,
 
     // Block Schemas
     ctaBlock,
@@ -39,4 +42,5 @@ export const schemaTypes = [
     testimonialsBlock,
     textBlock,
     videoBlock,
+    donationBlock,
 ]

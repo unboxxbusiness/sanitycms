@@ -69,6 +69,12 @@ async function getPageData(slug: string): Promise<PageData> {
       _type == 'impactMetricsBlock' => {
         ...,
         "metrics": metrics[]->
+      },
+      _type == 'donationBlock' => {
+        ...,
+        "donationTiers": donationTiers[]->{
+          ...
+        }
       }
     }
   }`;

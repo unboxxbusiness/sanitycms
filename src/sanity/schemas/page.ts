@@ -33,6 +33,7 @@ export default defineType({
         {type: 'ctaBlock'},
         {type: 'textBlock'},
         {type: 'videoBlock'},
+        {type: 'donationBlock'},
       ],
     }),
     defineField({
