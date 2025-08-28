@@ -1,5 +1,7 @@
 import type {Config} from 'tailwindcss';
 
+const plugin = require('tailwindcss/plugin')
+
 export default {
   darkMode: ['class'],
   content: [
@@ -13,6 +15,9 @@ export default {
         body: ['Inter', 'sans-serif'],
         headline: ['Inter', 'sans-serif'],
         code: ['monospace'],
+      },
+      boxShadow: {
+        'inset-2xs': 'inset 0 0 0 1px var(--tw-shadow-color)',
       },
       colors: {
         background: 'hsl(var(--background))',
@@ -111,5 +116,18 @@ export default {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [
+    require('tailwindcss-animate'),
+    plugin(function ({ addUtilities, theme }: { addUtilities: any, theme: any }) {
+      const newUtilities = {
+        '.inset-shadow-2xs': {
+          boxShadow: theme('boxShadow.inset-2xs'),
+        },
+        '.in-data-\\[state\\=active\\]\\:rotate-180': {
+          transform: 'rotate(180deg)',
+        }
+      }
+      addUtilities(newUtilities, ['responsive', 'hover'])
+    }),
+  ],
 } satisfies Config;

@@ -6,7 +6,7 @@ import { client } from '@/lib/sanity';
 import { notFound } from 'next/navigation';
 import { BlockRenderer } from '@/components/block-renderer';
 
-export const revalidate = 30 // revalidate at most every 30 seconds
+export const revalidate = 0
 
 export interface HomePageData {
   _id: string;
@@ -27,7 +27,7 @@ async function getHomePageData(): Promise<HomePageData> {
           asset->
         }
       },
-      _type == "testimonialsBlock" => {
+      _type == 'testimonialsBlock' => {
         ...,
         "testimonials": testimonials[]->{
           ...,
@@ -37,13 +37,13 @@ async function getHomePageData(): Promise<HomePageData> {
           }
         }
       },
-      _type == "programCardsBlock" => {
+      _type == 'programCardsBlock' => {
         ...,
         "programs": programs[]->{
           ...
         }
       },
-      _type == "partnerLogoBlock" => {
+      _type == 'partnerLogoBlock' => {
         ...,
         "partners": partners[]->{
           ...,
@@ -53,7 +53,7 @@ async function getHomePageData(): Promise<HomePageData> {
           }
         }
       },
-      _type == "impactMetricsBlock" => {
+      _type == 'impactMetricsBlock' => {
         ...,
         "metrics": metrics[]->
       }
