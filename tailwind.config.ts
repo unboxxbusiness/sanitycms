@@ -109,8 +109,8 @@ export default {
           },
         },
         'scale-in': {
-          '0%': { transform: 'scale(0.95)' },
-          '100%': { transform: 'scale(1)' },
+          '0%': { transform: 'scale(0.95)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
         }
       },
       animation: {
