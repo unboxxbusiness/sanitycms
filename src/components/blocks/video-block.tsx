@@ -2,11 +2,16 @@
 'use client'
 
 import React from 'react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 interface VideoBlockProps {
   heading?: string;
   subheading?: string;
   youtubeUrl: string;
+  showCtaButton?: boolean;
+  ctaText?: string;
+  ctaLink?: string;
 }
 
 // Function to extract video ID from various YouTube URL formats
@@ -16,7 +21,7 @@ const getYouTubeId = (url: string): string | null => {
   return (match && match[2].length === 11) ? match[2] : null;
 };
 
-export function VideoBlock({ heading, subheading, youtubeUrl }: VideoBlockProps) {
+export function VideoBlock({ heading, subheading, youtubeUrl, showCtaButton, ctaText, ctaLink }: VideoBlockProps) {
   const videoId = getYouTubeId(youtubeUrl);
 
   if (!videoId) {
@@ -48,6 +53,13 @@ export function VideoBlock({ heading, subheading, youtubeUrl }: VideoBlockProps)
             className="w-full h-full rounded-lg shadow-xl"
           ></iframe>
         </div>
+        {showCtaButton && ctaText && ctaLink && (
+            <div className="mt-8 text-center">
+                <Button asChild size="lg">
+                    <Link href={ctaLink}>{ctaText}</Link>
+                </Button>
+            </div>
+        )}
       </div>
     </section>
   );
