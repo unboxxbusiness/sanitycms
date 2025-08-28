@@ -93,20 +93,18 @@ export function Header() {
                                 ))}
                             </ul>
                         </div>
-                        <div className={cn("mb-6 w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border bg-background p-6 shadow-2xl shadow-zinc-300/20 dark:shadow-none md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent", menuState ? "flex" : "hidden lg:flex")}>
-                            <div className="lg:hidden">
-                                <ul className="space-y-6 text-base">
-                                    {navLinks.map((item, index) => (
-                                        <li key={index}>
-                                            <Link
-                                                href={item.link}
-                                                className="text-muted-foreground hover:text-accent-foreground block duration-150">
-                                                <span>{item.text}</span>
-                                            </Link>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+                        <div className={cn("mb-6 w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border bg-background p-6 shadow-2xl shadow-zinc-300/20 dark:shadow-none md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent", menuState ? "flex flex-col lg:flex-row" : "hidden lg:flex")}>
+                            <ul className="space-y-6 text-base lg:hidden">
+                                {navLinks.map((item, index) => (
+                                    <li key={index}>
+                                        <Link
+                                            href={item.link}
+                                            className="text-muted-foreground hover:text-accent-foreground block duration-150">
+                                            <span>{item.text}</span>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
                             <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
                                 {settings?.headerCta?.link && (
                                     <Button
