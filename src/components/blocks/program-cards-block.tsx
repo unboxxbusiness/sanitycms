@@ -1,63 +1,59 @@
 // src/components/blocks/program-cards-block.tsx
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { IndianRupee, Languages, MapPin, HeartHandshake, Users, Leaf, Goal } from 'lucide-react';
-import Link from 'next/link';
-import { Button } from '../ui/button';
+import { Cpu, Fingerprint, Goal, HeartHandshake, IndianRupee, Languages, Leaf, MapPin, Pencil, Settings2, Sparkles, Users, Zap } from 'lucide-react';
 
 interface Program {
     _id: string;
     icon: string;
     title: string;
     description: string;
-    buttonText?: string;
-    buttonLink?: string;
 }
 
 interface ProgramCardsBlockProps {
+    _key: string;
     heading?: string;
     subheading?: string;
     programs: Program[];
 }
 
 const iconMap: { [key: string]: React.ReactNode } = {
-  'MapPin': <MapPin className="h-8 w-8 text-primary" />,
-  'Languages': <Languages className="h-8 w-8 text-primary" />,
-  'IndianRupee': <IndianRupee className="h-8 w-8 text-primary" />,
-  'HeartHandshake': <HeartHandshake className="h-8 w-8 text-primary" />,
-  'Users': <Users className="h-8 w-8 text-primary" />,
-  'Leaf': <Leaf className="h-8 w-8 text-primary" />,
-  'Goal': <Goal className="h-8 w-8 text-primary" />,
+  'Zap': <Zap className="size-4" />,
+  'Cpu': <Cpu className="size-4" />,
+  'Fingerprint': <Fingerprint className="size-4" />,
+  'Pencil': <Pencil className="size-4" />,
+  'Settings2': <Settings2 className="size-4" />,
+  'Sparkles': <Sparkles className="size-4" />,
+  'MapPin': <MapPin className="size-4" />,
+  'Languages': <Languages className="size-4" />,
+  'IndianRupee': <IndianRupee className="size-4" />,
+  'HeartHandshake': <HeartHandshake className="size-4" />,
+  'Users': <Users className="size-4" />,
+  'Leaf': <Leaf className="size-4" />,
+  'Goal': <Goal className="size-4" />,
 };
 
-export function ProgramCardsBlock({ heading, subheading, programs }: ProgramCardsBlockProps) {
+export function ProgramCardsBlock({ _key, heading, subheading, programs }: ProgramCardsBlockProps) {
   return (
-    <section id="programs" className="py-20 md:py-28 bg-background">
-        <div className="container mx-auto px-4">
-            <div className="text-center space-y-4 mb-12">
-                {heading && <h2 className="text-3xl md:text-4xl font-bold">{heading}</h2>}
-                {subheading && <p className="text-muted-foreground max-w-2xl mx-auto">{subheading}</p>}
-            </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <section key={_key} className="py-12 md:py-20">
+        <div className="mx-auto max-w-5xl space-y-8 px-6 md:space-y-16">
+            {heading && (
+                <div className="relative z-10 mx-auto max-w-xl space-y-6 text-center md:space-y-12">
+                    <h2 className="text-balance text-4xl font-medium lg:text-5xl">{heading}</h2>
+                    {subheading && <p>{subheading}</p>}
+                </div>
+            )}
+             
+            <div className="relative mx-auto grid max-w-2xl lg:max-w-4xl divide-x divide-y border *:p-12 sm:grid-cols-2 lg:grid-cols-3">
                 {programs?.map((program) => (
-                    <Card key={program._id} className="text-center shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card flex flex-col">
-                        <CardHeader>
-                            <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit">
-                                {iconMap[program.icon] || <Goal className="h-8 w-8 text-primary" />}
-                            </div>
-                            <CardTitle className="mt-4">{program.title}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex flex-col flex-grow">
-                            <p className="text-muted-foreground flex-grow">{program.description}</p>
-                            {program.buttonLink && program.buttonText &&
-                                <Button asChild variant="link" className="mt-6">
-                                    <Link href={program.buttonLink}>{program.buttonText}</Link>
-                                </Button>
-                            }
-                        </CardContent>
-                    </Card>
+                    <div key={program._id} className="space-y-3">
+                        <div className="flex items-center gap-2">
+                            {iconMap[program.icon] || <Zap className="size-4" />}
+                            <h3 className="text-sm font-medium">{program.title}</h3>
+                        </div>
+                        <p className="text-sm text-muted-foreground">{program.description}</p>
+                    </div>
                 ))}
             </div>
         </div>
     </section>
-  );
+  )
 }

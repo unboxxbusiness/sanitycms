@@ -26,6 +26,12 @@ export default defineType({
       type: 'string',
       options: {
         list: [
+            {title: 'Zap', value: 'Zap'},
+            {title: 'CPU', value: 'Cpu'},
+            {title: 'Fingerprint', value: 'Fingerprint'},
+            {title: 'Pencil', value: 'Pencil'},
+            {title: 'Settings', value: 'Settings2'},
+            {title: 'Sparkles', value: 'Sparkles'},
             {title: 'Map Pin', value: 'MapPin'},
             {title: 'Languages', value: 'Languages'},
             {title: 'Indian Rupee', value: 'IndianRupee'},
