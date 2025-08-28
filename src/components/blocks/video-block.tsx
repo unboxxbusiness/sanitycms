@@ -13,7 +13,7 @@ interface VideoBlockProps {
   heading?: string;
   subheading?: string;
   youtubeUrl: string;
-  thumbnail: SanityImageSource;
+  thumbnail?: SanityImageSource;
   showCtaButton?: boolean;
   ctaText?: string;
   ctaLink?: string;
@@ -38,6 +38,12 @@ export function VideoBlock({ heading, subheading, youtubeUrl, thumbnail, showCta
   const videoId = getYouTubeId(youtubeUrl);
   const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : '';
 
+  const thumbnailSrc = thumbnail 
+    ? urlFor(thumbnail).width(1280).height(720).url() 
+    : videoId 
+    ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` 
+    : '';
+
   if (!videoId) {
     return (
       <section className="py-12 md:py-20">
@@ -48,11 +54,11 @@ export function VideoBlock({ heading, subheading, youtubeUrl, thumbnail, showCta
     );
   }
 
-  if (!thumbnail) {
+  if (!thumbnailSrc) {
     return (
         <section className="py-12 md:py-20">
             <div className="container mx-auto px-4 text-center">
-                <p className="text-red-500">Video thumbnail is missing.</p>
+                <p className="text-red-500">Could not determine video thumbnail.</p>
             </div>
       </section>
     );
@@ -73,7 +79,7 @@ export function VideoBlock({ heading, subheading, youtubeUrl, thumbnail, showCta
             onClick={() => setIsVideoOpen(true)}
           >
             <img
-              src={urlFor(thumbnail).width(1280).height(720).url()}
+              src={thumbnailSrc}
               alt={heading || "Video thumbnail"}
               width={1280}
               height={720}

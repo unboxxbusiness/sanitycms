@@ -29,18 +29,17 @@ export default defineType({
       title: 'YouTube Video URL',
       type: 'url',
       group: 'content',
-      description: 'Paste the full URL of the YouTube video (e.g., https://www.youtube.com/watch?v=dQw4w9WgXcQ)',
+      description: 'Paste the full URL of the YouTube video. If no thumbnail is uploaded below, one will be fetched automatically.',
       validation: (Rule) => Rule.required().uri({
         scheme: ['http', 'https']
       }),
     }),
     defineField({
         name: 'thumbnail',
-        title: 'Video Thumbnail',
+        title: 'Video Thumbnail (Optional)',
         type: 'image',
         group: 'content',
-        description: 'Image to display before the video is played.',
-        validation: (Rule) => Rule.required(),
+        description: 'Optional. If you leave this blank, a thumbnail will be automatically fetched from the YouTube video.',
     }),
     defineField({
         name: 'showCtaButton',
