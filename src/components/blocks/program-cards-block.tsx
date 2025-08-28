@@ -1,7 +1,9 @@
 // src/components/blocks/program-cards-block.tsx
+'use client';
+
 import { Cpu, Fingerprint, Goal, HeartHandshake, IndianRupee, Languages, Leaf, MapPin, Pencil, Settings2, Sparkles, Users, Zap, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
 interface Program {
@@ -70,8 +72,13 @@ interface FeatureCardProps extends React.ComponentProps<'div'> {
 }
 
 function FeatureCard({ program, className, ...props }: FeatureCardProps) {
-    const p = React.useMemo(() => genRandomPattern(), []);
+    const [pattern, setPattern] = useState<number[][] | undefined>(undefined);
     const Icon = iconMap[program.icon] || Zap;
+
+    useEffect(() => {
+        setPattern(genRandomPattern());
+    }, []);
+
 
     const cardContent = (
         <div className={cn('relative overflow-hidden p-6 h-full group', className)} {...props}>
@@ -82,7 +89,7 @@ function FeatureCard({ program, className, ...props }: FeatureCardProps) {
                         height={20}
                         x="-12"
                         y="4"
-                        squares={p}
+                        squares={pattern}
                         className="fill-foreground/5 stroke-foreground/25 absolute inset-0 h-full w-full mix-blend-overlay"
                     />
                 </div>
