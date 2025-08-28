@@ -27,6 +27,12 @@ const nextConfig: NextConfig = {
         hostname: 'cdn.sanity.io',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ui-avatars.com',
+        port: '',
+        pathname: '/api/**',
       }
     ],
   },

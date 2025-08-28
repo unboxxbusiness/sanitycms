@@ -1,8 +1,8 @@
 // src/components/blocks/testimonials-block.tsx
-import Image from 'next/image';
-import { Card, CardContent } from '@/components/ui/card';
-import { SanityImageSource } from '@sanity/image-url/lib/types/types';
-import { urlFor } from '@/lib/sanity-image';
+import { cn } from "@/lib/utils"
+import { TestimonialCard, TestimonialAuthor } from "@/components/ui/testimonial-card"
+import { SanityImageSource } from "@sanity/image-url/lib/types/types"
+import { urlFor } from "@/lib/sanity-image"
 
 interface Testimonial {
     _id: string;
@@ -18,33 +18,68 @@ interface TestimonialsBlockProps {
     testimonials: Testimonial[];
 }
 
-export function TestimonialsBlock({ heading, subheading, testimonials }: TestimonialsBlockProps) {
-  return (
-    <section id="testimonials" className="py-20 md:py-28 bg-secondary/10">
-        <div className="container mx-auto px-4">
-            <div className="text-center space-y-4 mb-12">
-                {heading && <h2 className="text-3xl md:text-4xl font-bold">{heading}</h2>}
-                {subheading && <p className="text-muted-foreground max-w-2xl mx-auto">{subheading}</p>}
+interface TestimonialsSectionProps {
+    title: string
+    description: string
+    testimonials: Array<{
+        author: TestimonialAuthor
+        text: string
+        href?: string
+    }>
+    className?: string
+}
+
+function TestimonialsSection({ title, description, testimonials, className }: TestimonialsSectionProps) {
+    return (
+        <section className={cn(
+            "bg-background text-foreground",
+            "py-12 sm:py-24 md:py-32 px-0",
+            className
+        )}>
+            <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 text-center sm:gap-16">
+                <div className="flex flex-col items-center gap-4 px-4 sm:gap-8">
+                    <h2 className="max-w-[720px] text-3xl font-bold leading-tight sm:text-4xl sm:leading-tight">
+                        {title}
+                    </h2>
+                    <p className="text-md max-w-[600px] text-muted-foreground sm:text-lg">
+                        {description}
+                    </p>
+                </div>
+
+                <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
+                    <div className="group flex overflow-hidden p-2 [--gap:1rem] [gap:var(--gap)] flex-row [--duration:40s]">
+                        <div className="flex shrink-0 justify-around [gap:var(--gap)] animate-marquee flex-row group-hover:[animation-play-state:paused]">
+                            {[...Array(4)].map((_, setIndex) => (
+                                testimonials.map((testimonial, i) => (
+                                    <TestimonialCard
+                                        key={`${setIndex}-${i}`}
+                                        {...testimonial}
+                                    />
+                                ))
+                            ))}
+                        </div>
+                    </div>
+                    <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-1/3 bg-gradient-to-r from-background sm:block" />
+                    <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/3 bg-gradient-to-l from-background sm:block" />
+                </div>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {testimonials?.map((testimonial) => (
-                    <Card key={testimonial._id} className="shadow-lg bg-card">
-                        <CardContent className="pt-6">
-                            <p className="text-muted-foreground mb-4 italic">"{testimonial.quote}"</p>
-                            <div className="flex items-center gap-4 border-t pt-4">
-                                {testimonial.image &&
-                                    <Image src={urlFor(testimonial.image).width(40).height(40).url()} alt={testimonial.author} width={40} height={40} className="rounded-full" data-ai-hint="person portrait" />
-                                }
-                                <div>
-                                    <p className="font-semibold">{testimonial.author}</p>
-                                    <p className="text-sm text-muted-foreground">{testimonial.title}</p>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
-        </div>
-    </section>
-  );
+        </section>
+    )
+}
+
+export function TestimonialsBlock({ heading, subheading, testimonials: rawTestimonials }: TestimonialsBlockProps) {
+    const testimonials = rawTestimonials.map(t => ({
+        text: t.quote,
+        author: {
+            name: t.author,
+            title: t.title,
+            imageSrc: t.image ? urlFor(t.image).width(40).height(40).url() : `https://ui-avatars.com/api/?name=${t.author}`,
+        }
+    }))
+
+    return <TestimonialsSection 
+        title={heading || "Loved by Teams Across India"}
+        description={subheading || "Hear from the people who have experienced the AmulyaX difference."}
+        testimonials={testimonials}
+    />
 }
