@@ -11,7 +11,6 @@ export default defineType({
       title: 'Title',
       type: 'string',
       initialValue: 'Home Page',
-      readOnly: true,
     }),
     defineField({
       name: 'pageBuilder',
