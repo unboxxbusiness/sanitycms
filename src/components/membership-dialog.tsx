@@ -31,13 +31,15 @@ export function MembershipDialog() {
     },
   });
 
+  const { handleSubmit, control, reset } = form;
+
   useEffect(() => {
     if (state.status === 'success') {
       toast({
         title: "Welcome aboard!",
         description: "You've successfully joined our community.",
       });
-      form.reset();
+      reset();
       setOpen(false); // Close the dialog on success
     } else if (state.status === 'error') {
         toast({
@@ -46,7 +48,15 @@ export function MembershipDialog() {
             variant: "destructive"
         })
     }
-  }, [state, toast, form]);
+  }, [state, toast, reset]);
+  
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    const formData = new FormData();
+    formData.append('name', data.name);
+    formData.append('email', data.email);
+    formAction(formData);
+  };
+
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -62,11 +72,11 @@ export function MembershipDialog() {
             </DialogHeader>
             <Form {...form}>
               <form
-                action={formAction}
+                onSubmit={handleSubmit(onSubmit)}
                 className="space-y-4"
               >
                 <FormField
-                  control={form.control}
+                  control={control}
                   name="name"
                   render={({ field }) => (
                     <FormItem>
@@ -79,7 +89,7 @@ export function MembershipDialog() {
                   )}
                 />
                 <FormField
-                  control={form.control}
+                  control={control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
