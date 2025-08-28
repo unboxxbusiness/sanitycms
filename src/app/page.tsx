@@ -3,7 +3,7 @@ import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { IndianRupee, Languages, MapPin } from 'lucide-react';
+import { IndianRupee, Languages, MapPin, HeartHandshake, Users, Leaf, Goal } from 'lucide-react';
 import Link from 'next/link';
 import { client } from '@/lib/sanity';
 import imageUrlBuilder from '@sanity/image-url'
@@ -31,13 +31,41 @@ interface HomePageData {
     title: string;
     image: SanityImageSource;
   }[];
+  about: {
+    title: string;
+    description: string;
+    image: SanityImageSource;
+    imageAlt: string;
+  };
+  impact: {
+    _key: string;
+    stat: string;
+    description: string;
+    icon: string;
+  }[];
+  partners: {
+    _key: string;
+    name: string;
+    logo: SanityImageSource;
+    website: string;
+  }[];
+  cta: {
+    title: string;
+    description: string;
+    buttonText: string;
+    buttonLink: string;
+  };
 }
 
 async function getHomePageData(): Promise<HomePageData> {
   const query = `*[_type == "homePage"][0]{
     hero,
     "features": features[]->{_id, _key, title, description, icon, dataAiHint},
-    "testimonials": testimonials[]->{_id, _key, quote, author, title, image}
+    "testimonials": testimonials[]->{_id, _key, quote, author, title, image},
+    "about": about->{title, description, image, imageAlt},
+    "impact": impact[]->{_id, _key, stat, description, icon},
+    "partners": partners[]->{_id, _key, name, logo, website},
+    "cta": cta->{title, description, buttonText, buttonLink}
   }`;
   const data = await client.fetch(query, {}, {
     // With this cache setting, the page will be statically generated at build time and revalidated every 60 seconds.
@@ -55,7 +83,11 @@ function urlFor(source: SanityImageSource) {
 const iconMap: { [key: string]: React.ReactNode } = {
   'MapPin': <MapPin className="h-8 w-8 text-primary" />,
   'Languages': <Languages className="h-8 w-8 text-primary" />,
-  'IndianRupee': <IndianRupee className="h-8 w-8 text-primary" />
+  'IndianRupee': <IndianRupee className="h-8 w-8 text-primary" />,
+  'HeartHandshake': <HeartHandshake className="h-8 w-8 text-primary" />,
+  'Users': <Users className="h-8 w-8 text-primary" />,
+  'Leaf': <Leaf className="h-8 w-8 text-primary" />,
+  'Goal': <Goal className="h-8 w-8 text-primary" />,
 };
 
 export default async function Home() {
@@ -76,7 +108,7 @@ export default async function Home() {
     );
   }
 
-  const { hero, features, testimonials } = data;
+  const { hero, features, testimonials, about, impact, partners, cta } = data;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -124,7 +156,7 @@ export default async function Home() {
                     <p className="text-muted-foreground max-w-2xl mx-auto">Discover the powerful features that make our platform the best choice for your needs in India.</p>
                 </div>
                 <div className="grid md:grid-cols-3 gap-8">
-                    {features.map((feature) => (
+                    {features?.map((feature) => (
                         <Card key={feature._key} className="text-center shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card">
                             <CardHeader>
                                 <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit">
@@ -141,6 +173,52 @@ export default async function Home() {
             </div>
         </section>
 
+        {/* About Section */}
+        {about && (
+          <section id="about" className="py-20 md:py-28 bg-background">
+            <div className="container mx-auto px-4">
+              <div className="grid md:grid-cols-2 gap-12 items-center">
+                <div className="animate-fade-in">
+                  <Image
+                    src={urlFor(about.image).width(800).height(600).url()}
+                    alt={about.imageAlt}
+                    width={800}
+                    height={600}
+                    className="rounded-xl shadow-2xl"
+                  />
+                </div>
+                <div className="space-y-6 text-center md:text-left animate-fade-in-up">
+                  <h2 className="text-3xl md:text-4xl font-bold">{about.title}</h2>
+                  <p className="text-lg text-muted-foreground">{about.description}</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Impact Section */}
+        {impact?.length > 0 && (
+          <section id="impact" className="py-20 md:py-28 bg-secondary/20">
+            <div className="container mx-auto px-4">
+              <div className="text-center space-y-4 mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold">Our Impact</h2>
+                <p className="text-muted-foreground max-w-2xl mx-auto">We are proud of the difference we're making across the nation.</p>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                {impact.map((item) => (
+                  <div key={item._key} className="p-4">
+                     <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit mb-4">
+                        {iconMap[item.icon] || <Goal className="h-8 w-8 text-primary" />}
+                    </div>
+                    <p className="text-4xl font-bold text-primary">{item.stat}</p>
+                    <p className="text-muted-foreground mt-2">{item.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Testimonials Section */}
         <section id="testimonials" className="py-20 md:py-28 bg-background">
             <div className="container mx-auto px-4">
@@ -149,7 +227,7 @@ export default async function Home() {
                     <p className="text-muted-foreground max-w-2xl mx-auto">See what our customers have to say about their experience with AmulyaX India.</p>
                 </div>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {testimonials.map((testimonial) => (
+                    {testimonials?.map((testimonial) => (
                         <Card key={testimonial._key} className="shadow-lg bg-card">
                             <CardContent className="pt-6">
                                 <p className="text-muted-foreground mb-4">"{testimonial.quote}"</p>
@@ -166,6 +244,44 @@ export default async function Home() {
                 </div>
             </div>
         </section>
+
+        {/* Partners Section */}
+        {partners?.length > 0 && (
+          <section id="partners" className="py-20 md:py-28 bg-secondary/20">
+            <div className="container mx-auto px-4">
+              <div className="text-center space-y-4 mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold">Our Partners & Supporters</h2>
+                <p className="text-muted-foreground max-w-2xl mx-auto">We are grateful for the support of our partners who share our vision.</p>
+              </div>
+              <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8">
+                {partners.map((partner) => (
+                  <Link key={partner._key} href={partner.website} target="_blank" rel="noopener noreferrer" className="grayscale hover:grayscale-0 transition-all">
+                     <Image 
+                        src={urlFor(partner.logo).height(60).url()}
+                        alt={`${partner.name} logo`}
+                        width={150}
+                        height={60}
+                        className="object-contain"
+                     />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* CTA Section */}
+        {cta && (
+          <section id="cta" className="py-20 md:py-32 bg-primary text-primary-foreground">
+            <div className="container mx-auto px-4 text-center">
+              <h2 className="text-3xl md:text-4xl font-bold">{cta.title}</h2>
+              <p className="text-lg md:text-xl mt-4 max-w-3xl mx-auto text-primary-foreground/80">{cta.description}</p>
+              <Button asChild size="lg" variant="secondary" className="mt-8 bg-primary-foreground text-primary hover:bg-primary-foreground/90">
+                <Link href={cta.buttonLink}>{cta.buttonText}</Link>
+              </Button>
+            </div>
+          </section>
+        )}
 
       </main>
       <Footer />
