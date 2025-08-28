@@ -125,6 +125,13 @@ export default defineType({
           })
         ]
       }]
+    }),
+    defineField({
+        name: 'copyrightText',
+        title: 'Copyright Text',
+        type: 'string',
+        group: 'footer',
+        initialValue: 'AmulyaX India. All rights reserved.'
     })
   ],
   preview: {

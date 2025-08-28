@@ -45,6 +45,7 @@ interface Settings {
   socialLinks: SocialLink[];
   newsletterHeadline?: string;
   newsletterSupportingText?: string;
+  copyrightText?: string;
 }
 
 const iconMap = {
@@ -87,7 +88,8 @@ export function Footer() {
         footerLegalLinks, 
         socialLinks,
         newsletterHeadline,
-        newsletterSupportingText 
+        newsletterSupportingText,
+        copyrightText
       }`;
       const data = await client.fetch(query);
       setSettings(data);
@@ -185,7 +187,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} AmulyaX India. All rights reserved.</p>
+            <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} {settings?.copyrightText || "AmulyaX India. All rights reserved."}</p>
             <div className="flex gap-4 mt-4 md:mt-0">
                 {settings?.footerLegalLinks?.map(link => (
                   <Link key={link._key} href={link.link} className="text-sm text-muted-foreground hover:text-primary transition-colors">{link.text}</Link>
