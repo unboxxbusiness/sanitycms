@@ -56,14 +56,22 @@ const distributeLogos = (allLogos: Logo[], columnCount: number): Logo[][] => {
 
   const maxLength = Math.max(...columns.map((col) => col.length))
   columns.forEach((col) => {
+    let fillIndex = 0;
     while (col.length > 0 && col.length < maxLength) {
-      let attempt = 0;
-      let randomLogo;
-      do {
-        randomLogo = shuffled[Math.floor(Math.random() * shuffled.length)];
-        attempt++;
-      } while (col.includes(randomLogo) && attempt < shuffled.length)
-      col.push(randomLogo);
+        // Find a logo that is not already in the column
+        let attempt = 0;
+        let randomLogo;
+        do {
+            randomLogo = shuffled[fillIndex % shuffled.length];
+            fillIndex++;
+            attempt++;
+        } while (col.find(l => l.id === randomLogo.id) && attempt < shuffled.length * 2)
+        
+        if (randomLogo) {
+            col.push(randomLogo);
+        } else {
+            break; // Break if no suitable logo can be found
+        }
     }
   })
 
@@ -81,9 +89,11 @@ const LogoColumn: React.FC<LogoColumnProps> = React.memo(
     const currentIndex = Math.floor(adjustedTime / cycleInterval)
     const currentLogo = logos[currentIndex];
 
+    if (!currentLogo) return null;
+
     return (
       <motion.div
-        className="relative h-24 w-48 overflow-hidden md:h-32 md:w-64"
+        className="relative h-28 w-48 overflow-hidden md:h-32 md:w-64"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
@@ -161,6 +171,8 @@ export function LogoCarousel({ columnCount = 4, logos }: LogoCarouselProps) {
     }
   }, [logos, columnCount])
 
+  if (logos.length === 0) return null;
+
   return (
     <div className="flex justify-center space-x-4">
       {logoSets.map((logos, index) => (
@@ -180,11 +192,13 @@ export function PartnerLogoBlock({ heading, partners }: PartnerLogoBlockProps) {
         return null;
     }
 
-    const formattedLogos: Logo[] = partners.map((partner) => ({
-        id: partner._id,
-        name: partner.name,
-        src: urlFor(partner.logo).height(100).url(),
-    }));
+    const formattedLogos: Logo[] = partners
+        .filter(partner => partner.logo && (partner.logo as any).asset)
+        .map((partner) => ({
+            id: partner._id,
+            name: partner.name,
+            src: urlFor(partner.logo).height(100).url(),
+        }));
 
     return (
         <section className="bg-background py-16 md:py-28">
@@ -194,7 +208,7 @@ export function PartnerLogoBlock({ heading, partners }: PartnerLogoBlockProps) {
                         <h2 className="text-3xl md:text-4xl font-bold">{heading}</h2>
                     </div>
                 )}
-                <LogoCarousel logos={formattedLogos} />
+                <LogoCarousel logos={formattedLogos} columnCount={4} />
             </div>
         </section>
     );
