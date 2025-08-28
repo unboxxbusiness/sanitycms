@@ -1,8 +1,8 @@
 // src/components/layout/footer.tsx
 'use client'
 
-import React, { useEffect, useState, useTransition } from "react"
-import { useFormState } from "react-dom"
+import React, { useEffect, useState } from "react"
+import { useActionState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -78,7 +78,7 @@ const transitionVariants = {
 
 function NewsletterForm({ settings }: { settings: Settings | null }) {
   const { toast } = useToast();
-  const [state, formAction] = useFormState(subscribeToNewsletter, { status: 'idle' });
+  const [state, formAction, isPending] = useActionState(subscribeToNewsletter, { status: 'idle' });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -125,8 +125,8 @@ function NewsletterForm({ settings }: { settings: Settings | null }) {
                 </FormItem>
               )}
             />
-            <Button type="submit" variant="default" disabled={state.status === 'pending'}>
-                {state.status === 'pending' ? 'Subscribing...' : 'Subscribe'}
+            <Button type="submit" variant="default" disabled={isPending}>
+                {isPending ? 'Subscribing...' : 'Subscribe'}
             </Button>
           </form>
         </Form>
