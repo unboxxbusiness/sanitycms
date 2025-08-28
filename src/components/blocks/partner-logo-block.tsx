@@ -10,6 +10,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import Image from "next/image"
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { urlFor } from '@/lib/sanity-image';
+import { cn } from "@/lib/utils";
 
 interface Partner {
   _id: string;
@@ -20,6 +21,7 @@ interface Partner {
 
 interface PartnerLogoBlockProps {
   heading?: string;
+  subheading?: string;
   partners: Partner[];
 }
 
@@ -45,38 +47,33 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 }
 
 const distributeLogos = (allLogos: Logo[], columnCount: number): Logo[][] => {
-  const shuffled = shuffleArray(allLogos)
-  const columns: Logo[][] = Array.from({ length: columnCount }, () => [])
+    const shuffled = shuffleArray([...allLogos]);
+    const columns: Logo[][] = Array.from({ length: columnCount }, () => []);
+    
+    if (shuffled.length === 0) return columns;
 
-  if (shuffled.length === 0) return columns;
+    let logoIndex = 0;
+    const addedLogos = new Set<string>();
 
-  shuffled.forEach((logo, index) => {
-    columns[index % columnCount].push(logo)
-  })
-
-  const maxLength = Math.max(...columns.map((col) => col.length))
-  columns.forEach((col) => {
-    let fillIndex = 0;
-    while (col.length > 0 && col.length < maxLength) {
-        // Find a logo that is not already in the column
-        let attempt = 0;
-        let randomLogo;
-        do {
-            randomLogo = shuffled[fillIndex % shuffled.length];
-            fillIndex++;
-            attempt++;
-        } while (col.find(l => l.id === randomLogo.id) && attempt < shuffled.length * 2)
+    for (let i = 0; i < shuffled.length * columnCount; i++) {
+        const colIndex = i % columnCount;
         
-        if (randomLogo) {
-            col.push(randomLogo);
-        } else {
-            break; // Break if no suitable logo can be found
+        let logo = shuffled[logoIndex % shuffled.length];
+        
+        // Ensure we don't repeat logos in the same "row" if possible
+        let attempts = 0;
+        while(columns[colIndex].find(l => l.id === logo.id) && attempts < shuffled.length) {
+            logoIndex++;
+            logo = shuffled[logoIndex % shuffled.length];
+            attempts++;
         }
-    }
-  })
 
-  return columns
-}
+        columns[colIndex].push(logo);
+        logoIndex++;
+    }
+
+    return columns;
+};
 
 const LogoColumn: React.FC<LogoColumnProps> = React.memo(
   ({ logos, index, currentTime }) => {
@@ -174,7 +171,7 @@ export function LogoCarousel({ columnCount = 4, logos }: LogoCarouselProps) {
   if (logos.length === 0) return null;
 
   return (
-    <div className="flex justify-center space-x-4">
+    <div className={cn("flex justify-center space-x-4")}>
       {logoSets.map((logos, index) => (
         <LogoColumn
           key={index}
@@ -187,7 +184,7 @@ export function LogoCarousel({ columnCount = 4, logos }: LogoCarouselProps) {
   )
 }
 
-export function PartnerLogoBlock({ heading, partners }: PartnerLogoBlockProps) {
+export function PartnerLogoBlock({ heading, subheading, partners }: PartnerLogoBlockProps) {
     if (!partners || partners.length === 0) {
         return null;
     }
@@ -197,18 +194,26 @@ export function PartnerLogoBlock({ heading, partners }: PartnerLogoBlockProps) {
         .map((partner) => ({
             id: partner._id,
             name: partner.name,
-            src: urlFor(partner.logo).height(100).url(),
+            src: urlFor(partner.logo).height(120).url(),
         }));
+    
+    if (formattedLogos.length === 0) {
+        return null;
+    }
 
     return (
         <section className="bg-background py-16 md:py-28">
             <div className="container mx-auto px-4">
-                {heading && (
-                    <div className="text-center space-y-4 mb-12">
-                        <h2 className="text-3xl md:text-4xl font-bold">{heading}</h2>
-                    </div>
-                )}
-                <LogoCarousel logos={formattedLogos} columnCount={4} />
+                <div className="text-center space-y-4 mb-12">
+                    {heading && <h2 className="text-3xl md:text-4xl font-bold">{heading}</h2>}
+                    {subheading && <p className="text-muted-foreground max-w-2xl mx-auto">{subheading}</p>}
+                </div>
+                <div className="hidden md:flex justify-center">
+                    <LogoCarousel logos={formattedLogos} columnCount={4} />
+                </div>
+                <div className="flex md:hidden justify-center">
+                    <LogoCarousel logos={formattedLogos} columnCount={2} />
+                </div>
             </div>
         </section>
     );
