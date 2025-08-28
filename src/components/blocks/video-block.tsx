@@ -128,9 +128,9 @@ export function VideoBlock({ heading, subheading, youtubeUrl, thumbnail, showCta
                   {...selectedAnimation}
                   transition={{ type: "spring", damping: 30, stiffness: 300 }}
                   onClick={(e) => e.stopPropagation()}
-                  className="relative w-11/12 max-w-6xl"
+                  className="relative w-[90vw] h-[90vh]"
                 >
-                  <div className="aspect-video">
+                  <div className="aspect-video w-full h-full">
                     <iframe
                       src={embedUrl}
                       className="size-full rounded-lg"
