@@ -74,10 +74,10 @@ export function Header() {
                             </Link>
                             <button
                                 onClick={() => setMenuState(!menuState)}
-                                aria-label={menuState == true ? 'Close Menu' : 'Open Menu'}
+                                aria-label={menuState ? 'Close Menu' : 'Open Menu'}
                                 className="relative z-20 -m-2.5 -mr-4 block cursor-pointer p-2.5 lg:hidden">
-                                <Menu className="in-data-[state=active]:rotate-180 group-data-[state=active]:scale-0 group-data-[state=active]:opacity-0 m-auto size-6 duration-200" />
-                                <X className="group-data-[state=active]:rotate-0 group-data-[state=active]:scale-100 group-data-[state=active]:opacity-100 absolute inset-0 m-auto size-6 -rotate-180 scale-0 opacity-0 duration-200" />
+                                <Menu className={cn("m-auto size-6 transition-transform duration-300", menuState && "rotate-90 scale-0")} />
+                                <X className={cn("absolute inset-0 m-auto size-6 transition-transform duration-300", !menuState && "-rotate-90 scale-0")} />
                             </button>
                         </div>
                         <div className="absolute inset-0 m-auto hidden size-fit lg:block">
@@ -93,7 +93,7 @@ export function Header() {
                                 ))}
                             </ul>
                         </div>
-                        <div className={cn("mb-6 w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border bg-background p-6 shadow-2xl shadow-zinc-300/20 dark:shadow-none md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent", menuState ? "flex flex-col lg:flex-row" : "hidden lg:flex")}>
+                        <div className={cn("w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border bg-background p-6 shadow-2xl shadow-zinc-300/20 dark:shadow-none md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent", menuState ? "flex flex-col lg:flex-row" : "hidden lg:flex")}>
                             <ul className="flex flex-col space-y-6 text-base lg:hidden">
                                 {navLinks.map((item, index) => (
                                     <li key={index}>
