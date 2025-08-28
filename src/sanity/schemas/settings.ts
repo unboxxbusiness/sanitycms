@@ -7,16 +7,22 @@ export default defineType({
   title: 'Site Settings',
   type: 'document',
   icon: Cog,
+  groups: [
+    { name: 'header', title: 'Header', default: true },
+    { name: 'footer', title: 'Footer' },
+  ],
   fields: [
     defineField({
       name: 'logo',
       title: 'Brand Logo',
       type: 'image',
+      group: 'header',
     }),
     defineField({
       name: 'mainNavigation',
       title: 'Main Navigation',
       type: 'array',
+      group: 'header',
       of: [{ 
         type: 'object',
         fields: [
@@ -29,15 +35,35 @@ export default defineType({
       name: 'headerCta',
       title: 'Header CTA Button',
       type: 'object',
+      group: 'header',
       fields: [
         { name: 'text', type: 'string', title: 'Button Text' },
         { name: 'link', type: 'string', title: 'Button Link' }
       ]
     }),
     defineField({
+        name: 'footerDescription',
+        title: 'Footer Description',
+        type: 'text',
+        group: 'footer',
+    }),
+    defineField({
+        name: 'newsletterHeadline',
+        title: 'Newsletter Headline',
+        type: 'string',
+        group: 'footer',
+    }),
+    defineField({
+        name: 'newsletterSupportingText',
+        title: 'Newsletter Supporting Text',
+        type: 'text',
+        group: 'footer',
+    }),
+    defineField({
       name: 'footerProductLinks',
       title: 'Footer Product Links',
       type: 'array',
+      group: 'footer',
       of: [{ 
         type: 'object',
         fields: [
@@ -50,6 +76,7 @@ export default defineType({
       name: 'footerCompanyLinks',
       title: 'Footer Company Links',
       type: 'array',
+      group: 'footer',
       of: [{ 
         type: 'object',
         fields: [
@@ -62,6 +89,7 @@ export default defineType({
       name: 'footerLegalLinks',
       title: 'Footer Legal Links',
       type: 'array',
+      group: 'footer',
       of: [{ 
         type: 'object',
         fields: [
@@ -74,6 +102,7 @@ export default defineType({
       name: 'socialLinks',
       title: 'Social Media Links',
       type: 'array',
+      group: 'footer',
       of: [{
         type: 'object',
         fields: [

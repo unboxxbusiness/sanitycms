@@ -36,10 +36,13 @@ interface SocialLink {
 
 interface Settings {
   logo: SanityImageSource;
+  footerDescription: string;
   footerProductLinks: NavLink[];
   footerCompanyLinks: NavLink[];
   footerLegalLinks: NavLink[];
   socialLinks: SocialLink[];
+  newsletterHeadline?: string;
+  newsletterSupportingText?: string;
 }
 
 const iconMap = {
@@ -54,7 +57,16 @@ export function Footer() {
 
   useEffect(() => {
     const fetchSettings = async () => {
-      const query = `*[_type == "settings"][0]{ logo, footerProductLinks, footerCompanyLinks, footerLegalLinks, socialLinks }`;
+      const query = `*[_type == "settings"][0]{ 
+        logo, 
+        footerDescription,
+        footerProductLinks, 
+        footerCompanyLinks, 
+        footerLegalLinks, 
+        socialLinks,
+        newsletterHeadline,
+        newsletterSupportingText 
+      }`;
       const data = await client.fetch(query);
       setSettings(data);
     };
@@ -87,7 +99,7 @@ export function Footer() {
             ) : (
                 <Logo />
             )}
-            <p className="text-sm text-muted-foreground">Innovative Solutions for India's future.</p>
+            <p className="text-sm text-muted-foreground">{settings?.footerDescription || "Innovative Solutions for India's future."}</p>
             <div className="flex space-x-4">
                 {settings?.socialLinks?.map(social => (
                   <Link key={social._key} href={social.url} aria-label={social.platform} target="_blank" rel="noopener noreferrer">
@@ -115,8 +127,8 @@ export function Footer() {
             </div>
           </div>
           <div>
-            <h3 className="font-semibold mb-4">Stay Updated</h3>
-            <p className="text-sm text-muted-foreground mb-4">Subscribe to our newsletter to get the latest updates.</p>
+            <h3 className="font-semibold mb-4">{settings?.newsletterHeadline || "Stay Updated"}</h3>
+            <p className="text-sm text-muted-foreground mb-4">{settings?.newsletterSupportingText || "Subscribe to our newsletter to get the latest updates."}</p>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2">
                 <FormField
