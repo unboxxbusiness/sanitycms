@@ -3,14 +3,13 @@
 
 import React from "react";
 import Link from "next/link";
-import { Linkedin, Twitter, Github } from 'lucide-react';
+import { Twitter, Github, Dribbble, Send } from 'lucide-react';
 
 // Types
 interface SocialBoxProps {
   href: string;
   icon: React.ReactNode;
-  className: string;
-  delay?: string;
+  className?: string;
   name: string;
 }
 
@@ -20,43 +19,40 @@ interface SocialCardProps {
 }
 
 // Components
-const SocialBox = ({ href, icon, className, delay, name }: SocialBoxProps) => (
+const SocialBox = ({ href, icon, className, name }: SocialBoxProps) => (
   <Link
     href={href}
     target="_blank"
     rel="noopener noreferrer"
     aria-label={`Share on ${name}`}
     className={`social-box ${className}`}
-    style={{ transitionDelay: delay }}
   >
     <span className="social-icon">{icon}</span>
   </Link>
 );
 
 const SocialCard = ({
-  title = "Share",
+  title = "Socials",
   socialLinks = [
-    { href: "https://www.linkedin.com/shareArticle?mini=true&url=https://amulyax.com", icon: <Linkedin />, className: "box1", name: 'LinkedIn' },
-    { href: "https://twitter.com/intent/tweet?url=https://amulyax.com&text=Check%20out%20AmulyaX%20India", icon: <Twitter />, className: "box2", delay: "0.2s", name: 'Twitter' },
-    { href: "https://github.com/your-repo", icon: <Github />, className: "box3", delay: "0.4s", name: 'GitHub' },
+    { href: "#", icon: <Dribbble />, name: 'Dribbble', className: 'dribbble' },
+    { href: "#", icon: <Twitter />, name: 'Twitter', className: 'twitter' },
+    { href: "#", icon: <Github />, name: 'GitHub', className: 'github' },
+    { href: "#", icon: <Send />, name: 'Telegram', className: 'telegram' },
   ],
 }: SocialCardProps) => (
   <div className="social-card">
-    <div className="social-background" />
     <div className="social-logo">{title}</div>
-
-    {socialLinks.map((link, index) => (
-      <SocialBox
-        key={index}
-        href={link.href}
-        icon={link.icon}
-        className={link.className}
-        delay={link.delay}
-        name={link.name}
-      />
-    ))}
-
-    <div className="social-box box4" style={{ transitionDelay: "0.6s" }} />
+    <div className="social-links">
+        {socialLinks.map((link, index) => (
+          <SocialBox
+            key={index}
+            href={link.href}
+            icon={link.icon}
+            className={link.className}
+            name={link.name}
+          />
+        ))}
+    </div>
   </div>
 );
 
