@@ -32,7 +32,7 @@ export default defineType({
         {type: 'partnerLogoBlock'},
         {type: 'ctaBlock'},
         {type: 'textBlock'},
-        // You can add other blocks here as they are created
+        {type: 'videoBlock'},
       ],
     }),
     defineField({

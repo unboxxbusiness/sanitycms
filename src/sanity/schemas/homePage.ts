@@ -24,6 +24,7 @@ export default defineType({
         {type: 'partnerLogoBlock'},
         {type: 'ctaBlock'},
         {type: 'textBlock'},
+        {type: 'videoBlock'},
       ],
     }),
   ],

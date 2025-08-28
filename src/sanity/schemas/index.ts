@@ -11,6 +11,7 @@ import partnerLogoBlock from './blocks/partnerLogoBlock'
 import programCardsBlock from './blocks/programCardsBlock'
 import testimonialsBlock from './blocks/testimonialsBlock'
 import textBlock from './blocks/textBlock'
+import videoBlock from './blocks/videoBlock'
 
 // Document types used by blocks
 import partner from './documents/partner'
@@ -37,4 +38,5 @@ export const schemaTypes = [
     programCardsBlock,
     testimonialsBlock,
     textBlock,
+    videoBlock,
 ]

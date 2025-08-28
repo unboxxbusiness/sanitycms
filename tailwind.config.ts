@@ -125,10 +125,14 @@ export default {
         'scale-in': 'scale-in 1s ease-out forwards',
         'marquee': 'marquee var(--duration) linear infinite',
       },
+      aspectRatio: {
+        '16/9': '16 / 9',
+      },
     },
   },
   plugins: [
     require('tailwindcss-animate'),
+    require('@tailwindcss/aspect-ratio'),
     plugin(function ({ addUtilities, theme }: { addUtilities: any, theme: any }) {
       const newUtilities = {
         '.inset-shadow-2xs': {
@@ -142,4 +146,3 @@ export default {
     }),
   ],
 } satisfies Config;
-    
