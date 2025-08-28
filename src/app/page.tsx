@@ -1,4 +1,3 @@
-
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Button } from '@/components/ui/button';
@@ -6,32 +5,78 @@ import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { IndianRupee, Languages, MapPin } from 'lucide-react';
 import Link from 'next/link';
+import { client } from '@/lib/sanity';
+import imageUrlBuilder from '@sanity/image-url'
+import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
-export default function Home() {
-  const headline = "Unlock India's Potential with AmulyaX";
-  const description = "We provide innovative technology solutions tailored for the Indian market, empowering businesses and individuals to achieve growth and efficiency.";
-  const callToAction = "Get Started Today";
+interface HomePageData {
+  hero: {
+    headline: string;
+    description: string;
+    callToAction: string;
+    image: SanityImageSource;
+    imageAlt: string;
+  };
+  features: {
+    _key: string;
+    icon: string;
+    title: string;
+    description: string;
+    dataAiHint: string;
+  }[];
+  testimonials: {
+    _key: string;
+    quote: string;
+    author: string;
+    title: string;
+    image: SanityImageSource;
+  }[];
+}
 
-  const features = [
-    {
-      icon: <MapPin className="h-8 w-8 text-primary" />,
-      title: 'Localized Solutions',
-      description: 'Built for India, with features and integrations that understand the nuances of the local market.',
-      dataAiHint: 'india map'
-    },
-    {
-      icon: <Languages className="h-8 w-8 text-primary" />,
-      title: 'Multilingual Support',
-      description: 'Communicate with your customers in their preferred language, from Hindi to Tamil.',
-      dataAiHint: 'language translation'
-    },
-    {
-      icon: <IndianRupee className="h-8 w-8 text-primary" />,
-      title: 'Affordable Pricing',
-      description: 'Get access to world-class technology at prices that make sense for the Indian economy.',
-      dataAiHint: 'money currency'
-    },
-  ];
+async function getHomePageData(): Promise<HomePageData> {
+  const query = `*[_type == "homePage"][0]{
+    hero,
+    "features": features[]->{_id, _key, title, description, icon, dataAiHint},
+    "testimonials": testimonials[]->{_id, _key, quote, author, title, image}
+  }`;
+  const data = await client.fetch(query, {}, {
+    // With this cache setting, the page will be statically generated at build time and revalidated every 60 seconds.
+    next: { revalidate: 60 }
+  });
+  return data;
+}
+
+const builder = imageUrlBuilder(client)
+
+function urlFor(source: SanityImageSource) {
+  return builder.image(source)
+}
+
+const iconMap: { [key: string]: React.ReactNode } = {
+  'MapPin': <MapPin className="h-8 w-8 text-primary" />,
+  'Languages': <Languages className="h-8 w-8 text-primary" />,
+  'IndianRupee': <IndianRupee className="h-8 w-8 text-primary" />
+};
+
+export default async function Home() {
+  const data = await getHomePageData();
+
+  if (!data) {
+    // This is a fallback for when Sanity data is not available
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen text-center">
+        <h1 className="text-2xl font-bold mb-4">Welcome to AmulyaX India</h1>
+        <p>Content is being loaded. Please set up your Sanity project.</p>
+        <p className="mt-4">
+          <Link href="/studio" className="text-blue-500 hover:underline">
+            Go to Sanity Studio
+          </Link>
+        </p>
+      </div>
+    );
+  }
+
+  const { hero, features, testimonials } = data;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -43,14 +88,14 @@ export default function Home() {
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div className="space-y-6 text-center md:text-left animate-fade-in-up">
                 <h1 className="text-4xl md:text-6xl font-bold tracking-tighter text-primary">
-                  {headline}
+                  {hero.headline}
                 </h1>
                 <p className="text-lg md:text-xl text-muted-foreground">
-                  {description}
+                  {hero.description}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                   <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-                    <Link href="#contact">{callToAction}</Link>
+                    <Link href="#contact">{hero.callToAction}</Link>
                   </Button>
                   <Button asChild size="lg" variant="outline">
                     <Link href="#features">Learn More</Link>
@@ -59,8 +104,8 @@ export default function Home() {
               </div>
               <div className="animate-fade-in">
                 <Image
-                  src="https://picsum.photos/800/600"
-                  alt="Abstract technology background"
+                  src={urlFor(hero.image).width(800).height(600).url()}
+                  alt={hero.imageAlt}
                   width={800}
                   height={600}
                   className="rounded-xl shadow-2xl"
@@ -79,11 +124,11 @@ export default function Home() {
                     <p className="text-muted-foreground max-w-2xl mx-auto">Discover the powerful features that make our platform the best choice for your needs in India.</p>
                 </div>
                 <div className="grid md:grid-cols-3 gap-8">
-                    {features.map((feature, index) => (
-                        <Card key={index} className="text-center shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card">
+                    {features.map((feature) => (
+                        <Card key={feature._key} className="text-center shadow-lg hover:shadow-xl transition-shadow duration-300 bg-card">
                             <CardHeader>
                                 <div className="mx-auto bg-primary/10 p-4 rounded-full w-fit">
-                                    {feature.icon}
+                                    {iconMap[feature.icon] || <MapPin className="h-8 w-8 text-primary" />}
                                 </div>
                                 <CardTitle className="mt-4">{feature.title}</CardTitle>
                             </CardHeader>
@@ -104,15 +149,15 @@ export default function Home() {
                     <p className="text-muted-foreground max-w-2xl mx-auto">See what our customers have to say about their experience with AmulyaX India.</p>
                 </div>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {[1, 2, 3].map((i) => (
-                        <Card key={i} className="shadow-lg bg-card">
+                    {testimonials.map((testimonial) => (
+                        <Card key={testimonial._key} className="shadow-lg bg-card">
                             <CardContent className="pt-6">
-                                <p className="text-muted-foreground mb-4">"AmulyaX India has transformed our business operations. The AI insights are a game-changer and the support is top-notch."</p>
+                                <p className="text-muted-foreground mb-4">"{testimonial.quote}"</p>
                                 <div className="flex items-center gap-4">
-                                    <Image src={`https://picsum.photos/id/${100+i}/40/40`} alt="Customer photo" width={40} height={40} className="rounded-full" data-ai-hint="person portrait" />
+                                    <Image src={urlFor(testimonial.image).width(40).height(40).url()} alt="Customer photo" width={40} height={40} className="rounded-full" data-ai-hint="person portrait" />
                                     <div>
-                                        <p className="font-semibold">Priya Sharma</p>
-                                        <p className="text-sm text-muted-foreground">CEO, TechInnovate</p>
+                                        <p className="font-semibold">{testimonial.author}</p>
+                                        <p className="text-sm text-muted-foreground">{testimonial.title}</p>
                                     </div>
                                 </div>
                             </CardContent>
