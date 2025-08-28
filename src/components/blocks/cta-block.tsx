@@ -4,6 +4,7 @@
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { cn } from "@/lib/utils"
+import { AnimatedGroup } from '../ui/animated-group';
 
 interface ButtonProps {
     text: string;
@@ -17,34 +18,63 @@ interface CtaBlockProps {
     className?: string
 }
 
+const transitionVariants = {
+    item: {
+        hidden: {
+            opacity: 0,
+            y: 20,
+        },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.5,
+            },
+        },
+    },
+};
+
 export function CtaBlock({ heading, supportingText, buttons, className }: CtaBlockProps) {
   const primaryAction = buttons && buttons[0];
 
   return (
-    <section className={cn("overflow-hidden pt-0 md:pt-0", className)}>
-        <div className="relative mx-auto flex max-w-5xl flex-col items-center gap-6 px-8 py-20 text-center sm:gap-8 md:py-28">
-            <h2 className="text-3xl font-bold sm:text-5xl opacity-0 animate-fade-in-up" style={{animationDelay: '200ms'}}>
-                {heading}
-            </h2>
+    <section className={cn("py-20 md:py-28", className)}>
+        <div className="container mx-auto px-4">
+            <AnimatedGroup 
+                 variants={{
+                    container: {
+                        visible: {
+                            transition: {
+                                staggerChildren: 0.1,
+                                delayChildren: 0.2,
+                            },
+                        },
+                    },
+                    ...transitionVariants
+                }}
+                className="relative mx-auto flex max-w-4xl flex-col items-center gap-6 rounded-2xl bg-secondary/50 p-12 text-center shadow-lg"
+            >
+                <div className="absolute -inset-px rounded-2xl shadow-glow opacity-0 animate-scale-in" style={{animationDelay: '700ms'}} />
+                <h2 className="text-3xl font-bold sm:text-4xl">
+                    {heading}
+                </h2>
 
-            {supportingText && (
-                <p className="text-muted-foreground opacity-0 animate-fade-in-up" style={{animationDelay: '300ms'}}>
-                    {supportingText}
-                </p>
-            )}
+                {supportingText && (
+                    <p className="text-muted-foreground max-w-2xl">
+                        {supportingText}
+                    </p>
+                )}
 
-            {primaryAction && (
-                <Button
-                    size="lg"
-                    className="opacity-0 animate-fade-in-up"
-                    style={{animationDelay: '500ms'}}
-                    asChild
-                >
-                    <Link href={primaryAction.link}>{primaryAction.text}</Link>
-                </Button>
-            )}
-            
-            <div className="pointer-events-none absolute inset-0 rounded-2xl shadow-glow opacity-0 animate-scale-in" style={{animationDelay: '700ms'}} />
+                {primaryAction && (
+                    <Button
+                        size="lg"
+                        asChild
+                        className="mt-4"
+                    >
+                        <Link href={primaryAction.link}>{primaryAction.text}</Link>
+                    </Button>
+                )}
+            </AnimatedGroup>
        </div>
     </section>
   )
