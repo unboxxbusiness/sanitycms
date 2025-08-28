@@ -94,7 +94,7 @@ export function Header() {
                             </ul>
                         </div>
                         <div className={cn("mb-6 w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border bg-background p-6 shadow-2xl shadow-zinc-300/20 dark:shadow-none md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-6 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent", menuState ? "flex flex-col lg:flex-row" : "hidden lg:flex")}>
-                            <ul className="space-y-6 text-base lg:hidden">
+                            <ul className="flex flex-col space-y-6 text-base lg:hidden">
                                 {navLinks.map((item, index) => (
                                     <li key={index}>
                                         <Link
