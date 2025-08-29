@@ -1,4 +1,3 @@
-
 // src/app/blog/[slug]/page.tsx
 import { client } from '@/lib/sanity';
 import { urlFor } from '@/lib/sanity-image';
@@ -18,7 +17,7 @@ import { CtaBlock } from '@/components/blocks/cta-block';
 import { VideoBlock } from '@/components/blocks/video-block';
 import { DonationBlock } from '@/components/blocks/donation-block';
 
-export const revalidate = 60
+export const revalidate = 60; // Revalidate posts every 60 seconds
 
 interface PostData {
   _id: string;
@@ -33,7 +32,7 @@ interface PostData {
   categories: { title: string }[];
   _createdAt: string;
   content: any[];
-  seo: {
+  seo?: {
     metaTitle?: string;
     metaDescription?: string;
   }
@@ -52,11 +51,12 @@ interface PostProps {
 
 // Function to generate static paths
 export async function generateStaticParams() {
-    const posts = await client.fetch<Pick<PostData, 'slug'>[]>(`*[_type == "post" && defined(slug.current)]{ slug }`);
+    const posts = await client.fetch<Pick<PostData, 'slug'>[]>(`*[_type == "post" && defined(slug.current)]{ "slug": slug.current }`);
     return posts.map(post => ({
-        slug: post.slug.current,
+        slug: post.slug,
     }));
 }
+
 
 async function getPostData(slug: string): Promise<PageData> {
   const query = `{
@@ -113,6 +113,11 @@ export async function generateMetadata({ params }: PostProps): Promise<Metadata>
     return {
       title: post.seo?.metaTitle || post.title,
       description: post.seo?.metaDescription,
+      openGraph: {
+        title: post.seo?.metaTitle || post.title,
+        description: post.seo?.metaDescription || '',
+        images: post.coverImage ? [urlFor(post.coverImage).width(1200).height(630).url()] : [],
+      },
     };
 }
 
@@ -180,7 +185,7 @@ export default async function BlogPostPage({ params }: PostProps) {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-1 py-24 md:py-32">
+      <main className="flex-1 py-16 md:py-24">
         <div className="container mx-auto px-4 max-w-4xl">
             <div className="mb-8">
                 <Button asChild variant="ghost">
@@ -192,9 +197,9 @@ export default async function BlogPostPage({ params }: PostProps) {
             </div>
             <article>
                 {post.coverImage && (
-                    <div className="relative w-full h-64 md:h-96 mb-8 rounded-lg overflow-hidden shadow-lg">
+                    <div className="relative w-full h-56 md:h-96 mb-8 rounded-lg overflow-hidden shadow-lg">
                         <Image
-                            src={urlFor(post.coverImage).url()}
+                            src={urlFor(post.coverImage).width(1200).height(630).url()}
                             alt={post.title}
                             fill
                             className="object-cover"
@@ -203,24 +208,24 @@ export default async function BlogPostPage({ params }: PostProps) {
                     </div>
                 )}
                 
-                <h1 className="text-4xl md:text-5xl font-bold mb-4">{post.title}</h1>
+                <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">{post.title}</h1>
                 
-                <div className="flex items-center text-sm text-muted-foreground mb-8">
+                <div className="flex flex-wrap items-center text-sm text-muted-foreground mb-8 gap-x-4 gap-y-2">
                     {post.author?.picture && (
-                        <Image
+                         <Image
                             src={urlFor(post.author.picture).width(40).height(40).url()}
                             alt={post.author.name}
                             width={40}
                             height={40}
-                            className="rounded-full mr-3"
+                            className="rounded-full"
                         />
                     )}
                     <span>By {post.author?.name || 'AmulyaX India Team'}</span>
-                    <span className="mx-2">|</span>
+                    <span className="hidden sm:inline">|</span>
                     <span>{new Date(post._createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                    {post.categories && (
+                    {post.categories && post.categories.length > 0 && (
                         <>
-                            <span className="mx-2">|</span>
+                            <span className="hidden sm:inline">|</span>
                             <div className="flex gap-2">
                                 {post.categories.map(cat => (
                                     <span key={cat.title} className="bg-secondary text-secondary-foreground text-xs font-medium px-2 py-1 rounded-full">{cat.title}</span>
@@ -240,7 +245,7 @@ export default async function BlogPostPage({ params }: PostProps) {
 
             {post.author && (
                 <div className="mt-16 pt-12 border-t">
-                    <div className="flex items-start gap-6 bg-secondary/50 p-6 rounded-lg">
+                    <div className="flex flex-col sm:flex-row items-start gap-6 bg-secondary/50 p-6 rounded-lg">
                         <Avatar className="h-16 w-16">
                             {post.author.picture ? (
                                <AvatarImage src={urlFor(post.author.picture).width(64).height(64).url()} />
@@ -276,3 +281,5 @@ export default async function BlogPostPage({ params }: PostProps) {
     </div>
   );
 }
+
+    

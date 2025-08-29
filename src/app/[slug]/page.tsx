@@ -6,15 +6,15 @@ import { Footer } from '@/components/layout/footer';
 import { BlockRenderer } from '@/components/block-renderer';
 import type { Metadata } from 'next';
 
-export const revalidate = 30 // revalidate at most every 30 seconds
+export const revalidate = 60 // revalidate at most every 60 seconds
 
 interface PageData {
   _id: string;
   title: string;
   slug: { current: string };
-  seo: {
-    metaTitle: string;
-    metaDescription: string;
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
   };
   pageBuilder: any[];
 }
@@ -85,15 +85,17 @@ async function getPageData(slug: string): Promise<PageData> {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const page = await getPageData(params.slug);
-  if (!page || !page.seo) {
+  const settings = await client.fetch(`*[_type == "settings"][0]{ defaultMetaTitle, defaultMetaDescription }`);
+  
+  if (!page) {
     return {
-      title: 'AmulyaX India',
-      description: 'Innovative Solutions for India',
+      title: 'Page Not Found',
     };
   }
+
   return {
-    title: page.seo.metaTitle,
-    description: page.seo.metaDescription,
+    title: page.seo?.metaTitle || page.title || settings?.defaultMetaTitle,
+    description: page.seo?.metaDescription || settings?.defaultMetaDescription,
   };
 }
 
@@ -114,3 +116,5 @@ export default async function Page({ params }: PageProps) {
     </div>
   );
 }
+
+    

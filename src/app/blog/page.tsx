@@ -9,13 +9,13 @@ import { PostCard, type Post } from '@/components/post-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 
-const POSTS_PER_PAGE = 10;
+const POSTS_PER_PAGE = 9;
 
 interface BlogPageData {
     posts: Post[];
     total: number;
-    heading: string;
-    subheading: string;
+    heading?: string;
+    subheading?: string;
 }
 
 async function getPaginatedPosts(page: number): Promise<BlogPageData> {
@@ -54,7 +54,7 @@ export default function BlogIndexPage() {
             setLoading(true);
             try {
                 const { posts: fetchedPosts, total, heading, subheading } = await getPaginatedPosts(currentPage);
-                setPosts(fetchedPosts);
+                setPosts(prevPosts => currentPage === 1 ? fetchedPosts : [...prevPosts, ...fetchedPosts]);
                 setTotalPosts(total);
                 if (heading) setHeading(heading);
                 if (subheading) setSubheading(subheading);
@@ -67,7 +67,7 @@ export default function BlogIndexPage() {
         fetchPosts();
     }, [currentPage]);
 
-    const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
+    const hasMorePosts = posts.length < totalPosts;
 
     const featuredPost = !loading && posts.length > 0 ? posts[0] : null;
     const otherPosts = !loading && posts.length > 1 ? posts.slice(1) : [];
@@ -76,9 +76,9 @@ export default function BlogIndexPage() {
         <div className="flex flex-col min-h-screen">
             <Header />
             <main className="flex-1 w-full py-20 lg:py-32">
-                <div className="container mx-auto flex flex-col gap-16 px-4">
+                <div className="container mx-auto flex flex-col gap-12 px-4">
                     <div className="flex w-full flex-col text-center items-center gap-4">
-                        <h1 className="text-4xl md:text-6xl tracking-tighter max-w-2xl font-bold">
+                        <h1 className="text-4xl md:text-6xl tracking-tighter max-w-3xl font-bold">
                             {heading}
                         </h1>
                         <p className="text-lg max-w-2xl text-muted-foreground">
@@ -86,7 +86,7 @@ export default function BlogIndexPage() {
                         </p>
                     </div>
                     
-                    {loading && (
+                    {loading && posts.length === 0 ? (
                         <>
                             <div className="w-full">
                                 <div className="flex flex-col md:flex-row md:gap-8">
@@ -119,46 +119,37 @@ export default function BlogIndexPage() {
                                 ))}
                             </div>
                         </>
-                    )}
-                    
-                    {!loading && featuredPost && (
-                        <div className="w-full">
-                            <PostCard post={featuredPost} featured={true} />
-                        </div>
-                    )}
-                    
-                    {!loading && otherPosts.length > 0 && <div className="w-full border-b my-8" />}
+                    ) : (
+                        <>
+                            {featuredPost && (
+                                <>
+                                    <div className="w-full">
+                                        <PostCard post={featuredPost} featured={true} />
+                                    </div>
+                                    <div className="w-full border-b my-8" />
+                                </>
+                            )}
+                            
+                            {otherPosts.length > 0 && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+                                    {otherPosts.map((post) => (
+                                       <PostCard key={post._id} post={post} />
+                                    ))}
+                                </div>
+                            )}
 
-                    {!loading && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-                            {otherPosts.map((post) => (
-                               <PostCard key={post._id} post={post} />
-                            ))}
-                        </div>
-                    )}
+                            {posts.length === 0 && !loading && (
+                                <p className="text-center text-muted-foreground">No blog posts found.</p>
+                            )}
 
-                    {!loading && posts.length === 0 && (
-                        <p className="text-center text-muted-foreground">No blog posts found.</p>
-                    )}
-
-                    {!loading && totalPages > 1 && (
-                        <div className="flex justify-center items-center gap-4 mt-16">
-                            <Button 
-                                onClick={() => setCurrentPage(p => p - 1)} 
-                                disabled={currentPage === 1}
-                            >
-                                Previous
-                            </Button>
-                            <span className="text-muted-foreground">
-                                Page {currentPage} of {totalPages}
-                            </span>
-                            <Button 
-                                onClick={() => setCurrentPage(p => p + 1)}
-                                disabled={currentPage === totalPages}
-                            >
-                                Next
-                            </Button>
-                        </div>
+                            {hasMorePosts && (
+                                <div className="flex justify-center items-center gap-4 mt-12">
+                                    <Button onClick={() => setCurrentPage(p => p + 1)} disabled={loading}>
+                                        {loading ? 'Loading...' : 'Load More Posts'}
+                                    </Button>
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </main>
@@ -166,3 +157,5 @@ export default function BlogIndexPage() {
         </div>
     )
 }
+
+    

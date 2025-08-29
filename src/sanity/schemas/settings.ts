@@ -27,7 +27,7 @@ export default defineType({
       title: 'Logo (Light Mode)',
       type: 'image',
       group: 'general',
-      description: 'Upload the logo to be displayed on light backgrounds.',
+      description: 'Upload the logo to be displayed on light backgrounds. Recommended size: 400x100px.',
       options: {
         hotspot: true,
       },
@@ -49,6 +49,7 @@ export default defineType({
       group: 'header',
       of: [{ 
         type: 'object',
+        name: 'navLink',
         fields: [
           { name: 'text', type: 'string', title: 'Link Text' },
           { name: 'link', type: 'string', title: 'Link URL' }
@@ -70,14 +71,15 @@ export default defineType({
         title: 'Footer Description',
         type: 'text',
         group: 'footer',
+        rows: 3
     }),
     defineField({
       name: 'showMembershipCta',
-      title: 'Show Membership CTA',
+      title: 'Show Membership CTA in Footer',
       type: 'boolean',
       initialValue: true,
       group: 'footer',
-      description: 'If enabled, shows the membership popup button in the newsletter section.'
+      description: 'If enabled, shows the membership popup button in the newsletter section of the footer.'
     }),
     defineField({
         name: 'membershipCtaText',
@@ -108,12 +110,14 @@ export default defineType({
         title: 'Newsletter Headline',
         type: 'string',
         group: 'footer',
+        initialValue: 'Stay Updated',
     }),
     defineField({
         name: 'newsletterSupportingText',
         title: 'Newsletter Supporting Text',
         type: 'text',
         group: 'footer',
+        initialValue: 'Subscribe to our newsletter to get the latest updates.',
     }),
     defineField({
       name: 'footerProductLinks',
@@ -122,6 +126,7 @@ export default defineType({
       group: 'footer',
       of: [{ 
         type: 'object',
+        name: 'footerLink',
         fields: [
           { name: 'text', type: 'string', title: 'Link Text' },
           { name: 'link', type: 'string', title: 'Link URL' }
@@ -135,6 +140,7 @@ export default defineType({
       group: 'footer',
       of: [{ 
         type: 'object',
+        name: 'footerLink',
         fields: [
           { name: 'text', type: 'string', title: 'Link Text' },
           { name: 'link', type: 'string', title: 'Link URL' }
@@ -148,6 +154,7 @@ export default defineType({
       group: 'footer',
       of: [{ 
         type: 'object',
+        name: 'footerLink',
         fields: [
           { name: 'text', type: 'string', title: 'Link Text' },
           { name: 'link', type: 'string', title: 'Link URL' }
@@ -161,6 +168,7 @@ export default defineType({
       group: 'footer',
       of: [{
         type: 'object',
+        name: 'socialLink',
         fields: [
           defineField({
             name: 'platform',
@@ -226,3 +234,5 @@ export default defineType({
     }
   }
 })
+
+    

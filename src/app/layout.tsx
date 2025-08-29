@@ -1,14 +1,29 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 import { SocialShare } from '@/components/social-share';
+import { client } from '@/lib/sanity';
 
-export const metadata: Metadata = {
-  title: 'AmulyaX India',
-  description: 'Innovative Solutions for India',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await client.fetch(`*[_type == "settings"][0]{ siteTitle, defaultMetaTitle, defaultMetaDescription }`);
+  return {
+    title: {
+      template: `%s | ${settings?.siteTitle || 'AmulyaX India'}`,
+      default: settings?.defaultMetaTitle || 'AmulyaX India',
+    },
+    description: settings?.defaultMetaDescription || 'Innovative Solutions for India',
+  };
+}
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: 'black' },
+  ],
+}
+
 
 export default function RootLayout({
   children,
@@ -37,3 +52,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+    

@@ -40,12 +40,12 @@ export const PostCard = ({ post, featured = false }: { post: Post, featured?: bo
                 <Link
                     href={`/blog/${post.slug.current}`}
                     className={cn(
-                        "block overflow-hidden rounded-md relative aspect-video",
+                        "block overflow-hidden rounded-md relative aspect-video shrink-0",
                         featured ? "md:w-1/2" : ""
                     )}
                 >
                     <Image
-                        src={urlFor(post.coverImage).url()}
+                        src={urlFor(post.coverImage).width(800).height(450).url()}
                         alt={post.title}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -54,7 +54,7 @@ export const PostCard = ({ post, featured = false }: { post: Post, featured?: bo
             )}
             <div className={cn(
                 "flex flex-col",
-                featured ? "md:w-1/2 justify-center" : "gap-2 mt-4"
+                featured ? "md:w-1/2 justify-center" : "gap-2 mt-4 md:mt-0"
             )}>
                 {post.categories && post.categories[0] && (
                      <div className="flex gap-2">
@@ -63,7 +63,7 @@ export const PostCard = ({ post, featured = false }: { post: Post, featured?: bo
                 )}
                 <h3 className={cn(
                     "font-bold tracking-tight",
-                    featured ? "text-3xl lg:text-4xl" : "text-xl"
+                    featured ? "text-2xl md:text-3xl lg:text-4xl" : "text-xl"
                 )}>
                     <Link href={`/blog/${post.slug.current}`} className="hover:text-primary transition-colors">
                         {post.title}
@@ -90,3 +90,5 @@ export const PostCard = ({ post, featured = false }: { post: Post, featured?: bo
         </article>
     )
 }
+
+    
