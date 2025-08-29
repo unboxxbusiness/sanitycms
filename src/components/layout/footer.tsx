@@ -1,3 +1,4 @@
+
 // src/components/layout/footer.tsx
 import { Logo } from '@/components/logo'
 import Link from "next/link"
