@@ -69,6 +69,7 @@ async function getPostData(slug: string): Promise<PageData> {
         content[]{
           ...,
           _type == 'reference' => @->{
+            _id,
             _type,
             name,
             content[]{
@@ -107,7 +108,7 @@ export async function generateMetadata({ params }: PostProps): Promise<Metadata>
     };
 }
 
-const portableTextComponents = {
+const portableTextComponents: any = {
     types: {
         image: ({ value }: any) => (
             <div className="my-8">
@@ -122,11 +123,17 @@ const portableTextComponents = {
         ),
         reusableBlock: ({ value }: any) => {
           if (!value?.content) return null;
+
           return value.content.map((block: any) => {
             switch(block._type) {
               case 'ctaBlock':
                 return <CtaBlock key={block._key} {...block} className="my-8" />;
-              // Add other reusable block types here if needed
+              case 'block':
+                return (
+                    <div className="prose prose-lg max-w-none dark:prose-invert my-8" key={block._key}>
+                        <PortableText value={[block]} components={portableTextComponents} />
+                    </div>
+                );
               default:
                 return <p key={block._key}>Unsupported reusable block type: {block._type}</p>;
             }
