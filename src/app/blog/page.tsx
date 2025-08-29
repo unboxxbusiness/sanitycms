@@ -46,46 +46,72 @@ async function getPosts(): Promise<Post[]> {
 }
 
 const PostCard = ({ post, featured = false }: { post: Post, featured?: boolean }) => {
+    const postDate = new Date(post._createdAt).toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+    });
+
     return (
-        <Link href={`/blog/${post.slug.current}`} className="flex flex-col gap-4 hover:opacity-75 cursor-pointer group">
-            {post.coverImage ? (
-                 <div className="relative bg-muted rounded-md aspect-video overflow-hidden">
-                    <Image 
-                        src={urlFor(post.coverImage).url()} 
-                        alt={post.title}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                </div>
-            ) : (
-                <div className="bg-muted rounded-md aspect-video"></div>
+        <article className={cn(
+            "flex flex-col group",
+            featured ? "md:flex-row md:gap-8" : "gap-4"
+        )}>
+            {post.coverImage && (
+                <Link href={`/blog/${post.slug.current}`} className={cn(
+                    "block overflow-hidden rounded-md",
+                    featured ? "md:w-1/2" : ""
+                )}>
+                    <div className={cn(
+                        "relative bg-muted aspect-video",
+                    )}>
+                        <Image
+                            src={urlFor(post.coverImage).url()}
+                            alt={post.title}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                    </div>
+                </Link>
             )}
-            <div className="flex flex-row gap-4 items-center">
+            <div className={cn(
+                "flex flex-col",
+                featured ? "md:w-1/2 justify-center" : "gap-2"
+            )}>
                 {post.categories && post.categories[0] && (
-                    <Badge variant="secondary">{post.categories[0].title}</Badge>
+                     <div className="flex gap-2">
+                        <Link href="#">
+                            <Badge variant="secondary">{post.categories[0].title}</Badge>
+                        </Link>
+                     </div>
                 )}
-                <p className="flex flex-row gap-2 text-sm items-center">
-                    <span className="text-muted-foreground">By</span>{" "}
-                    <Avatar className="h-6 w-6">
-                        {post.author.picture ? (
-                           <AvatarImage src={urlFor(post.author.picture).width(24).height(24).url()} />
-                        ) : (
-                            <AvatarImage src={`https://ui-avatars.com/api/?name=${post.author.name}&size=24`} />
-                        )}
-                        <AvatarFallback>{post.author.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <span>{post.author.name}</span>
-                </p>
-            </div>
-            <div className="flex flex-col gap-2">
-                <h3 className={featured ? "max-w-3xl text-4xl tracking-tight" : "max-w-3xl text-2xl tracking-tight"}>
-                    {post.title}
+                <h3 className={cn(
+                    "font-bold tracking-tight",
+                    featured ? "text-3xl lg:text-4xl" : "text-2xl"
+                )}>
+                    <Link href={`/blog/${post.slug.current}`} className="hover:text-primary transition-colors">
+                        {post.title}
+                    </Link>
                 </h3>
-                <p className="max-w-3xl text-muted-foreground text-base">
+                <p className={cn("text-muted-foreground", featured ? "text-base mt-2" : "text-sm")}>
                     {post.excerpt}
                 </p>
+                <div className="flex items-center gap-4 mt-4 text-sm">
+                    <div className="flex items-center gap-2">
+                         <Avatar className="h-8 w-8">
+                            {post.author.picture ? (
+                               <AvatarImage src={urlFor(post.author.picture).width(32).height(32).url()} />
+                            ) : (
+                                <AvatarImage src={`https://ui-avatars.com/api/?name=${post.author.name}&size=32`} />
+                            )}
+                            <AvatarFallback>{post.author.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <span className="font-medium">{post.author.name}</span>
+                    </div>
+                    <time dateTime={post._createdAt} className="text-muted-foreground">{postDate}</time>
+                </div>
             </div>
-        </Link>
+        </article>
     )
 }
 
@@ -97,20 +123,26 @@ export default async function BlogIndexPage() {
     return (
         <div className="flex flex-col min-h-screen">
             <Header />
-            <main className="flex-1 w-full py-20 lg:py-40">
-                <div className="container mx-auto flex flex-col gap-14">
-                    <div className="flex w-full flex-col sm:flex-row sm:justify-between sm:items-center gap-8">
-                        <h1 className="text-3xl md:text-5xl tracking-tighter max-w-xl font-regular">
-                            Latest articles
+            <main className="flex-1 w-full py-20 lg:py-32">
+                <div className="container mx-auto flex flex-col gap-16">
+                    <div className="flex w-full flex-col text-center items-center gap-4">
+                        <h1 className="text-4xl md:text-6xl tracking-tighter max-w-2xl font-bold">
+                            AmulyaX Blog
                         </h1>
+                        <p className="text-lg max-w-2xl text-muted-foreground">
+                           Latest news, insights, and stories from our mission to empower students across India.
+                        </p>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {featuredPost && (
-                            <div className="md:col-span-2">
-                                <PostCard post={featuredPost} featured={true} />
-                            </div>
-                        )}
+                    {featuredPost && (
+                        <div className="w-full">
+                            <PostCard post={featuredPost} featured={true} />
+                        </div>
+                    )}
+                    
+                    {otherPosts.length > 0 && <div className="w-full border-b" />}
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
                         {otherPosts.map((post) => (
                            <PostCard key={post._id} post={post} />
                         ))}
