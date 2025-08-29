@@ -62,13 +62,16 @@ export const structure: StructureResolver = (S) =>
 
       S.divider(),
 
-      // Filter out singleton types from the main list
+      // Filter out singleton types and other specific types from the main list
       ...S.documentTypeListItems().filter(
         (listItem) => {
             const id = listItem.getId()
             if (!id) return false
-            // Keep 'partner', 'testimonial', etc. in the main list
-            return !singletonTypes.has(id) && id !== 'page' && id !== 'post' && id !== 'author' && id !== 'category' && id !== 'reusableBlock'
+            const hiddenDocTypes = [
+                'page', 'post', 'author', 'category', 'reusableBlock',
+                'partner', 'testimonial', 'program', 'impactMetric', 'donationTier'
+            ];
+            return !singletonTypes.has(id) && !hiddenDocTypes.includes(id);
         }
       ),
     ])
