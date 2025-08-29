@@ -36,7 +36,10 @@ interface HeaderProps {
 }
 
 export function Header({ settings }: HeaderProps) {
-    const navLinks = settings?.mainNavigation || [];
+    if (!settings) {
+        return null;
+    }
+    const navLinks = settings.mainNavigation || [];
     
     return (
         <header key="header">
@@ -51,7 +54,7 @@ export function Header({ settings }: HeaderProps) {
                                 href="/"
                                 aria-label="home"
                                 className="flex items-center space-x-2">
-                                {settings?.logoLight && (
+                                {settings.logoLight && (
                                     <>
                                         <Image src={urlFor(settings.logoLight).height(24).url()} alt={settings.siteTitle || 'Logo'} width={94} height={24} className="h-6 w-auto dark:hidden" priority />
                                         <Image src={urlFor(settings.logoDark || settings.logoLight).height(24).url()} alt={settings.siteTitle || 'Logo'} width={94} height={24} className="h-6 w-auto hidden dark:block" priority />
@@ -71,7 +74,7 @@ export function Header({ settings }: HeaderProps) {
                         </div>
                         <div className="hidden lg:flex lg:items-center lg:space-x-4">
                             <ThemeToggle />
-                            {settings?.headerCta?.link && (
+                            {settings.headerCta?.link && (
                                 <Button asChild>
                                     <Link href={settings.headerCta.link}>
                                         {settings.headerCta.text || 'Get Started'}
@@ -106,7 +109,7 @@ export function Header({ settings }: HeaderProps) {
                                                 ))}
                                             </ul>
                                         </div>
-                                        {settings?.headerCta?.link && (
+                                        {settings.headerCta?.link && (
                                             <div className="mt-auto">
                                                 <SheetClose asChild>
                                                     <Button asChild size="lg" className="w-full">
