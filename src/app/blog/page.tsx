@@ -1,16 +1,12 @@
 // src/app/blog/page.tsx
+'use client'
+
+import { useState, useEffect } from 'react';
 import { client } from '@/lib/sanity';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
-import type { Metadata } from 'next';
 import { PostCard, type Post } from '@/components/post-card';
-
-export const revalidate = 60 // revalidate at most every minute
-
-export const metadata: Metadata = {
-    title: 'Blog | AmulyaX India',
-    description: 'Read the latest articles and insights from the team at AmulyaX India.',
-};
+import { Skeleton } from '@/components/ui/skeleton';
 
 async function getPosts(): Promise<Post[]> {
     const query = `*[_type == "post"] | order(_createdAt desc){
@@ -27,10 +23,26 @@ async function getPosts(): Promise<Post[]> {
     return data;
 }
 
-export default async function BlogIndexPage() {
-    const posts = await getPosts();
-    const featuredPost = posts.length > 0 ? posts[0] : null;
-    const otherPosts = posts.length > 1 ? posts.slice(1) : [];
+export default function BlogIndexPage() {
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchPosts() {
+            try {
+                const fetchedPosts = await getPosts();
+                setPosts(fetchedPosts);
+            } catch (error) {
+                console.error("Failed to fetch posts:", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchPosts();
+    }, []);
+
+    const featuredPost = !loading && posts.length > 0 ? posts[0] : null;
+    const otherPosts = !loading && posts.length > 1 ? posts.slice(1) : [];
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -46,19 +58,60 @@ export default async function BlogIndexPage() {
                         </p>
                     </div>
                     
-                    {featuredPost && (
+                    {loading && (
+                        <>
+                            <div className="w-full">
+                                <div className="flex flex-col md:flex-row md:gap-8">
+                                    <Skeleton className="aspect-video rounded-md md:w-1/2" />
+                                    <div className="md:w-1/2 flex flex-col justify-center gap-4 mt-4 md:mt-0">
+                                        <Skeleton className="h-6 w-1/4" />
+                                        <Skeleton className="h-8 w-full" />
+                                        <Skeleton className="h-8 w-5/6" />
+                                        <Skeleton className="h-20 w-full" />
+                                        <div className="flex items-center gap-4 mt-4">
+                                            <Skeleton className="h-8 w-8 rounded-full" />
+                                            <Skeleton className="h-6 w-1/3" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="w-full border-b my-8" />
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+                                {[...Array(3)].map((_, i) => (
+                                    <div key={i} className="flex flex-col gap-4">
+                                        <Skeleton className="aspect-video rounded-md" />
+                                        <Skeleton className="h-6 w-1/4" />
+                                        <Skeleton className="h-8 w-full" />
+                                        <Skeleton className="h-20 w-full" />
+                                        <div className="flex items-center gap-4 mt-4">
+                                            <Skeleton className="h-8 w-8 rounded-full" />
+                                            <Skeleton className="h-6 w-1/3" />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
+                    )}
+                    
+                    {!loading && featuredPost && (
                         <div className="w-full">
                             <PostCard post={featuredPost} featured={true} />
                         </div>
                     )}
                     
-                    {otherPosts.length > 0 && <div className="w-full border-b my-8" />}
+                    {!loading && otherPosts.length > 0 && <div className="w-full border-b my-8" />}
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-                        {otherPosts.map((post) => (
-                           <PostCard key={post._id} post={post} />
-                        ))}
-                    </div>
+                    {!loading && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+                            {otherPosts.map((post) => (
+                               <PostCard key={post._id} post={post} />
+                            ))}
+                        </div>
+                    )}
+
+                    {!loading && posts.length === 0 && (
+                        <p className="text-center text-muted-foreground">No blog posts found.</p>
+                    )}
                 </div>
             </main>
             <Footer />

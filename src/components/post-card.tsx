@@ -37,7 +37,7 @@ export const PostCard = ({ post, featured = false }: { post: Post, featured?: bo
             featured ? "md:flex-row md:gap-8" : "gap-4"
         )}>
             {post.coverImage && (
-                 <Link 
+                <Link 
                     href={`/blog/${post.slug.current}`} 
                     className={cn(
                         "block overflow-hidden rounded-md relative bg-muted aspect-video",
