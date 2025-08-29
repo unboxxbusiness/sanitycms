@@ -1,8 +1,6 @@
-
 // src/components/layout/footer.tsx
 'use client'
 
-import { Logo } from '@/components/logo'
 import Link from "next/link"
 import { Github, Twitter, Linkedin } from "lucide-react"
 import { SanityImageSource } from "@sanity/image-url/lib/types/types"
@@ -55,13 +53,11 @@ export function Footer({ settings }: FooterProps) {
        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
           <div className="md:col-span-4 space-y-4">
-            {settings?.logoLight ? (
-                <>
-                  <Image src={urlFor(settings.logoLight).height(24).url()} alt="Logo" width={94} height={24} className="h-6 w-auto dark:hidden" />
-                  <Image src={urlFor(settings.logoDark || settings.logoLight).height(24).url()} alt="Logo" width={94} height={24} className="h-6 w-auto hidden dark:block" />
-                </>
-            ) : (
-                <Logo />
+            {settings?.logoLight && (
+                <Link href="/" aria-label="home">
+                  <Image src={urlFor(settings.logoLight).height(24).url()} alt={settings.siteTitle || 'Logo'} width={94} height={24} className="h-6 w-auto dark:hidden" />
+                  <Image src={urlFor(settings.logoDark || settings.logoLight).height(24).url()} alt={settings.siteTitle || 'Logo'} width={94} height={24} className="h-6 w-auto hidden dark:block" />
+                </Link>
             )}
             <p className="text-sm text-muted-foreground max-w-xs">{settings?.footerDescription || "Innovative Solutions for India's future."}</p>
             <div className="flex space-x-4">
