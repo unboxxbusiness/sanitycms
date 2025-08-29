@@ -4,11 +4,14 @@ import { client } from '@/lib/sanity';
 import { urlFor } from '@/lib/sanity-image';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { PortableText } from '@portabletext/react';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 export const revalidate = 60
 
@@ -117,53 +120,63 @@ export default async function BlogPostPage({ params }: PostProps) {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-1 py-24 md:py-32">
-        <article className="container mx-auto px-4 max-w-4xl">
-            {post.coverImage && (
-                <div className="relative w-full h-64 md:h-96 mb-8 rounded-lg overflow-hidden shadow-lg">
-                    <Image
-                        src={urlFor(post.coverImage).url()}
-                        alt={post.title}
-                        fill
-                        className="object-cover"
-                        priority
-                    />
+        <div className="container mx-auto px-4 max-w-4xl">
+            <div className="mb-8">
+                <Button asChild variant="ghost">
+                    <Link href="/blog">
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Back to all posts
+                    </Link>
+                </Button>
+            </div>
+            <article>
+                {post.coverImage && (
+                    <div className="relative w-full h-64 md:h-96 mb-8 rounded-lg overflow-hidden shadow-lg">
+                        <Image
+                            src={urlFor(post.coverImage).url()}
+                            alt={post.title}
+                            fill
+                            className="object-cover"
+                            priority
+                        />
+                    </div>
+                )}
+                
+                <h1 className="text-4xl md:text-5xl font-bold mb-4">{post.title}</h1>
+                
+                <div className="flex items-center text-sm text-muted-foreground mb-8">
+                    {post.author?.picture && (
+                        <Image
+                            src={urlFor(post.author.picture).width(40).height(40).url()}
+                            alt={post.author.name}
+                            width={40}
+                            height={40}
+                            className="rounded-full mr-3"
+                        />
+                    )}
+                    <span>By {post.author?.name || 'AmulyaX India Team'}</span>
+                    <span className="mx-2">|</span>
+                    <span>{new Date(post._createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                    {post.categories && (
+                        <>
+                            <span className="mx-2">|</span>
+                            <div className="flex gap-2">
+                                {post.categories.map(cat => (
+                                    <span key={cat.title} className="bg-secondary text-secondary-foreground text-xs font-medium px-2 py-1 rounded-full">{cat.title}</span>
+                                ))}
+                            </div>
+                        </>
+                    )}
                 </div>
-            )}
-            
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">{post.title}</h1>
-            
-            <div className="flex items-center text-sm text-muted-foreground mb-8">
-                {post.author?.picture && (
-                    <Image
-                        src={urlFor(post.author.picture).width(40).height(40).url()}
-                        alt={post.author.name}
-                        width={40}
-                        height={40}
-                        className="rounded-full mr-3"
-                    />
-                )}
-                <span>By {post.author?.name || 'AmulyaX India Team'}</span>
-                <span className="mx-2">|</span>
-                <span>{new Date(post._createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                {post.categories && (
-                    <>
-                        <span className="mx-2">|</span>
-                        <div className="flex gap-2">
-                            {post.categories.map(cat => (
-                                <span key={cat.title} className="bg-secondary text-secondary-foreground text-xs font-medium px-2 py-1 rounded-full">{cat.title}</span>
-                            ))}
-                        </div>
-                    </>
-                )}
-            </div>
 
-            <div className={cn(
-                "prose prose-lg max-w-none dark:prose-invert",
-                "prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary prose-strong:text-foreground prose-ol:text-muted-foreground prose-ul:text-muted-foreground prose-li:text-muted-foreground"
-            )}>
-                <PortableText value={post.content} components={portableTextComponents} />
-            </div>
-        </article>
+                <div className={cn(
+                    "prose prose-lg max-w-none dark:prose-invert",
+                    "prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary prose-strong:text-foreground prose-ol:text-muted-foreground prose-ul:text-muted-foreground prose-li:text-muted-foreground"
+                )}>
+                    <PortableText value={post.content} components={portableTextComponents} />
+                </div>
+            </article>
+        </div>
       </main>
       <Footer />
     </div>
