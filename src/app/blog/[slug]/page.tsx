@@ -35,6 +35,14 @@ interface PostProps {
   };
 }
 
+// Function to generate static paths
+export async function generateStaticParams() {
+    const posts = await client.fetch<PostData[]>(`*[_type == "post" && defined(slug.current)]{"slug": slug.current}`);
+    return posts.map(post => ({
+        slug: post.slug.current,
+    }));
+}
+
 async function getPostData(slug: string): Promise<PostData> {
   const query = `*[_type == "post" && slug.current == $slug][0]{
     _id,
@@ -133,7 +141,7 @@ export default async function BlogPostPage({ params }: PostProps) {
                         className="rounded-full mr-3"
                     />
                 )}
-                <span>By {post.author?.name || 'AmulyaX Team'}</span>
+                <span>By {post.author?.name || 'AmulyaX India Team'}</span>
                 <span className="mx-2">|</span>
                 <span>{new Date(post._createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                 {post.categories && (
