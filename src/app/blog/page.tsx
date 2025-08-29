@@ -9,7 +9,7 @@ import { PostCard, type Post } from '@/components/post-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 
-const POSTS_PER_PAGE = 20;
+const POSTS_PER_PAGE = 10;
 
 async function getPaginatedPosts(page: number): Promise<{ posts: Post[], total: number }> {
     const start = (page - 1) * POSTS_PER_PAGE;
