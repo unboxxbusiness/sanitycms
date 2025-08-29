@@ -25,7 +25,8 @@ interface SocialLink {
 }
 
 interface Settings {
-  logo: SanityImageSource;
+  logoLight: SanityImageSource;
+  logoDark: SanityImageSource;
   footerDescription: string;
   footerProductLinks: NavLink[];
   footerCompanyLinks: NavLink[];
@@ -72,7 +73,8 @@ export function Footer() {
   useEffect(() => {
     const fetchSettings = async () => {
       const query = `*[_type == "settings"][0]{ 
-        logo, 
+        logoLight,
+        logoDark, 
         footerDescription,
         footerProductLinks, 
         footerCompanyLinks, 
@@ -110,8 +112,11 @@ export function Footer() {
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="space-y-4">
-            {settings?.logo ? (
-                <Image src={urlFor(settings.logo).height(20).url()} alt="Logo" width={78} height={20} className="h-5 w-auto" />
+            {settings?.logoLight ? (
+                <>
+                  <Image src={urlFor(settings.logoLight).height(20).url()} alt="Logo" width={78} height={20} className="h-5 w-auto dark:hidden" />
+                  <Image src={urlFor(settings.logoDark || settings.logoLight).height(20).url()} alt="Logo" width={78} height={20} className="h-5 w-auto hidden dark:block" />
+                </>
             ) : (
                 <Logo />
             )}

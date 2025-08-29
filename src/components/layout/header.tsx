@@ -27,7 +27,8 @@ interface Cta {
 }
 
 interface Settings {
-  logo: SanityImageSource;
+  logoLight: SanityImageSource;
+  logoDark: SanityImageSource;
   mainNavigation: NavLink[];
   headerCta: Cta;
 }
@@ -38,7 +39,7 @@ export function Header() {
 
     React.useEffect(() => {
         const fetchSettings = async () => {
-          const query = `*[_type == "settings"][0]{ logo, mainNavigation, headerCta }`;
+          const query = `*[_type == "settings"][0]{ logoLight, logoDark, mainNavigation, headerCta }`;
           const data = await client.fetch(query);
           setSettings(data);
         };
@@ -71,8 +72,11 @@ export function Header() {
                                 href="/"
                                 aria-label="home"
                                 className="flex items-center space-x-2">
-                                {settings?.logo ? (
-                                    <Image src={urlFor(settings.logo).height(20).url()} alt="Logo" width={78} height={20} className="h-5 w-auto" />
+                                {settings?.logoLight ? (
+                                    <>
+                                        <Image src={urlFor(settings.logoLight).height(20).url()} alt="Logo" width={78} height={20} className="h-5 w-auto dark:hidden" />
+                                        <Image src={urlFor(settings.logoDark || settings.logoLight).height(20).url()} alt="Logo" width={78} height={20} className="h-5 w-auto hidden dark:block" />
+                                    </>
                                 ) : (
                                     <Logo />
                                 )}
