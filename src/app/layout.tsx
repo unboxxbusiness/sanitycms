@@ -6,8 +6,7 @@ import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 import { SocialShare } from '@/components/social-share';
 import { client } from '@/lib/sanity';
-import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
+import { AppLayout } from '@/components/layout/app-layout';
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
 interface NavLink {
@@ -79,15 +78,12 @@ async function getSettings(): Promise<SettingsData | null> {
     return data;
 }
 
-export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSettings();
-  return {
+export const metadata: Metadata = {
     title: {
-      template: `%s | ${settings?.siteTitle || 'AmulyaX India'}`,
-      default: settings?.defaultMetaTitle || 'AmulyaX India',
+      template: `%s | AmulyaX India`,
+      default: 'AmulyaX India',
     },
-    description: settings?.defaultMetaDescription || 'Innovative Solutions for India',
-  };
+    description: 'Innovative Solutions for India',
 }
 
 export const viewport: Viewport = {
@@ -106,11 +102,6 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      </head>
       <body className={cn("font-body antialiased min-h-screen bg-background flex flex-col")} suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
@@ -118,11 +109,9 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Header settings={settings} />
-          <main className="flex-1">
+          <AppLayout settings={settings}>
             {children}
-          </main>
-          <Footer settings={settings} />
+          </AppLayout>
           <Toaster />
           <SocialShare />
         </ThemeProvider>
