@@ -51,8 +51,8 @@ export async function BlogPostGridBlock({ heading, subheading, posts: postRefs }
     }
 
     const animatedPosts: AnimatedPost[] = posts.map(post => {
-        const truncatedExcerpt = post.excerpt.length > 50 
-            ? post.excerpt.substring(0, 50) + '...' 
+        const truncatedExcerpt = post.excerpt.length > 100 
+            ? post.excerpt.substring(0, 100) + '...' 
             : post.excerpt;
         
         return {
