@@ -50,12 +50,18 @@ export async function BlogPostGridBlock({ heading, subheading, posts: postRefs }
         return null;
     }
 
-    const animatedPosts: AnimatedPost[] = posts.map(post => ({
-        title: post.title,
-        excerpt: post.excerpt,
-        imageUrl: urlFor(post.coverImage).width(500).height(500).url(),
-        href: `/blog/${post.slug.current}`
-    }));
+    const animatedPosts: AnimatedPost[] = posts.map(post => {
+        const truncatedExcerpt = post.excerpt.length > 50 
+            ? post.excerpt.substring(0, 50) + '...' 
+            : post.excerpt;
+        
+        return {
+            title: post.title,
+            excerpt: truncatedExcerpt,
+            imageUrl: urlFor(post.coverImage).width(500).height(500).url(),
+            href: `/blog/${post.slug.current}`
+        }
+    });
 
     return (
         <section className="py-20 md:py-28 bg-secondary/20">
