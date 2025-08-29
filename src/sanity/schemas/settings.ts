@@ -27,6 +27,9 @@ export default defineType({
       title: 'Brand Logo',
       type: 'image',
       group: 'general',
+      options: {
+        hotspot: true,
+      }
     }),
     defineField({
       name: 'mainNavigation',
