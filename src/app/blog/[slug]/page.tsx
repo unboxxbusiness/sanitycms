@@ -22,6 +22,7 @@ interface PostData {
   title: string;
   slug: { current: string };
   coverImage: any;
+  excerpt: string;
   author: {
     name: string;
     picture?: any;
@@ -63,6 +64,7 @@ async function getPostData(slug: string): Promise<PageData> {
         title,
         slug,
         coverImage,
+        excerpt,
         author->{name, picture, bio},
         "categories": categories[]->{title},
         _createdAt,
@@ -108,13 +110,19 @@ export async function generateMetadata({ params }: PostProps): Promise<Metadata>
         title: 'Post Not Found',
       }
     }
+    const metaTitle = post.seo?.metaTitle || post.title;
+    const metaDescription = post.seo?.metaDescription || post.excerpt;
+
     return {
-      title: post.seo?.metaTitle || post.title,
-      description: post.seo?.metaDescription,
+      title: metaTitle,
+      description: metaDescription,
       openGraph: {
-        title: post.seo?.metaTitle || post.title,
-        description: post.seo?.metaDescription || '',
+        title: metaTitle,
+        description: metaDescription,
         images: post.coverImage ? [urlFor(post.coverImage).width(1200).height(630).url()] : [],
+        type: 'article',
+        publishedTime: post._createdAt,
+        authors: post.author?.name ? [post.author.name] : [],
       },
     };
 }
@@ -244,9 +252,9 @@ export default async function BlogPostPage({ params }: PostProps) {
                     <div className="flex flex-col sm:flex-row items-start gap-6 bg-secondary/50 p-6 rounded-lg">
                         <Avatar className="h-16 w-16">
                             {post.author.picture ? (
-                               <AvatarImage src={urlFor(post.author.picture).width(64).height(64).url()} />
+                               <AvatarImage src={urlFor(post.author.picture).width(64).height(64).url()} alt={post.author.name} />
                             ) : (
-                                <AvatarImage src={`https://ui-avatars.com/api/?name=${post.author.name}&size=64`} />
+                                <AvatarImage src={`https://ui-avatars.com/api/?name=${post.author.name}&size=64`} alt={post.author.name} />
                             )}
                             <AvatarFallback>{post.author.name.charAt(0)}</AvatarFallback>
                         </Avatar>

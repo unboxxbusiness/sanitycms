@@ -43,7 +43,7 @@ export function SocialShare() {
       setCurrentUrl(window.location.href);
       setShareTitle(document.title || "AmulyaX India");
     }
-  }, []);
+  }, [pathname]); // Re-run when pathname changes
 
   if (!isMounted || pathname.startsWith('/studio')) {
     return null;
@@ -63,17 +63,6 @@ export function SocialShare() {
     });
   };
 
-  const handleNativeShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: shareTitle,
-        url: currentUrl,
-      }).catch(console.error);
-    } else {
-        toast({ title: "Share not supported", description: "Your browser does not support native sharing.", variant: "destructive" });
-    }
-  };
-
   return (
     <div className="fixed bottom-4 right-4 z-50">
         <TooltipProvider>
@@ -81,7 +70,7 @@ export function SocialShare() {
                 <DockIcon>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="size-12 rounded-full" onClick={() => setIsOpen(!isOpen)}>
+                            <Button variant="ghost" size="icon" className="size-12 rounded-full" onClick={() => setIsOpen(!isOpen)} aria-label={isOpen ? "Close share options" : "Open share options"}>
                                 {isOpen ? <X className="size-5" /> : <Share2 className="size-5" />}
                             </Button>
                         </TooltipTrigger>
@@ -95,7 +84,7 @@ export function SocialShare() {
                     <DockIcon key={link.name}>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Link href={link.href} target="_blank" rel="noopener noreferrer">
+                                <Link href={link.href} target="_blank" rel="noopener noreferrer" aria-label={`Share on ${link.name}`}>
                                     <link.icon className="size-5" />
                                 </Link>
                             </TooltipTrigger>
@@ -106,10 +95,10 @@ export function SocialShare() {
                     </DockIcon>
                 ))}
                 {isOpen && (
-                    <DockIcon onClick={handleCopy}>
+                    <DockIcon>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <button>
+                                <button onClick={handleCopy} aria-label="Copy link to clipboard">
                                     <Copy className="size-5" />
                                 </button>
                             </TooltipTrigger>

@@ -84,8 +84,8 @@ export async function Footer() {
             <p className="text-sm text-muted-foreground max-w-xs">{settings?.footerDescription || "Innovative Solutions for India's future."}</p>
             <div className="flex space-x-4">
                 {settings?.socialLinks?.map(social => (
-                  <Link key={social._key} href={social.url} aria-label={social.platform} target="_blank" rel="noopener noreferrer">
-                    {iconMap[social.platform] || <Github className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />}
+                  <Link key={social._key} href={social.url} aria-label={`Follow us on ${social.platform}`} target="_blank" rel="noopener noreferrer">
+                    {iconMap[social.platform]}
                   </Link>
                 ))}
             </div>
