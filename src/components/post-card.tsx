@@ -32,7 +32,7 @@ export const PostCard = ({ post, featured = false }: { post: Post, featured?: bo
         : post.excerpt;
 
     return (
-        <article className={cn(
+        <article key={post._id} className={cn(
             "flex flex-col group",
             featured ? "md:flex-row md:gap-8" : "gap-4"
         )}>

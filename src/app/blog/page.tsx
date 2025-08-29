@@ -7,17 +7,26 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { PostCard, type Post } from '@/components/post-card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 
-async function getPosts(): Promise<Post[]> {
-    const query = `*[_type == "post"] | order(_createdAt desc){
-        _id,
-        title,
-        slug,
-        excerpt,
-        coverImage,
-        author->{name, picture},
-        "categories": categories[]->{title},
-        _createdAt
+const POSTS_PER_PAGE = 20;
+
+async function getPaginatedPosts(page: number): Promise<{ posts: Post[], total: number }> {
+    const start = (page - 1) * POSTS_PER_PAGE;
+    const end = start + POSTS_PER_PAGE;
+    
+    const query = `{
+        "posts": *[_type == "post"] | order(_createdAt desc)[${start}...${end}]{
+            _id,
+            title,
+            slug,
+            excerpt,
+            coverImage,
+            author->{name, picture},
+            "categories": categories[]->{title},
+            _createdAt
+        },
+        "total": count(*[_type == "post"])
     }`;
     const data = await client.fetch(query);
     return data;
@@ -26,12 +35,16 @@ async function getPosts(): Promise<Post[]> {
 export default function BlogIndexPage() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPosts, setTotalPosts] = useState(0);
 
     useEffect(() => {
         async function fetchPosts() {
+            setLoading(true);
             try {
-                const fetchedPosts = await getPosts();
+                const { posts: fetchedPosts, total } = await getPaginatedPosts(currentPage);
                 setPosts(fetchedPosts);
+                setTotalPosts(total);
             } catch (error) {
                 console.error("Failed to fetch posts:", error);
             } finally {
@@ -39,7 +52,9 @@ export default function BlogIndexPage() {
             }
         }
         fetchPosts();
-    }, []);
+    }, [currentPage]);
+
+    const totalPages = Math.ceil(totalPosts / POSTS_PER_PAGE);
 
     const featuredPost = !loading && posts.length > 0 ? posts[0] : null;
     const otherPosts = !loading && posts.length > 1 ? posts.slice(1) : [];
@@ -111,6 +126,26 @@ export default function BlogIndexPage() {
 
                     {!loading && posts.length === 0 && (
                         <p className="text-center text-muted-foreground">No blog posts found.</p>
+                    )}
+
+                    {!loading && totalPages > 1 && (
+                        <div className="flex justify-center items-center gap-4 mt-16">
+                            <Button 
+                                onClick={() => setCurrentPage(p => p - 1)} 
+                                disabled={currentPage === 1}
+                            >
+                                Previous
+                            </Button>
+                            <span className="text-muted-foreground">
+                                Page {currentPage} of {totalPages}
+                            </span>
+                            <Button 
+                                onClick={() => setCurrentPage(p => p + 1)}
+                                disabled={currentPage === totalPages}
+                            >
+                                Next
+                            </Button>
+                        </div>
                     )}
                 </div>
             </main>
