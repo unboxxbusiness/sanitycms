@@ -13,9 +13,6 @@ const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!
 const singletonActions = new Set(["publish", "discardChanges", "restore"])
 const singletonTypes = new Set(["homePage", "settings"])
 
-// The document types that should not be included in the main navigation list
-const hiddenDocTypes = ['partner', 'testimonial', 'program', 'impactMetric', 'donationTier', 'post', 'author', 'category', 'reusableBlock']
-
 export const structure: StructureResolver = (S) =>
   S.list()
     .title('Content')
@@ -65,12 +62,13 @@ export const structure: StructureResolver = (S) =>
 
       S.divider(),
 
-      // Filter out singleton types and hidden types from the main list
+      // Filter out singleton types from the main list
       ...S.documentTypeListItems().filter(
         (listItem) => {
             const id = listItem.getId()
             if (!id) return false
-            return !singletonTypes.has(id) && !hiddenDocTypes.includes(id) && id !== 'page'
+            // Keep 'partner', 'testimonial', etc. in the main list
+            return !singletonTypes.has(id) && id !== 'page' && id !== 'post' && id !== 'author' && id !== 'category' && id !== 'reusableBlock'
         }
       ),
     ])
