@@ -5,6 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import type { Metadata } from 'next';
 
 export const revalidate = 60 // revalidate at most every minute
@@ -22,7 +24,9 @@ interface Post {
     coverImage: any;
     author: {
         name: string;
+        picture?: any;
     };
+    categories?: { title: string }[];
     _createdAt: string;
 }
 
@@ -33,51 +37,82 @@ async function getPosts(): Promise<Post[]> {
         slug,
         excerpt,
         coverImage,
-        author->{name},
+        author->{name, picture},
+        "categories": categories[]->{title},
         _createdAt
     }`;
     const data = await client.fetch(query);
     return data;
 }
 
+const PostCard = ({ post, featured = false }: { post: Post, featured?: boolean }) => {
+    return (
+        <Link href={`/blog/${post.slug.current}`} className="flex flex-col gap-4 hover:opacity-75 cursor-pointer group">
+            {post.coverImage ? (
+                 <div className="relative bg-muted rounded-md aspect-video overflow-hidden">
+                    <Image 
+                        src={urlFor(post.coverImage).url()} 
+                        alt={post.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                </div>
+            ) : (
+                <div className="bg-muted rounded-md aspect-video"></div>
+            )}
+            <div className="flex flex-row gap-4 items-center">
+                {post.categories && post.categories[0] && (
+                    <Badge variant="secondary">{post.categories[0].title}</Badge>
+                )}
+                <p className="flex flex-row gap-2 text-sm items-center">
+                    <span className="text-muted-foreground">By</span>{" "}
+                    <Avatar className="h-6 w-6">
+                        {post.author.picture ? (
+                           <AvatarImage src={urlFor(post.author.picture).width(24).height(24).url()} />
+                        ) : (
+                            <AvatarImage src={`https://ui-avatars.com/api/?name=${post.author.name}&size=24`} />
+                        )}
+                        <AvatarFallback>{post.author.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                    <span>{post.author.name}</span>
+                </p>
+            </div>
+            <div className="flex flex-col gap-2">
+                <h3 className={featured ? "max-w-3xl text-4xl tracking-tight" : "max-w-3xl text-2xl tracking-tight"}>
+                    {post.title}
+                </h3>
+                <p className="max-w-3xl text-muted-foreground text-base">
+                    {post.excerpt}
+                </p>
+            </div>
+        </Link>
+    )
+}
+
 export default async function BlogIndexPage() {
     const posts = await getPosts();
+    const featuredPost = posts.length > 0 ? posts[0] : null;
+    const otherPosts = posts.length > 1 ? posts.slice(1) : [];
 
     return (
         <div className="flex flex-col min-h-screen">
             <Header />
-            <main className="flex-1 py-24 md:py-32">
-                <div className="container mx-auto px-4">
-                    <div className="text-center mb-16">
-                        <h1 className="text-4xl md:text-5xl font-bold">Our Blog</h1>
-                        <p className="text-lg text-muted-foreground mt-4 max-w-2xl mx-auto">
-                            Latest news, insights, and stories from our mission to empower students across India.
-                        </p>
+            <main className="flex-1 w-full py-20 lg:py-40">
+                <div className="container mx-auto flex flex-col gap-14">
+                    <div className="flex w-full flex-col sm:flex-row sm:justify-between sm:items-center gap-8">
+                        <h1 className="text-3xl md:text-5xl tracking-tighter max-w-xl font-regular">
+                            Latest articles
+                        </h1>
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {posts.map((post) => (
-                            <Link key={post._id} href={`/blog/${post.slug.current}`} className="group block">
-                                <div className="bg-card rounded-lg overflow-hidden shadow-md h-full flex flex-col transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1">
-                                    {post.coverImage && (
-                                        <div className="relative w-full h-48">
-                                            <Image
-                                                src={urlFor(post.coverImage).width(400).height(250).url()}
-                                                alt={post.title}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        </div>
-                                    )}
-                                    <div className="p-6 flex-1 flex flex-col">
-                                        <h2 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">{post.title}</h2>
-                                        <p className="text-muted-foreground text-sm flex-1">{post.excerpt}</p>
-                                        <div className="mt-4 text-xs text-muted-foreground">
-                                            <span>By {post.author?.name || 'AmulyaX Team'}</span> | <span>{new Date(post._createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </Link>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {featuredPost && (
+                            <div className="md:col-span-2">
+                                <PostCard post={featuredPost} featured={true} />
+                            </div>
+                        )}
+                        {otherPosts.map((post) => (
+                           <PostCard key={post._id} post={post} />
                         ))}
                     </div>
                 </div>
