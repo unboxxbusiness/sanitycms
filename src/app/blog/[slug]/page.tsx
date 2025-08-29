@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { PostCard, type Post } from '@/components/post-card';
 
 export const revalidate = 60
 
@@ -33,6 +34,11 @@ interface PostData {
   }
 }
 
+interface PageData {
+    post: PostData;
+    morePosts: Post[];
+}
+
 interface PostProps {
   params: {
     slug: string;
@@ -47,17 +53,29 @@ export async function generateStaticParams() {
     }));
 }
 
-async function getPostData(slug: string): Promise<PostData> {
-  const query = `*[_type == "post" && slug.current == $slug][0]{
-    _id,
-    title,
-    slug,
-    coverImage,
-    author->{name, picture},
-    "categories": categories[]->{title},
-    _createdAt,
-    content,
-    seo
+async function getPostData(slug: string): Promise<PageData> {
+  const query = `{
+    "post": *[_type == "post" && slug.current == $slug][0]{
+        _id,
+        title,
+        slug,
+        coverImage,
+        author->{name, picture},
+        "categories": categories[]->{title},
+        _createdAt,
+        content,
+        seo
+    },
+    "morePosts": *[_type == "post" && slug.current != $slug] | order(_createdAt desc)[0...3]{
+        _id,
+        title,
+        slug,
+        excerpt,
+        coverImage,
+        author->{name, picture},
+        "categories": categories[]->{title},
+        _createdAt
+    }
   }`;
 
   const data = await client.fetch(query, { slug });
@@ -65,7 +83,7 @@ async function getPostData(slug: string): Promise<PostData> {
 }
 
 export async function generateMetadata({ params }: PostProps): Promise<Metadata> {
-    const post = await getPostData(params.slug);
+    const { post } = await getPostData(params.slug);
     if (!post) {
       return {
         title: 'Post Not Found',
@@ -110,7 +128,7 @@ const portableTextComponents = {
 };
 
 export default async function BlogPostPage({ params }: PostProps) {
-  const post = await getPostData(params.slug);
+  const { post, morePosts } = await getPostData(params.slug);
 
   if (!post) {
     notFound();
@@ -176,6 +194,19 @@ export default async function BlogPostPage({ params }: PostProps) {
                     <PortableText value={post.content} components={portableTextComponents} />
                 </div>
             </article>
+
+            {morePosts && morePosts.length > 0 && (
+                <div className="mt-24">
+                    <div className="border-t pt-12">
+                        <h2 className="text-3xl font-bold text-center mb-12">Read Next</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {morePosts.map(p => (
+                                <PostCard key={p._id} post={p} />
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
       </main>
       <Footer />
