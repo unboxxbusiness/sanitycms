@@ -88,22 +88,21 @@ export function SocialShare() {
                     </Tooltip>
                 </DockIcon>
                 
+                {isOpen && socialLinks.map((link) => (
+                    <DockIcon key={link.name}>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Link href={link.href} target="_blank" rel="noopener noreferrer">
+                                    <link.icon className="size-5" />
+                                </Link>
+                            </TooltipTrigger>
+                            <TooltipContent side="left">
+                                <p>Share on {link.name}</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </DockIcon>
+                ))}
                 {isOpen && (
-                  <>
-                    {socialLinks.map((link) => (
-                        <DockIcon key={link.name}>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Link href={link.href} target="_blank" rel="noopener noreferrer">
-                                        <link.icon className="size-5" />
-                                    </Link>
-                                </TooltipTrigger>
-                                <TooltipContent side="left">
-                                    <p>Share on {link.name}</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </DockIcon>
-                    ))}
                     <DockIcon onClick={handleCopy}>
                         <Tooltip>
                             <TooltipTrigger asChild>
@@ -116,7 +115,6 @@ export function SocialShare() {
                             </TooltipContent>
                         </Tooltip>
                     </DockIcon>
-                  </>
                 )}
             </Dock>
         </TooltipProvider>
