@@ -13,4 +13,8 @@ export const client = createClient({
   dataset,
   apiVersion,
   useCdn,
+  // Automatically tag all queries with the document types they reference
+  next: {
+    tags: ['post', 'author', 'category', 'settings', 'page', 'homePage', 'partner', 'testimonial', 'program', 'impactMetric', 'donationTier', 'reusableBlock']
+  }
 });
