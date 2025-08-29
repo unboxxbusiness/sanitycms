@@ -1,3 +1,4 @@
+
 // src/app/blog/[slug]/page.tsx
 import { client } from '@/lib/sanity';
 import { urlFor } from '@/lib/sanity-image';
@@ -37,7 +38,7 @@ interface PostProps {
 
 // Function to generate static paths
 export async function generateStaticParams() {
-    const posts = await client.fetch<PostData[]>(`*[_type == "post" && defined(slug.current)]{"slug": slug.current}`);
+    const posts = await client.fetch<Pick<PostData, 'slug'>[]>(`*[_type == "post" && defined(slug.current)]{ slug }`);
     return posts.map(post => ({
         slug: post.slug.current,
     }));
