@@ -21,6 +21,12 @@ import program from './documents/program'
 import impactMetric from './documents/impactMetric'
 import donationTier from './documents/donationTier'
 
+// Blog schema types
+import post from './documents/post'
+import author from './documents/author'
+import category from './documents/category'
+import reusableBlock from './documents/reusableBlock'
+
 
 export const schemaTypes = [
     // Document types
@@ -32,6 +38,10 @@ export const schemaTypes = [
     impactMetric,
     settings,
     donationTier,
+    post,
+    author,
+    category,
+    reusableBlock,
 
     // Block Schemas
     ctaBlock,

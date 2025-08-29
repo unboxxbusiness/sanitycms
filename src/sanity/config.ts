@@ -3,6 +3,7 @@ import {defineConfig} from 'sanity'
 import {structureTool, type StructureResolver} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './schemas'
+import { Book, User, Tag } from 'lucide-react'
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!
@@ -11,7 +12,7 @@ const singletonActions = new Set(["publish", "discardChanges", "restore"])
 const singletonTypes = new Set(["homePage", "settings"])
 
 // The document types that should not be included in the main navigation list
-const hiddenDocTypes = ['partner', 'testimonial', 'program', 'impactMetric', 'donationTier']
+const hiddenDocTypes = ['partner', 'testimonial', 'program', 'impactMetric', 'donationTier', 'post', 'author', 'category']
 
 export const structure: StructureResolver = (S) =>
   S.list()
@@ -24,6 +25,21 @@ export const structure: StructureResolver = (S) =>
           S.document()
             .schemaType('settings')
             .documentId('settings')
+        ),
+      
+      S.divider(),
+
+      S.listItem()
+        .title('Blog')
+        .icon(Book)
+        .child(
+          S.list()
+            .title('Blog')
+            .items([
+              S.documentTypeListItem('post').title('All Posts'),
+              S.documentTypeListItem('author').title('Authors').icon(User),
+              S.documentTypeListItem('category').title('Categories').icon(Tag),
+            ])
         ),
       
       S.divider(),

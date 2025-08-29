@@ -8,15 +8,24 @@ export default defineType({
   type: 'document',
   icon: Cog,
   groups: [
-    { name: 'header', title: 'Header', default: true },
+    { name: 'general', title: 'General', default: true },
+    { name: 'header', title: 'Header' },
     { name: 'footer', title: 'Footer' },
+    { name: 'seo', title: 'Default SEO' },
   ],
   fields: [
+    defineField({
+        name: 'siteTitle',
+        title: 'Site Title',
+        type: 'string',
+        group: 'general',
+        description: 'The overall title of the website, used in browser tabs and search results.'
+    }),
     defineField({
       name: 'logo',
       title: 'Brand Logo',
       type: 'image',
-      group: 'header',
+      group: 'general',
     }),
     defineField({
       name: 'mainNavigation',
@@ -164,7 +173,21 @@ export default defineType({
         type: 'string',
         group: 'footer',
         initialValue: 'AmulyaX India. All rights reserved.'
-    })
+    }),
+    defineField({
+      name: 'defaultMetaTitle',
+      title: 'Default Meta Title',
+      type: 'string',
+      group: 'seo',
+      description: 'The default title for pages that do not have a specific meta title.'
+    }),
+    defineField({
+      name: 'defaultMetaDescription',
+      title: 'Default Meta Description',
+      type: 'text',
+      group: 'seo',
+      description: 'The default description for pages that do not have a specific meta description.'
+    }),
   ],
   preview: {
     prepare() {
