@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { PostCard, type Post } from '@/components/post-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { CtaBlock } from '@/components/blocks/cta-block';
 
 export const revalidate = 60
 
@@ -65,7 +66,16 @@ async function getPostData(slug: string): Promise<PageData> {
         author->{name, picture, bio},
         "categories": categories[]->{title},
         _createdAt,
-        content,
+        content[]{
+          ...,
+          _type == 'reference' => @->{
+            _type,
+            name,
+            content[]{
+              ...,
+            }
+          }
+        },
         seo
     },
     "morePosts": *[_type == "post" && slug.current != $slug] | order(_createdAt desc)[0...2]{
@@ -109,7 +119,19 @@ const portableTextComponents = {
                     className="rounded-lg mx-auto"
                 />
             </div>
-        )
+        ),
+        reusableBlock: ({ value }: any) => {
+          if (!value?.content) return null;
+          return value.content.map((block: any) => {
+            switch(block._type) {
+              case 'ctaBlock':
+                return <CtaBlock key={block._key} {...block} className="my-8" />;
+              // Add other reusable block types here if needed
+              default:
+                return <p key={block._key}>Unsupported reusable block type: {block._type}</p>;
+            }
+          });
+        }
     },
     block: {
       h2: ({ children }: any) => <h2 className="text-3xl font-bold mt-12 mb-4">{children}</h2>,
