@@ -1,4 +1,3 @@
-
 // src/sanity/schemas/settings.ts
 import {defineField, defineType} from 'sanity'
 import { Cog } from 'lucide-react'

@@ -1,3 +1,4 @@
+// /sanity.config.ts
 import {defineConfig} from 'sanity'
 import {structureTool, type StructureResolver} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
@@ -12,6 +13,7 @@ const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!
 const singletonActions = new Set(["publish", "discardChanges", "restore"])
 const singletonTypes = new Set(["homePage", "settings"])
 
+// The document types that should not be included in the main navigation list
 const hiddenDocTypes = ['partner', 'testimonial', 'program', 'impactMetric', 'donationTier', 'post', 'author', 'category', 'reusableBlock']
 
 export const structure: StructureResolver = (S) =>
@@ -63,6 +65,7 @@ export const structure: StructureResolver = (S) =>
 
       S.divider(),
 
+      // Filter out singleton types and hidden types from the main list
       ...S.documentTypeListItems().filter(
         (listItem) => {
             const id = listItem.getId()
@@ -86,11 +89,14 @@ export default defineConfig({
 
   schema: {
     types: schemaTypes,
+     // Filter out singleton types from the global “New document” menu options
      templates: (templates) =>
         templates.filter(({ schemaType }) => !singletonTypes.has(schemaType)),
   },
 
   document: {
+    // For singleton types, filter out actions that are not explicitly included
+    // in the `singletonActions` list defined above
     actions: (input, context) =>
       singletonTypes.has(context.schemaType)
         ? input.filter(({ action }) => action && singletonActions.has(action))
