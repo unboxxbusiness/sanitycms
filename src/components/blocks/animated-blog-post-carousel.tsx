@@ -16,6 +16,62 @@ export interface AnimatedPost {
   href: string;
 }
 
+const randomRotateY = () => {
+  return Math.floor(Math.random() * 21) - 10;
+};
+
+const CarouselItem = ({ post, isActive, index, totalPosts }: { post: AnimatedPost; isActive: boolean; index: number; totalPosts: number; }) => {
+    const [rotation, setRotation] = useState(0);
+
+    useEffect(() => {
+        // Set rotation only on the client side after mount
+        setRotation(randomRotateY());
+    }, []);
+
+    return (
+        <motion.div
+            key={`${post.href}-${index}`}
+            initial={{
+            opacity: 0,
+            scale: 0.9,
+            z: -100,
+            rotate: rotation,
+            }}
+            animate={{
+            opacity: isActive ? 1 : 0.7,
+            scale: isActive ? 1 : 0.95,
+            z: isActive ? 0 : -100,
+            rotate: isActive ? 0 : rotation,
+            zIndex: isActive ? 999 : totalPosts + 2 - index,
+            y: isActive ? [0, -40, 0] : 0,
+            }}
+            exit={{
+            opacity: 0,
+            scale: 0.9,
+            z: 100,
+            rotate: rotation,
+            }}
+            transition={{
+            duration: 0.4,
+            ease: "easeInOut",
+            }}
+            className="absolute inset-0 origin-bottom"
+        >
+            <Link href={post.href}>
+                <Image
+                    src={post.imageUrl}
+                    alt={post.title}
+                    width={500}
+                    height={500}
+                    draggable={false}
+                    className="h-full w-full rounded-3xl object-cover object-center shadow-lg"
+                />
+            </Link>
+        </motion.div>
+    );
+};
+
+
 export function AnimatedBlogPostCarousel({
   posts,
   autoplay = false,
@@ -35,10 +91,6 @@ export function AnimatedBlogPostCarousel({
     setActive((prev) => (prev - 1 + posts.length) % posts.length);
   };
 
-  const isActive = (index: number) => {
-    return index === active;
-  };
-
   useEffect(() => {
     if (autoplay) {
       const interval = setInterval(handleNext, 5000);
@@ -46,55 +98,19 @@ export function AnimatedBlogPostCarousel({
     }
   }, [autoplay, posts.length]);
 
-  const randomRotateY = () => {
-    return Math.floor(Math.random() * 21) - 10;
-  };
-
   return (
     <div className={cn("max-w-sm md:max-w-4xl mx-auto px-4 md:px-8 lg:px-12", className)}>
       <div className="relative grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-20">
         <div className="relative h-80 w-full">
           <AnimatePresence>
             {posts.map((post, index) => (
-              <motion.div
-                key={`${post.href}-${index}`}
-                initial={{
-                  opacity: 0,
-                  scale: 0.9,
-                  z: -100,
-                  rotate: randomRotateY(),
-                }}
-                animate={{
-                  opacity: isActive(index) ? 1 : 0.7,
-                  scale: isActive(index) ? 1 : 0.95,
-                  z: isActive(index) ? 0 : -100,
-                  rotate: isActive(index) ? 0 : randomRotateY(),
-                  zIndex: isActive(index) ? 999 : posts.length + 2 - index,
-                  y: isActive(index) ? [0, -40, 0] : 0,
-                }}
-                exit={{
-                  opacity: 0,
-                  scale: 0.9,
-                  z: 100,
-                  rotate: randomRotateY(),
-                }}
-                transition={{
-                  duration: 0.4,
-                  ease: "easeInOut",
-                }}
-                className="absolute inset-0 origin-bottom"
-              >
-                <Link href={post.href}>
-                    <Image
-                        src={post.imageUrl}
-                        alt={post.title}
-                        width={500}
-                        height={500}
-                        draggable={false}
-                        className="h-full w-full rounded-3xl object-cover object-center shadow-lg"
-                    />
-                </Link>
-              </motion.div>
+                <CarouselItem 
+                    key={`${post.href}-${index}`} 
+                    post={post} 
+                    isActive={index === active} 
+                    index={index} 
+                    totalPosts={posts.length}
+                />
             ))}
           </AnimatePresence>
         </div>
