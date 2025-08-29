@@ -1,3 +1,4 @@
+
 // src/components/layout/header.tsx
 'use client';
 
@@ -7,7 +8,6 @@ import { Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Logo } from '@/components/logo';
-import { client } from '@/lib/sanity'
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { urlFor } from '@/lib/sanity-image';
 import Image from 'next/image';
@@ -33,21 +33,19 @@ interface Settings {
   headerCta: Cta;
 }
 
-export function Header() {
+interface HeaderProps {
+    settings: Settings | null;
+}
+
+export function Header({ settings }: HeaderProps) {
     const [isScrolled, setIsScrolled] = React.useState(false)
-    const [settings, setSettings] = React.useState<Settings | null>(null);
+    const [isMounted, setIsMounted] = React.useState(false);
 
     React.useEffect(() => {
-        const fetchSettings = async () => {
-          const query = `*[_type == "settings"][0]{ logoLight, logoDark, mainNavigation, headerCta }`;
-          const data = await client.fetch(query);
-          setSettings(data);
-        };
-        fetchSettings();
+        setIsMounted(true);
     }, []);
 
     const navLinks = settings?.mainNavigation || [];
-
 
     React.useEffect(() => {
         const handleScroll = () => {
@@ -56,6 +54,20 @@ export function Header() {
         window.addEventListener('scroll', handleScroll, { passive: true })
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
+
+    if (!isMounted) {
+        return (
+            <header key="header">
+                <nav className="fixed top-0 z-50 w-full">
+                    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                        <div className="relative flex h-16 items-center justify-between">
+                             <div className="h-6 w-[94px] bg-muted rounded"></div>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+        );
+    }
     
     return (
         <header key="header">
@@ -151,5 +163,3 @@ export function Header() {
         </header>
     )
 }
-
-    

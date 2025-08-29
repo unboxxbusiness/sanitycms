@@ -1,13 +1,9 @@
 // src/app/blog/page.tsx
-'use client'
-
-import { useState, useEffect } from 'react';
 import { client } from '@/lib/sanity';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { PostCard, type Post } from '@/components/post-card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Button } from '@/components/ui/button';
+import type { Metadata } from 'next';
 
 const POSTS_PER_PAGE = 9;
 
@@ -41,84 +37,35 @@ async function getPaginatedPosts(page: number): Promise<BlogPageData> {
     return data;
 }
 
-export default function BlogIndexPage() {
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [heading, setHeading] = useState('Our Blog');
-    const [subheading, setSubheading] = useState('Latest news, insights, and stories from our mission to empower students across India.');
-    const [loading, setLoading] = useState(true);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPosts, setTotalPosts] = useState(0);
+export async function generateMetadata(): Promise<Metadata> {
+    const settings = await client.fetch(`*[_type == "settings"][0]{ blogPageHeading, blogPageSubheading }`);
+    return {
+        title: settings?.blogPageHeading || 'Blog',
+        description: settings?.blogPageSubheading || 'Latest news, insights, and stories.',
+    };
+}
 
-    useEffect(() => {
-        async function fetchPosts() {
-            setLoading(true);
-            try {
-                const { posts: fetchedPosts, total, heading, subheading } = await getPaginatedPosts(currentPage);
-                setPosts(prevPosts => currentPage === 1 ? fetchedPosts : [...prevPosts, ...fetchedPosts]);
-                setTotalPosts(total);
-                if (heading) setHeading(heading);
-                if (subheading) setSubheading(subheading);
-            } catch (error) {
-                console.error("Failed to fetch posts:", error);
-            } finally {
-                setLoading(false);
-            }
-        }
-        fetchPosts();
-    }, [currentPage]);
+export default async function BlogIndexPage() {
+    const { posts, total, heading, subheading } = await getPaginatedPosts(1);
 
-    const hasMorePosts = posts.length < totalPosts;
-
-    const featuredPost = !loading && posts.length > 0 ? posts[0] : null;
-    const otherPosts = !loading && posts.length > 1 ? posts.slice(1) : [];
+    const featuredPost = posts.length > 0 ? posts[0] : null;
+    const otherPosts = posts.length > 1 ? posts.slice(1) : [];
 
     return (
         <div className="flex flex-col min-h-screen">
-            <Header />
             <main className="flex-1 w-full py-20 lg:py-32">
                 <div className="container mx-auto flex flex-col gap-12 px-4">
                     <div className="flex w-full flex-col text-center items-center gap-4">
                         <h1 className="text-4xl md:text-6xl tracking-tighter max-w-3xl font-bold">
-                            {heading}
+                            {heading || 'Our Blog'}
                         </h1>
                         <p className="text-lg max-w-2xl text-muted-foreground">
-                           {subheading}
+                           {subheading || 'Latest news, insights, and stories from our mission to empower students across India.'}
                         </p>
                     </div>
                     
-                    {loading && posts.length === 0 ? (
-                        <>
-                            <div className="w-full">
-                                <div className="flex flex-col md:flex-row md:gap-8">
-                                    <Skeleton className="aspect-video rounded-md md:w-1/2" />
-                                    <div className="md:w-1/2 flex flex-col justify-center gap-4 mt-4 md:mt-0">
-                                        <Skeleton className="h-6 w-1/4" />
-                                        <Skeleton className="h-8 w-full" />
-                                        <Skeleton className="h-8 w-5/6" />
-                                        <Skeleton className="h-20 w-full" />
-                                        <div className="flex items-center gap-4 mt-4">
-                                            <Skeleton className="h-8 w-8 rounded-full" />
-                                            <Skeleton className="h-6 w-1/3" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="w-full border-b my-8" />
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-                                {[...Array(3)].map((_, i) => (
-                                    <div key={i} className="flex flex-col gap-4">
-                                        <Skeleton className="aspect-video rounded-md" />
-                                        <Skeleton className="h-6 w-1/4" />
-                                        <Skeleton className="h-8 w-full" />
-                                        <Skeleton className="h-20 w-full" />
-                                        <div className="flex items-center gap-4 mt-4">
-                                            <Skeleton className="h-8 w-8 rounded-full" />
-                                            <Skeleton className="h-6 w-1/3" />
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </>
+                    {posts.length === 0 ? (
+                        <p className="text-center text-muted-foreground">No blog posts found.</p>
                     ) : (
                         <>
                             {featuredPost && (
@@ -137,18 +84,6 @@ export default function BlogIndexPage() {
                                     ))}
                                 </div>
                             )}
-
-                            {posts.length === 0 && !loading && (
-                                <p className="text-center text-muted-foreground">No blog posts found.</p>
-                            )}
-
-                            {hasMorePosts && (
-                                <div className="flex justify-center items-center gap-4 mt-12">
-                                    <Button onClick={() => setCurrentPage(p => p + 1)} disabled={loading}>
-                                        {loading ? 'Loading...' : 'Load More Posts'}
-                                    </Button>
-                                </div>
-                            )}
                         </>
                     )}
                 </div>
@@ -157,5 +92,3 @@ export default function BlogIndexPage() {
         </div>
     )
 }
-
-    

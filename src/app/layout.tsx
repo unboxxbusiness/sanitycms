@@ -1,3 +1,4 @@
+
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
@@ -5,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 import { SocialShare } from '@/components/social-share';
 import { client } from '@/lib/sanity';
+import { Header } from '@/components/layout/header';
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await client.fetch(`*[_type == "settings"][0]{ siteTitle, defaultMetaTitle, defaultMetaDescription }`);
@@ -24,12 +26,24 @@ export const viewport: Viewport = {
   ],
 }
 
+async function getHeaderData() {
+    const query = `*[_type == "settings"][0]{ 
+        logoLight,
+        logoDark, 
+        mainNavigation, 
+        headerCta 
+    }`;
+    const data = await client.fetch(query);
+    return data;
+}
 
-export default function RootLayout({
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headerData = await getHeaderData();
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -44,6 +58,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Header settings={headerData} />
           {children}
           <Toaster />
           <SocialShare />
@@ -52,5 +67,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-    
