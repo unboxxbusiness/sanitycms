@@ -11,7 +11,14 @@ import { Button } from '@/components/ui/button';
 
 const POSTS_PER_PAGE = 10;
 
-async function getPaginatedPosts(page: number): Promise<{ posts: Post[], total: number }> {
+interface BlogPageData {
+    posts: Post[];
+    total: number;
+    heading: string;
+    subheading: string;
+}
+
+async function getPaginatedPosts(page: number): Promise<BlogPageData> {
     const start = (page - 1) * POSTS_PER_PAGE;
     const end = start + POSTS_PER_PAGE;
     
@@ -26,7 +33,9 @@ async function getPaginatedPosts(page: number): Promise<{ posts: Post[], total: 
             "categories": categories[]->{title},
             _createdAt
         },
-        "total": count(*[_type == "post"])
+        "total": count(*[_type == "post"]),
+        "heading": *[_type == "settings"][0].blogPageHeading,
+        "subheading": *[_type == "settings"][0].blogPageSubheading
     }`;
     const data = await client.fetch(query);
     return data;
@@ -34,6 +43,8 @@ async function getPaginatedPosts(page: number): Promise<{ posts: Post[], total: 
 
 export default function BlogIndexPage() {
     const [posts, setPosts] = useState<Post[]>([]);
+    const [heading, setHeading] = useState('Our Blog');
+    const [subheading, setSubheading] = useState('Latest news, insights, and stories from our mission to empower students across India.');
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPosts, setTotalPosts] = useState(0);
@@ -42,9 +53,11 @@ export default function BlogIndexPage() {
         async function fetchPosts() {
             setLoading(true);
             try {
-                const { posts: fetchedPosts, total } = await getPaginatedPosts(currentPage);
+                const { posts: fetchedPosts, total, heading, subheading } = await getPaginatedPosts(currentPage);
                 setPosts(fetchedPosts);
                 setTotalPosts(total);
+                if (heading) setHeading(heading);
+                if (subheading) setSubheading(subheading);
             } catch (error) {
                 console.error("Failed to fetch posts:", error);
             } finally {
@@ -66,10 +79,10 @@ export default function BlogIndexPage() {
                 <div className="container mx-auto flex flex-col gap-16 px-4">
                     <div className="flex w-full flex-col text-center items-center gap-4">
                         <h1 className="text-4xl md:text-6xl tracking-tighter max-w-2xl font-bold">
-                            Our Blog
+                            {heading}
                         </h1>
                         <p className="text-lg max-w-2xl text-muted-foreground">
-                           Latest news, insights, and stories from our mission to empower students across India.
+                           {subheading}
                         </p>
                     </div>
                     
