@@ -1,7 +1,4 @@
 // src/components/layout/footer.tsx
-'use client'
-
-import React, { useEffect, useState } from "react"
 import { Logo } from '@/components/logo'
 import Link from "next/link"
 import { Github, Twitter, Linkedin } from "lucide-react"
@@ -46,32 +43,29 @@ const iconMap = {
   linkedin: <Linkedin className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />,
 }
 
-export function Footer() {
-  const [settings, setSettings] = useState<Settings | null>(null);
+async function getFooterData(): Promise<Settings | null> {
+    const query = `*[_type == "settings"][0]{ 
+      logoLight,
+      logoDark, 
+      footerDescription,
+      footerProductLinks, 
+      footerCompanyLinks, 
+      footerLegalLinks, 
+      socialLinks,
+      newsletterHeadline,
+      newsletterSupportingText,
+      copyrightText,
+      showMembershipCta,
+      membershipCtaText,
+      membershipDialogTitle,
+      membershipDialogDescription
+    }`;
+    const data = await client.fetch(query);
+    return data;
+}
 
-  useEffect(() => {
-    const fetchSettings = async () => {
-      const query = `*[_type == "settings"][0]{ 
-        logoLight,
-        logoDark, 
-        footerDescription,
-        footerProductLinks, 
-        footerCompanyLinks, 
-        footerLegalLinks, 
-        socialLinks,
-        newsletterHeadline,
-        newsletterSupportingText,
-        copyrightText,
-        showMembershipCta,
-        membershipCtaText,
-        membershipDialogTitle,
-        membershipDialogDescription
-      }`;
-      const data = await client.fetch(query);
-      setSettings(data);
-    };
-    fetchSettings();
-  }, []);
+export async function Footer() {
+  const settings = await getFooterData();
 
   return (
     <footer id="contact" className="py-12 bg-secondary/30">
@@ -137,5 +131,3 @@ export function Footer() {
     </footer>
   )
 }
-
-    
