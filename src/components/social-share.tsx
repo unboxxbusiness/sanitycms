@@ -42,6 +42,10 @@ export function SocialShare() {
     }
   }, []);
 
+  if (!isMounted) {
+    return null;
+  }
+
   const socialLinks = [
     { name: "Facebook", icon: Facebook, href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}` },
     { name: "Twitter", icon: Twitter, href: `https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}&text=${encodeURIComponent(shareTitle)}` },
@@ -66,16 +70,12 @@ export function SocialShare() {
         toast({ title: "Share not supported", description: "Your browser does not support native sharing.", variant: "destructive" });
     }
   };
-  
-  if (!isMounted) {
-    return null;
-  }
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
         <TooltipProvider>
             <Dock direction="vertical" className="p-2 gap-2" data-state={isOpen ? 'open' : 'closed'}>
-                <DockIcon onClick={() => setIsOpen(!isOpen)} className="size-12 rounded-full">
+                <DockIcon onClick={() => setIsOpen(!isOpen)}>
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button variant="ghost" size="icon" className="size-12 rounded-full">
@@ -88,8 +88,9 @@ export function SocialShare() {
                     </Tooltip>
                 </DockIcon>
                 
-                <div className="flex flex-col gap-2">
-                    {isOpen && socialLinks.map((link) => (
+                {isOpen && (
+                  <>
+                    {socialLinks.map((link) => (
                         <DockIcon key={link.name}>
                             <Tooltip>
                                 <TooltipTrigger asChild>
@@ -103,21 +104,20 @@ export function SocialShare() {
                             </Tooltip>
                         </DockIcon>
                     ))}
-                    {isOpen && (
-                        <DockIcon onClick={handleCopy}>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <button>
-                                        <Copy className="size-5" />
-                                    </button>
-                                </TooltipTrigger>
-                                <TooltipContent side="left">
-                                    <p>Copy Link</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </DockIcon>
-                    )}
-                </div>
+                    <DockIcon onClick={handleCopy}>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <button>
+                                    <Copy className="size-5" />
+                                </button>
+                            </TooltipTrigger>
+                            <TooltipContent side="left">
+                                <p>Copy Link</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </DockIcon>
+                  </>
+                )}
             </Dock>
         </TooltipProvider>
     </div>
