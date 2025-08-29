@@ -1,7 +1,5 @@
 
 // src/components/layout/header.tsx
-'use client';
-
 import React from 'react'
 import Link from 'next/link'
 import { Menu } from 'lucide-react'
@@ -37,46 +35,16 @@ interface HeaderProps {
     settings: Settings | null;
 }
 
+// NOTE: This is now a server component to ensure revalidation works correctly.
+// The scroll effect has been removed to avoid client-side state complexities.
 export function Header({ settings }: HeaderProps) {
-    const [isScrolled, setIsScrolled] = React.useState(false)
-    const [isMounted, setIsMounted] = React.useState(false);
-
-    React.useEffect(() => {
-        setIsMounted(true);
-    }, []);
-
     const navLinks = settings?.mainNavigation || [];
-
-    React.useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 20)
-        }
-        window.addEventListener('scroll', handleScroll, { passive: true })
-        return () => window.removeEventListener('scroll', handleScroll)
-    }, [])
-
-    if (!isMounted) {
-        return (
-            <header key="header">
-                <nav className="fixed top-0 z-50 w-full">
-                    <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                        <div className="relative flex h-16 items-center justify-between">
-                             <div className="h-6 w-[94px] bg-muted rounded"></div>
-                        </div>
-                    </div>
-                </nav>
-            </header>
-        );
-    }
     
     return (
         <header key="header">
             <nav
                 aria-label="Main navigation"
-                className={cn(
-                    "fixed top-0 z-50 w-full transition-all duration-300",
-                    isScrolled ? "bg-background/80 backdrop-blur-lg border-b" : ""
-                )}
+                className="fixed top-0 z-50 w-full transition-all duration-300 bg-background/80 backdrop-blur-lg border-b"
             >
                 <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="relative flex h-16 items-center justify-between">

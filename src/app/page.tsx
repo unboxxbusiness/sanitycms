@@ -1,10 +1,9 @@
 // src/app/page.tsx
-import { Footer } from '@/components/layout/footer';
-import Link from 'next/link';
 import { client } from '@/lib/sanity';
 import { notFound } from 'next/navigation';
 import { BlockRenderer } from '@/components/block-renderer';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const revalidate = 60; // Revalidate the home page every 60 seconds
 
@@ -110,11 +109,6 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <main className="flex-1">
-        <BlockRenderer blocks={data.pageBuilder} />
-      </main>
-      <Footer />
-    </div>
+    <BlockRenderer blocks={data.pageBuilder} />
   );
 }

@@ -1,7 +1,6 @@
 // src/app/[slug]/page.tsx
 import { client } from '@/lib/sanity';
 import { notFound } from 'next/navigation';
-import { Footer } from '@/components/layout/footer';
 import { BlockRenderer } from '@/components/block-renderer';
 import type { Metadata } from 'next';
 
@@ -106,11 +105,6 @@ export default async function Page({ params }: PageProps) {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <main className="flex-1">
-        <BlockRenderer blocks={page.pageBuilder} />
-      </main>
-      <Footer />
-    </div>
+    <BlockRenderer blocks={page.pageBuilder} />
   );
 }

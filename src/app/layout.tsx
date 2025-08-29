@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { SocialShare } from '@/components/social-share';
 import { client } from '@/lib/sanity';
 import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await client.fetch(`*[_type == "settings"][0]{ siteTitle, defaultMetaTitle, defaultMetaDescription }`);
@@ -59,7 +60,10 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <Header settings={headerData} />
-          {children}
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
           <Toaster />
           <SocialShare />
         </ThemeProvider>
