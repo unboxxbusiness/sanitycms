@@ -1,7 +1,7 @@
 // src/components/social-share.tsx
 "use client";
 
-import { Copy, Facebook, Linkedin, Mail, Share2, Twitter } from "lucide-react";
+import { Copy, Facebook, Linkedin, Mail, Share2, Twitter, X } from "lucide-react";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -36,8 +36,10 @@ export function SocialShare() {
 
   useEffect(() => {
     setIsMounted(true);
-    setCurrentUrl(window.location.href);
-    setShareTitle(document.title || "AmulyaX India");
+    if (typeof window !== 'undefined') {
+      setCurrentUrl(window.location.href);
+      setShareTitle(document.title || "AmulyaX India");
+    }
   }, []);
 
   const socialLinks = [
@@ -77,7 +79,7 @@ export function SocialShare() {
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button variant="ghost" size="icon" className="size-12 rounded-full">
-                                <Share2 className="size-5" />
+                                {isOpen ? <X className="size-5" /> : <Share2 className="size-5" />}
                             </Button>
                         </TooltipTrigger>
                         <TooltipContent side="left">
@@ -86,9 +88,8 @@ export function SocialShare() {
                     </Tooltip>
                 </DockIcon>
                 
-                {isOpen && (
-                  <>
-                    {socialLinks.map((link) => (
+                <div className="flex flex-col gap-2">
+                    {isOpen && socialLinks.map((link) => (
                         <DockIcon key={link.name}>
                             <Tooltip>
                                 <TooltipTrigger asChild>
@@ -102,20 +103,21 @@ export function SocialShare() {
                             </Tooltip>
                         </DockIcon>
                     ))}
-                    <DockIcon onClick={handleCopy}>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <button>
-                                    <Copy className="size-5" />
-                                </button>
-                            </TooltipTrigger>
-                            <TooltipContent side="left">
-                                <p>Copy Link</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </DockIcon>
-                  </>
-                )}
+                    {isOpen && (
+                        <DockIcon onClick={handleCopy}>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <button>
+                                        <Copy className="size-5" />
+                                    </button>
+                                </TooltipTrigger>
+                                <TooltipContent side="left">
+                                    <p>Copy Link</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </DockIcon>
+                    )}
+                </div>
             </Dock>
         </TooltipProvider>
     </div>
