@@ -53,6 +53,10 @@ const PostCard = ({ post, featured = false }: { post: Post, featured?: boolean }
         year: 'numeric',
     });
 
+    const truncatedExcerpt = post.excerpt && post.excerpt.length > 150
+        ? post.excerpt.substring(0, 150) + '...'
+        : post.excerpt;
+
     return (
         <article className={cn(
             "flex flex-col group",
@@ -95,7 +99,7 @@ const PostCard = ({ post, featured = false }: { post: Post, featured?: boolean }
                     </Link>
                 </h3>
                 <p className={cn("text-muted-foreground", featured ? "text-base mt-2" : "text-sm")}>
-                    {post.excerpt}
+                    {truncatedExcerpt}
                 </p>
                 <div className="flex items-center gap-4 mt-4 text-sm">
                     <div className="flex items-center gap-2">
