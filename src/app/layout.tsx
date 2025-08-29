@@ -27,24 +27,11 @@ export const viewport: Viewport = {
   ],
 }
 
-async function getHeaderData() {
-    const query = `*[_type == "settings"][0]{ 
-        logoLight,
-        logoDark, 
-        mainNavigation, 
-        headerCta 
-    }`;
-    const data = await client.fetch(query);
-    return data;
-}
-
-
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const headerData = await getHeaderData();
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -59,7 +46,7 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Header settings={headerData} />
+          <Header />
           <main className="flex-1">
             {children}
           </main>

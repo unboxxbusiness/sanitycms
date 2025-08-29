@@ -4,14 +4,13 @@ import React from 'react'
 import Link from 'next/link'
 import { Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 import { Logo } from '@/components/logo';
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { urlFor } from '@/lib/sanity-image';
 import Image from 'next/image';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
-
+import { client } from '@/lib/sanity';
 
 interface NavLink {
   _key: string;
@@ -31,13 +30,23 @@ interface Settings {
   headerCta: Cta;
 }
 
-interface HeaderProps {
-    settings: Settings | null;
+async function getHeaderData(): Promise<Settings | null> {
+    const query = `*[_type == "settings"][0]{ 
+        logoLight,
+        logoDark, 
+        mainNavigation, 
+        headerCta 
+    }`;
+    const data = await client.fetch(query, {}, {
+        next: {
+            tags: ['settings']
+        }
+    });
+    return data;
 }
 
-// NOTE: This is now a server component to ensure revalidation works correctly.
-// The scroll effect has been removed to avoid client-side state complexities.
-export function Header({ settings }: HeaderProps) {
+export async function Header() {
+    const settings = await getHeaderData();
     const navLinks = settings?.mainNavigation || [];
     
     return (
