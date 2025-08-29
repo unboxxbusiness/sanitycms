@@ -13,6 +13,7 @@ import type { Metadata } from 'next';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { PostCard, type Post } from '@/components/post-card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export const revalidate = 60
 
@@ -24,6 +25,7 @@ interface PostData {
   author: {
     name: string;
     picture?: any;
+    bio?: string;
   };
   categories: { title: string }[];
   _createdAt: string;
@@ -60,7 +62,7 @@ async function getPostData(slug: string): Promise<PageData> {
         title,
         slug,
         coverImage,
-        author->{name, picture},
+        author->{name, picture, bio},
         "categories": categories[]->{title},
         _createdAt,
         content,
@@ -194,6 +196,26 @@ export default async function BlogPostPage({ params }: PostProps) {
                     <PortableText value={post.content} components={portableTextComponents} />
                 </div>
             </article>
+
+            {post.author && (
+                <div className="mt-16 pt-12 border-t">
+                    <div className="flex items-start gap-6 bg-secondary/50 p-6 rounded-lg">
+                        <Avatar className="h-16 w-16">
+                            {post.author.picture ? (
+                               <AvatarImage src={urlFor(post.author.picture).width(64).height(64).url()} />
+                            ) : (
+                                <AvatarImage src={`https://ui-avatars.com/api/?name=${post.author.name}&size=64`} />
+                            )}
+                            <AvatarFallback>{post.author.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                            <p className="text-sm text-muted-foreground uppercase tracking-wide">About the author</p>
+                            <h3 className="text-xl font-bold mt-1">{post.author.name}</h3>
+                            {post.author.bio && <p className="text-muted-foreground mt-2">{post.author.bio}</p>}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {morePosts && morePosts.length > 0 && (
                 <div className="mt-24">
