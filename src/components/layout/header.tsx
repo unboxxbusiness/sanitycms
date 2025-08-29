@@ -24,6 +24,7 @@ interface Cta {
 }
 
 interface HeaderSettings {
+  siteTitle?: string;
   logoLight?: SanityImageSource;
   logoDark?: SanityImageSource;
   mainNavigation?: NavLink[];
@@ -52,8 +53,8 @@ export function Header({ settings }: HeaderProps) {
                                 className="flex items-center space-x-2">
                                 {settings?.logoLight && (
                                     <>
-                                        <Image src={urlFor(settings.logoLight).height(24).url()} alt="Logo" width={94} height={24} className="h-6 w-auto dark:hidden" priority />
-                                        <Image src={urlFor(settings.logoDark || settings.logoLight).height(24).url()} alt="Logo" width={94} height={24} className="h-6 w-auto hidden dark:block" priority />
+                                        <Image src={urlFor(settings.logoLight).height(24).url()} alt={settings.siteTitle || 'Logo'} width={94} height={24} className="h-6 w-auto dark:hidden" priority />
+                                        <Image src={urlFor(settings.logoDark || settings.logoLight).height(24).url()} alt={settings.siteTitle || 'Logo'} width={94} height={24} className="h-6 w-auto hidden dark:block" priority />
                                     </>
                                 )}
                             </Link>
