@@ -6,7 +6,6 @@ import React from 'react'
 import Link from 'next/link'
 import { Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Logo } from '@/components/logo';
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { urlFor } from '@/lib/sanity-image';
 import Image from 'next/image';
@@ -51,13 +50,11 @@ export function Header({ settings }: HeaderProps) {
                                 href="/"
                                 aria-label="home"
                                 className="flex items-center space-x-2">
-                                {settings?.logoLight ? (
+                                {settings?.logoLight && (
                                     <>
                                         <Image src={urlFor(settings.logoLight).height(24).url()} alt="Logo" width={94} height={24} className="h-6 w-auto dark:hidden" priority />
                                         <Image src={urlFor(settings.logoDark || settings.logoLight).height(24).url()} alt="Logo" width={94} height={24} className="h-6 w-auto hidden dark:block" priority />
                                     </>
-                                ) : (
-                                    <Logo />
                                 )}
                             </Link>
                         </div>
