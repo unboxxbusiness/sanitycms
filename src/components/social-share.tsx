@@ -13,6 +13,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "./ui/button";
+import { usePathname } from "next/navigation";
+
 
 const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg
@@ -29,6 +31,7 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export function SocialShare() {
   const { toast } = useToast();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [currentUrl, setCurrentUrl] = useState("");
   const [shareTitle, setShareTitle] = useState("");
@@ -42,7 +45,7 @@ export function SocialShare() {
     }
   }, []);
 
-  if (!isMounted) {
+  if (!isMounted || pathname.startsWith('/studio')) {
     return null;
   }
 
@@ -75,10 +78,10 @@ export function SocialShare() {
     <div className="fixed bottom-4 right-4 z-50">
         <TooltipProvider>
             <Dock direction="vertical" className="p-2 gap-2">
-                <DockIcon onClick={() => setIsOpen(!isOpen)}>
+                <DockIcon>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="size-12 rounded-full">
+                            <Button variant="ghost" size="icon" className="size-12 rounded-full" onClick={() => setIsOpen(!isOpen)}>
                                 {isOpen ? <X className="size-5" /> : <Share2 className="size-5" />}
                             </Button>
                         </TooltipTrigger>
