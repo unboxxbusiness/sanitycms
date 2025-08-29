@@ -15,6 +15,8 @@ import { ArrowLeft } from 'lucide-react';
 import { PostCard, type Post } from '@/components/post-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { CtaBlock } from '@/components/blocks/cta-block';
+import { VideoBlock } from '@/components/blocks/video-block';
+import { DonationBlock } from '@/components/blocks/donation-block';
 
 export const revalidate = 60
 
@@ -74,6 +76,12 @@ async function getPostData(slug: string): Promise<PageData> {
             name,
             content[]{
               ...,
+              _type == 'donationBlock' => {
+                ...,
+                "donationTiers": donationTiers[]->{
+                  ...
+                }
+              }
             }
           }
         },
@@ -128,6 +136,10 @@ const portableTextComponents: any = {
             switch(block._type) {
               case 'ctaBlock':
                 return <CtaBlock key={block._key} {...block} className="my-8" />;
+              case 'videoBlock':
+                return <VideoBlock key={block._key} {...block} className="my-8" />;
+              case 'donationBlock':
+                return <DonationBlock key={block._key} {...block} className="my-8" />;
               case 'block':
                 return (
                     <div className="prose prose-lg max-w-none dark:prose-invert my-8" key={block._key}>
