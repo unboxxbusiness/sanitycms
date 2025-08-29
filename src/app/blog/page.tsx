@@ -51,7 +51,7 @@ export default async function BlogIndexPage() {
 
     return (
         <div className="flex flex-col min-h-screen">
-            <div className="flex-1 w-full py-20 lg:py-32">
+            <main className="flex-1 w-full py-20 lg:py-32">
                 <div className="container mx-auto flex flex-col gap-12 px-4">
                     <div className="flex w-full flex-col text-center items-center gap-4">
                         <h1 className="text-4xl md:text-6xl tracking-tighter max-w-3xl font-bold">
@@ -85,7 +85,7 @@ export default async function BlogIndexPage() {
                         </>
                     )}
                 </div>
-            </div>
+            </main>
         </div>
     )
 }

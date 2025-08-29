@@ -204,7 +204,7 @@ export default async function BlogPostPage({ params }: PostProps) {
                     </div>
                 )}
                 
-                <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">{post.title}</h1>
+                <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">{post.title}</h1>
                 
                 <div className="flex flex-wrap items-center text-sm text-muted-foreground mb-8 gap-x-4 gap-y-2">
                     {post.author?.picture && (

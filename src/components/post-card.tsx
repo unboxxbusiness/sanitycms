@@ -34,7 +34,7 @@ export const PostCard = ({ post, featured = false }: { post: Post, featured?: bo
     return (
         <article key={post._id} className={cn(
             "flex flex-col group",
-            featured ? "md:flex-row md:gap-8" : "gap-4"
+            featured ? "gap-4 md:flex-row md:gap-8" : "gap-4"
         )}>
             {post.coverImage && (
                 <Link
@@ -54,7 +54,7 @@ export const PostCard = ({ post, featured = false }: { post: Post, featured?: bo
             )}
             <div className={cn(
                 "flex flex-col",
-                featured ? "md:w-1/2 justify-center" : "gap-2 mt-4 md:mt-0"
+                featured ? "md:w-1/2 justify-center" : "gap-2"
             )}>
                 {post.categories && post.categories[0] && (
                      <div className="flex gap-2">
@@ -62,7 +62,7 @@ export const PostCard = ({ post, featured = false }: { post: Post, featured?: bo
                      </div>
                 )}
                 <h3 className={cn(
-                    "font-bold tracking-tight",
+                    "font-bold tracking-tight mt-2",
                     featured ? "text-2xl md:text-3xl lg:text-4xl" : "text-xl"
                 )}>
                     <Link href={`/blog/${post.slug.current}`} className="hover:text-primary transition-colors">
@@ -90,5 +90,3 @@ export const PostCard = ({ post, featured = false }: { post: Post, featured?: bo
         </article>
     )
 }
-
-    

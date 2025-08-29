@@ -73,7 +73,7 @@ export function HeroBlock({ headline, subheadline, image, imageAlt, buttons, sho
                                 </Link>
                                 )}
                                 <h1
-                                    className="mt-8 max-w-4xl mx-auto text-balance text-5xl font-bold md:text-6xl lg:mt-16 xl:text-7xl">
+                                    className="mt-8 max-w-4xl mx-auto text-balance text-4xl font-bold sm:text-5xl md:text-6xl lg:mt-16 xl:text-7xl">
                                     {headline}
                                 </h1>
                                 {subheadline && <p
@@ -134,6 +134,7 @@ export function HeroBlock({ headline, subheadline, image, imageAlt, buttons, sho
                                         alt={imageAlt || "App screen"}
                                         width={2700}
                                         height={1440}
+                                        priority
                                     />
                                 )}
                             </div>
