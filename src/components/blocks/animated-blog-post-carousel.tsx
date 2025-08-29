@@ -138,7 +138,7 @@ export function AnimatedBlogPostCarousel({
                 </motion.span>
               ))}
             </motion.p>
-            <Button asChild className="mt-6">
+            <Button asChild className="mt-6 mb-4">
                 <Link href={posts[active].href}>Read More</Link>
             </Button>
           </motion.div>
