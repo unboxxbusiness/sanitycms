@@ -87,7 +87,7 @@ const DockIcon = ({
         <div
             ref={ref}
             className={cn(
-                "flex aspect-square items-center justify-center rounded-full bg-neutral-100/50 dark:bg-neutral-800/50",
+                "flex aspect-square items-center justify-center rounded-full w-10",
                 className
             )}
             {...props}
@@ -99,19 +99,23 @@ const DockIcon = ({
 
   const distance = useTransform(motionValue, (val: number) => {
     const bounds = ref.current?.getBoundingClientRect() ?? { x: 0, y: 0, width: 0, height: 0 };
-    const center = mouseX ? bounds.x + bounds.width / 2 : bounds.y + bounds.height / 2;
+    const center = mouseY ? bounds.y + bounds.height / 2 : bounds.x + bounds.width / 2;
     return val - center;
   });
 
-  const widthSync = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
-  const width = useSpring(widthSync, { mass: 0.2, stiffness: 150, damping: 15 });
+  const scaleSync = useTransform(distance, [-150, 0, 150], [1, 1.75, 1]);
+  const scale = useSpring(scaleSync, {
+    mass: 0.1,
+    stiffness: 150,
+    damping: 12,
+  });
 
   return (
     <motion.div
       ref={ref}
-      style={{ width }}
+      style={{ scale }}
       className={cn(
-        "flex aspect-square items-center justify-center rounded-full bg-neutral-100/50 dark:bg-neutral-800/50",
+        "flex aspect-square items-center justify-center rounded-full w-10",
         className
       )}
       {...props}

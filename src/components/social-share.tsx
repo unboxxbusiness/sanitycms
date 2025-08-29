@@ -74,7 +74,7 @@ export function SocialShare() {
   return (
     <div className="fixed bottom-4 right-4 z-50">
         <TooltipProvider>
-            <Dock direction="vertical" className="p-2 gap-2" data-state={isOpen ? 'open' : 'closed'}>
+            <Dock direction="vertical" className="p-2 gap-2">
                 <DockIcon onClick={() => setIsOpen(!isOpen)}>
                     <Tooltip>
                         <TooltipTrigger asChild>
