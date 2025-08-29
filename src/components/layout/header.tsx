@@ -55,11 +55,16 @@ export function Header() {
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
+    
     return (
         <header key="header">
             <nav
-                className="fixed z-50 group w-full px-2">
-                <div className={cn('mx-auto mt-2 max-w-6xl px-6 transition-all duration-300 lg:px-12', isScrolled && 'bg-background/50 max-w-4xl rounded-2xl border backdrop-blur-lg lg:px-5')}>
+                className={cn(
+                    "fixed top-0 z-50 w-full transition-all duration-300",
+                    isScrolled ? "bg-background/80 backdrop-blur-lg" : ""
+                )}
+            >
+                <div className="container mx-auto max-w-6xl px-6 lg:px-12">
                     <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
                         <div className="relative z-30 flex w-full justify-between lg:w-auto">
                             <Link
@@ -115,20 +120,18 @@ export function Header() {
                                 </Sheet>
                             </div>
                         </div>
-                        <div className={cn("hidden w-full flex-col items-center justify-center gap-6 bg-background p-6 shadow-2xl shadow-zinc-300/20 dark:shadow-none lg:static lg:w-fit lg:flex-row lg:gap-0 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent lg:flex")}>
-                            <div className="absolute inset-0 m-auto hidden size-fit lg:block">
-                                <ul className="flex gap-8 text-sm">
-                                    {navLinks.map((item, index) => (
-                                        <li key={index}>
-                                            <Link
-                                                href={item.link}
-                                                className="text-foreground/80 hover:text-foreground block duration-150">
-                                                <span>{item.text}</span>
-                                            </Link>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+                        <div className={cn("hidden w-full flex-col items-center justify-center gap-6 p-6 lg:static lg:w-fit lg:flex-row lg:gap-8 lg:space-y-0 lg:p-0 lg:flex")}>
+                            <ul className="flex flex-col gap-6 text-base lg:flex-row lg:gap-8 lg:text-sm">
+                                {navLinks.map((item, index) => (
+                                    <li key={index}>
+                                        <Link
+                                            href={item.link}
+                                            className="text-foreground/80 hover:text-foreground block duration-150">
+                                            <span>{item.text}</span>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
                             
                             <div className="flex w-full flex-col space-y-3 sm:w-fit sm:flex-row sm:items-center sm:gap-3 sm:space-y-0">
                                 <div className="hidden lg:flex items-center gap-3">
