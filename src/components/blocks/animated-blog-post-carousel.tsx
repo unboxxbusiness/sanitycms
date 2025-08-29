@@ -57,7 +57,7 @@ export function AnimatedBlogPostCarousel({
           <AnimatePresence>
             {posts.map((post, index) => (
               <motion.div
-                key={post.imageUrl}
+                key={`${post.href}-${index}`}
                 initial={{
                   opacity: 0,
                   scale: 0.9,
