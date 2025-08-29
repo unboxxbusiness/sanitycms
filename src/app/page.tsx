@@ -1,5 +1,4 @@
 // src/app/page.tsx
-import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import Link from 'next/link';
 import { client } from '@/lib/sanity';
@@ -112,7 +111,6 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
       <main className="flex-1">
         <BlockRenderer blocks={data.pageBuilder} />
       </main>
@@ -120,5 +118,3 @@ export default async function Home() {
     </div>
   );
 }
-
-    

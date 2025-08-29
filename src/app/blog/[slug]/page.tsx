@@ -4,7 +4,6 @@ import { urlFor } from '@/lib/sanity-image';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { PortableText } from '@portabletext/react';
 import { cn } from '@/lib/utils';
@@ -184,7 +183,6 @@ export default async function BlogPostPage({ params }: PostProps) {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
       <main className="flex-1 py-16 md:py-24">
         <div className="container mx-auto px-4 max-w-4xl">
             <div className="mb-8">
@@ -281,5 +279,3 @@ export default async function BlogPostPage({ params }: PostProps) {
     </div>
   );
 }
-
-    
