@@ -5,6 +5,9 @@ import { usePathname } from 'next/navigation';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
+import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '../ui/toaster';
+import { SocialShare } from '../social-share';
 
 interface NavLink {
   _key: string;
@@ -55,12 +58,19 @@ export function AppLayout({ settings, children }: AppLayoutProps) {
   const isStudioPage = pathname.startsWith('/studio');
 
   return (
-    <>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
       {!isStudioPage && <Header settings={settings} />}
       <main className="flex-1">
         {children}
       </main>
       {!isStudioPage && <Footer settings={settings} />}
-    </>
+      <Toaster />
+      <SocialShare />
+    </ThemeProvider>
   );
 }

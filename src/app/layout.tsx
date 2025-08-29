@@ -1,10 +1,7 @@
 
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
-import { Toaster } from "@/components/ui/toaster";
 import { cn } from '@/lib/utils';
-import { ThemeProvider } from '@/components/theme-provider';
-import { SocialShare } from '@/components/social-share';
 import { client } from '@/lib/sanity';
 import { AppLayout } from '@/components/layout/app-layout';
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
@@ -103,18 +100,9 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn("font-body antialiased min-h-screen bg-background flex flex-col")} suppressHydrationWarning>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <AppLayout settings={settings}>
-            {children}
-          </AppLayout>
-          <Toaster />
-          <SocialShare />
-        </ThemeProvider>
+        <AppLayout settings={settings}>
+          {children}
+        </AppLayout>
       </body>
     </html>
   );
