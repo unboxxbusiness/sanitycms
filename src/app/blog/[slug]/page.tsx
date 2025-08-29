@@ -66,7 +66,7 @@ async function getPostData(slug: string): Promise<PageData> {
         content,
         seo
     },
-    "morePosts": *[_type == "post" && slug.current != $slug] | order(_createdAt desc)[0...3]{
+    "morePosts": *[_type == "post" && slug.current != $slug] | order(_createdAt desc)[0...2]{
         _id,
         title,
         slug,
