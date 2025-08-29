@@ -13,6 +13,7 @@ import testimonialsBlock from './blocks/testimonialsBlock'
 import textBlock from './blocks/textBlock'
 import videoBlock from './blocks/videoBlock'
 import donationBlock from './blocks/donationBlock'
+import blogPostGridBlock from './blocks/blogPostGridBlock'
 
 // Document types used by blocks
 import partner from './documents/partner'
@@ -53,4 +54,5 @@ export const schemaTypes = [
     textBlock,
     videoBlock,
     donationBlock,
+    blogPostGridBlock,
 ]

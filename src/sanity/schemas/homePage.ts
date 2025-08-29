@@ -26,6 +26,7 @@ export default defineType({
         {type: 'textBlock'},
         {type: 'videoBlock'},
         {type: 'donationBlock'},
+        {type: 'blogPostGridBlock'},
       ],
     }),
   ],
