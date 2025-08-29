@@ -1,10 +1,17 @@
 
-import type { Metadata, Viewport } from 'next';
+'use client'
+
+import { usePathname } from 'next/navigation';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { client } from '@/lib/sanity';
-import { AppLayout } from '@/components/layout/app-layout';
+import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
 import { SanityImageSource } from '@sanity/image-url/lib/types/types';
+import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '@/components/ui/toaster';
+import { SocialShare } from '@/components/social-share';
+import React, { useState, useEffect } from 'react';
 
 interface NavLink {
   _key: string;
@@ -67,42 +74,54 @@ async function getSettings(): Promise<SettingsData | null> {
         newsletterHeadline,
         newsletterSupportingText
     }`;
-    const data = await client.fetch(query, {}, {
-        next: {
-            tags: ['settings']
-        }
-    });
-    return data;
+    try {
+        const data = await client.fetch(query, {}, {
+            next: {
+                tags: ['settings']
+            }
+        });
+        return data;
+    } catch (error) {
+        console.error("Failed to fetch settings:", error);
+        return null;
+    }
 }
 
-export const metadata: Metadata = {
-    title: {
-      template: `%s | AmulyaX India`,
-      default: 'AmulyaX India',
-    },
-    description: 'Innovative Solutions for India',
-}
 
-export const viewport: Viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: 'white' },
-    { media: '(prefers-color-scheme: dark)', color: 'black' },
-  ],
-}
-
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const settings = await getSettings();
+  const [settings, setSettings] = useState<SettingsData | null>(null);
+  const pathname = usePathname();
+  const isStudioPage = pathname.startsWith('/studio');
+
+  useEffect(() => {
+    async function fetchData() {
+        const data = await getSettings();
+        setSettings(data);
+    }
+    fetchData();
+  }, []);
 
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn("font-body antialiased min-h-screen bg-background flex flex-col")} suppressHydrationWarning>
-        <AppLayout settings={settings}>
-          {children}
-        </AppLayout>
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+            >
+            {!isStudioPage && <Header settings={settings} />}
+            <main className="flex-1">
+                {children}
+            </main>
+            {!isStudioPage && <Footer settings={settings} />}
+            <Toaster />
+            <SocialShare />
+        </ThemeProvider>
       </body>
     </html>
   );
