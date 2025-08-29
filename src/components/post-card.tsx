@@ -13,7 +13,7 @@ export interface Post {
     excerpt: string;
     coverImage: any;
     author: {
-        name: string;
+        name:string;
         picture?: any;
     };
     categories?: { title: string }[];
