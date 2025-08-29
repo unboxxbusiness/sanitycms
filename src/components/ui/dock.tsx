@@ -50,7 +50,7 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
       >
         {React.Children.map(children, (child) => {
             if (!React.isValidElement(child)) {
-                return null;
+                return child;
             }
             return React.cloneElement(child as React.ReactElement<PropsWithChildren<DockIconProps>>, {
                 mouseX: direction === 'horizontal' ? mouseX : undefined,
@@ -104,7 +104,7 @@ const DockIcon = ({
   });
 
   const widthSync = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
-  const width = useSpring(widthSync, { mass: 0.1, stiffness: 150, damping: 12 });
+  const width = useSpring(widthSync, { mass: 0.2, stiffness: 150, damping: 15 });
 
   return (
     <motion.div
