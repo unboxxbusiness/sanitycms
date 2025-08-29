@@ -158,7 +158,7 @@ export function Footer() {
             <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} {settings?.copyrightText || "AmulyaX India. All rights reserved."}</p>
             <div className="flex gap-4 mt-4 md:mt-0">
                 {settings?.footerLegalLinks?.map(link => (
-                  <Link key={link._key} href={link.link} className="text-sm text-muted-foreground hover:text-primary transition-colors">{link.text}</Link></li>
+                  <li key={link._key}><Link href={link.link} className="text-sm text-muted-foreground hover:text-primary transition-colors">{link.text}</Link></li>
                 ))}
             </div>
         </div>
