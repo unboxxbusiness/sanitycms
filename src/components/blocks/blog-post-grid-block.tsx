@@ -1,9 +1,15 @@
 // src/components/blocks/blog-post-grid-block.tsx
-import React from 'react';
+'use client'
+
+import React, { useEffect, useState } from 'react';
 import { client } from '@/lib/sanity';
 import { urlFor } from '@/lib/sanity-image';
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion, AnimatePresence } from "framer-motion";
+import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
+import { cn } from '@/lib/utils';
+import { Button } from '../ui/button';
 
 interface Post {
     _id: string;
@@ -21,6 +27,13 @@ interface BlogPostGridBlockProps {
     heading?: string;
     subheading?: string;
     posts: Post[]; // These are references, so we'll need to fetch the full data
+}
+
+interface AnimatedPost {
+  title: string;
+  excerpt: string;
+  imageUrl: string;
+  href: string;
 }
 
 async function fetchPosts(postReferences: {_ref: string}[]): Promise<Post[]> {
@@ -44,12 +57,150 @@ async function fetchPosts(postReferences: {_ref: string}[]): Promise<Post[]> {
     return postIds.map(id => data.find((post: Post) => post._id === id)).filter(Boolean);
 }
 
+const AnimatedPostCarousel = ({
+  posts,
+  autoplay = false,
+  className,
+}: {
+  posts: AnimatedPost[];
+  autoplay?: boolean;
+  className?: string;
+}) => {
+  const [active, setActive] = useState(0);
+
+  const handleNext = () => {
+    setActive((prev) => (prev + 1) % posts.length);
+  };
+
+  const handlePrev = () => {
+    setActive((prev) => (prev - 1 + posts.length) % posts.length);
+  };
+
+  const isActive = (index: number) => {
+    return index === active;
+  };
+
+  useEffect(() => {
+    if (autoplay) {
+      const interval = setInterval(handleNext, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [autoplay, posts.length]);
+
+  const randomRotateY = () => {
+    return Math.floor(Math.random() * 21) - 10;
+  };
+
+  return (
+    <div className={cn("max-w-sm md:max-w-4xl mx-auto px-4 md:px-8 lg:px-12", className)}>
+      <div className="relative grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-20">
+        <div className="relative h-80 w-full">
+          <AnimatePresence>
+            {posts.map((post, index) => (
+              <motion.div
+                key={post.imageUrl}
+                initial={{
+                  opacity: 0,
+                  scale: 0.9,
+                  z: -100,
+                  rotate: randomRotateY(),
+                }}
+                animate={{
+                  opacity: isActive(index) ? 1 : 0.7,
+                  scale: isActive(index) ? 1 : 0.95,
+                  z: isActive(index) ? 0 : -100,
+                  rotate: isActive(index) ? 0 : randomRotateY(),
+                  zIndex: isActive(index) ? 999 : posts.length + 2 - index,
+                  y: isActive(index) ? [0, -40, 0] : 0,
+                }}
+                exit={{
+                  opacity: 0,
+                  scale: 0.9,
+                  z: 100,
+                  rotate: randomRotateY(),
+                }}
+                transition={{
+                  duration: 0.4,
+                  ease: "easeInOut",
+                }}
+                className="absolute inset-0 origin-bottom"
+              >
+                <Link href={post.href}>
+                    <Image
+                        src={post.imageUrl}
+                        alt={post.title}
+                        width={500}
+                        height={500}
+                        draggable={false}
+                        className="h-full w-full rounded-3xl object-cover object-center shadow-lg"
+                    />
+                </Link>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+        <div className="flex justify-between flex-col py-4">
+          <motion.div
+            key={active}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -20, opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+          >
+            <h3 className="text-2xl font-bold text-foreground">
+                <Link href={posts[active].href}>{posts[active].title}</Link>
+            </h3>
+            <motion.p className="text-lg text-muted-foreground mt-4">
+              {posts[active].excerpt.split(" ").map((word, index) => (
+                <motion.span
+                  key={index}
+                  initial={{ filter: "blur(10px)", opacity: 0, y: 5 }}
+                  animate={{ filter: "blur(0px)", opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2, ease: "easeInOut", delay: 0.02 * index }}
+                  className="inline-block"
+                >
+                  {word}&nbsp;
+                </motion.span>
+              ))}
+            </motion.p>
+            <Button asChild className="mt-6">
+                <Link href={posts[active].href}>Read More</Link>
+            </Button>
+          </motion.div>
+          <div className="flex gap-4 pt-12 md:pt-0">
+            <button
+              onClick={handlePrev}
+              className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center group/button"
+            >
+              <IconArrowLeft className="h-5 w-5 text-foreground group-hover/button:rotate-12 transition-transform duration-300" />
+            </button>
+            <button
+              onClick={handleNext}
+              className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center group/button"
+            >
+              <IconArrowRight className="h-5 w-5 text-foreground group-hover/button:-rotate-12 transition-transform duration-300" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
 export async function BlogPostGridBlock({ heading, subheading, posts: postRefs }: BlogPostGridBlockProps) {
     const posts = await fetchPosts(postRefs as any);
 
     if (!posts || posts.length === 0) {
         return null;
     }
+
+    const animatedPosts: AnimatedPost[] = posts.map(post => ({
+        title: post.title,
+        excerpt: post.excerpt,
+        imageUrl: urlFor(post.coverImage).width(500).height(500).url(),
+        href: `/blog/${post.slug.current}`
+    }));
 
     return (
         <section className="py-20 md:py-28 bg-secondary/20">
@@ -64,32 +215,9 @@ export async function BlogPostGridBlock({ heading, subheading, posts: postRefs }
                         )}
                     </div>
                 )}
+                
+                <AnimatedPostCarousel posts={animatedPosts} autoplay={true} />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {posts.map((post) => (
-                        <Link key={post._id} href={`/blog/${post.slug.current}`} className="group block">
-                            <div className="bg-card rounded-lg overflow-hidden shadow-md h-full flex flex-col transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1">
-                                {post.coverImage && (
-                                    <div className="relative w-full h-48">
-                                        <Image
-                                            src={urlFor(post.coverImage).width(400).height(250).url()}
-                                            alt={post.title}
-                                            fill
-                                            className="object-cover"
-                                        />
-                                    </div>
-                                )}
-                                <div className="p-6 flex-1 flex flex-col">
-                                    <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">{post.title}</h3>
-                                    <p className="text-muted-foreground text-sm flex-1">{post.excerpt}</p>
-                                    <div className="mt-4 text-xs text-muted-foreground">
-                                        <span>By {post.author?.name || 'AmulyaX Team'}</span> | <span>{new Date(post._createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </Link>
-                    ))}
-                </div>
             </div>
         </section>
     );
