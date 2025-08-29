@@ -1,9 +1,10 @@
 
 // src/components/layout/footer.tsx
+'use client'
+
 import { Logo } from '@/components/logo'
 import Link from "next/link"
 import { Github, Twitter, Linkedin } from "lucide-react"
-import { client } from "@/lib/sanity"
 import { SanityImageSource } from "@sanity/image-url/lib/types/types"
 import Image from "next/image"
 import { urlFor } from "@/lib/sanity-image"
@@ -21,14 +22,14 @@ interface SocialLink {
   url: string;
 }
 
-interface Settings {
+interface FooterSettings {
   logoLight?: SanityImageSource;
   logoDark?: SanityImageSource;
-  footerDescription: string;
-  footerProductLinks: NavLink[];
-  footerCompanyLinks: NavLink[];
-  footerLegalLinks: NavLink[];
-  socialLinks: SocialLink[];
+  footerDescription?: string;
+  footerProductLinks?: NavLink[];
+  footerCompanyLinks?: NavLink[];
+  footerLegalLinks?: NavLink[];
+  socialLinks?: SocialLink[];
   newsletterHeadline?: string;
   newsletterSupportingText?: string;
   copyrightText?: string;
@@ -38,36 +39,17 @@ interface Settings {
   membershipDialogDescription?: string;
 }
 
+interface FooterProps {
+    settings: FooterSettings | null;
+}
+
 const iconMap = {
   github: <Github className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />,
   twitter: <Twitter className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />,
   linkedin: <Linkedin className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />,
 }
 
-async function getFooterData(): Promise<Settings | null> {
-    const query = `*[_type == "settings"][0]{ 
-      logoLight,
-      logoDark, 
-      footerDescription,
-      footerProductLinks, 
-      footerCompanyLinks, 
-      footerLegalLinks, 
-      socialLinks,
-      newsletterHeadline,
-      newsletterSupportingText,
-      copyrightText,
-      showMembershipCta,
-      membershipCtaText,
-      membershipDialogTitle,
-      membershipDialogDescription
-    }`;
-    const data = await client.fetch(query);
-    return data;
-}
-
-export async function Footer() {
-  const settings = await getFooterData();
-
+export function Footer({ settings }: FooterProps) {
   return (
     <footer id="contact" className="py-12 bg-secondary/30">
        <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

@@ -1,5 +1,7 @@
 
 // src/components/layout/header.tsx
+'use client'
+
 import React from 'react'
 import Link from 'next/link'
 import { Menu } from 'lucide-react'
@@ -10,7 +12,6 @@ import { urlFor } from '@/lib/sanity-image';
 import Image from 'next/image';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
-import { client } from '@/lib/sanity';
 
 interface NavLink {
   _key: string;
@@ -23,30 +24,18 @@ interface Cta {
     link:string;
 }
 
-interface Settings {
+interface HeaderSettings {
   logoLight?: SanityImageSource;
   logoDark?: SanityImageSource;
-  mainNavigation: NavLink[];
-  headerCta: Cta;
+  mainNavigation?: NavLink[];
+  headerCta?: Cta;
 }
 
-async function getHeaderData(): Promise<Settings | null> {
-    const query = `*[_type == "settings"][0]{ 
-        logoLight,
-        logoDark, 
-        mainNavigation, 
-        headerCta 
-    }`;
-    const data = await client.fetch(query, {}, {
-        next: {
-            tags: ['settings']
-        }
-    });
-    return data;
+interface HeaderProps {
+    settings: HeaderSettings | null;
 }
 
-export async function Header() {
-    const settings = await getHeaderData();
+export function Header({ settings }: HeaderProps) {
     const navLinks = settings?.mainNavigation || [];
     
     return (
