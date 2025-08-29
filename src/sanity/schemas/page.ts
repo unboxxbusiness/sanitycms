@@ -1,10 +1,12 @@
 // src/sanity/schemas/page.ts
 import {defineField, defineType} from 'sanity'
+import { FileText } from 'lucide-react'
 
 export default defineType({
   name: 'page',
   title: 'Page',
   type: 'document',
+  icon: FileText,
   fields: [
     defineField({
       name: 'title',

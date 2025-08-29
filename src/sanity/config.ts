@@ -3,7 +3,9 @@ import {defineConfig} from 'sanity'
 import {structureTool, type StructureResolver} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './schemas'
-import { Book, User, Tag } from 'lucide-react'
+import { Book, User, Tag, Layers, Settings, Home, FileText } from 'lucide-react'
+import { studioTheme } from './studio-theme'
+import { StudioLogo } from './studio-logo'
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!
@@ -12,7 +14,7 @@ const singletonActions = new Set(["publish", "discardChanges", "restore"])
 const singletonTypes = new Set(["homePage", "settings"])
 
 // The document types that should not be included in the main navigation list
-const hiddenDocTypes = ['partner', 'testimonial', 'program', 'impactMetric', 'donationTier', 'post', 'author', 'category']
+const hiddenDocTypes = ['partner', 'testimonial', 'program', 'impactMetric', 'donationTier', 'post', 'author', 'category', 'reusableBlock']
 
 export const structure: StructureResolver = (S) =>
   S.list()
@@ -21,6 +23,7 @@ export const structure: StructureResolver = (S) =>
       S.listItem()
         .title('Site Settings')
         .id('settings')
+        .icon(Settings)
         .child(
           S.document()
             .schemaType('settings')
@@ -30,23 +33,8 @@ export const structure: StructureResolver = (S) =>
       S.divider(),
 
       S.listItem()
-        .title('Blog')
-        .icon(Book)
-        .child(
-          S.list()
-            .title('Blog')
-            .items([
-              S.documentTypeListItem('post').title('All Posts'),
-              S.documentTypeListItem('author').title('Authors').icon(User),
-              S.documentTypeListItem('category').title('Categories').icon(Tag),
-            ])
-        ),
-      
-      S.divider(),
-
-      // Singleton for the Home Page
-      S.listItem()
         .title('Home Page')
+        .icon(Home)
         .id('homePage')
         .child(
           S.document()
@@ -54,12 +42,29 @@ export const structure: StructureResolver = (S) =>
             .documentId('homePage')
         ),
       
-      // Document list for all other pages
-      S.documentTypeListItem('page').title('Pages'),
+      S.documentTypeListItem('page').title('Other Pages').icon(FileText),
+      
+      S.divider(),
+
+      S.listItem()
+        .title('Blog Content')
+        .icon(Book)
+        .child(
+          S.list()
+            .title('Blog Content')
+            .items([
+              S.documentTypeListItem('post').title('All Posts'),
+              S.documentTypeListItem('author').title('Authors').icon(User),
+              S.documentTypeListItem('category').title('Categories').icon(Tag),
+            ])
+        ),
 
       S.divider(),
 
-      // Filter out the singleton and hidden document types from the main list
+       S.documentTypeListItem('reusableBlock').title('Reusable Content').icon(Layers),
+
+      S.divider(),
+
       ...S.documentTypeListItems().filter(
         (listItem) => {
             const id = listItem.getId()
@@ -96,4 +101,11 @@ export default defineConfig({
         ? input.filter(({ action }) => action && singletonActions.has(action))
         : input,
   },
+  
+  studio: {
+    theme: studioTheme,
+    components: {
+        logo: StudioLogo
+    }
+  }
 })

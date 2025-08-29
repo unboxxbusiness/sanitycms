@@ -2,36 +2,73 @@ import {defineConfig} from 'sanity'
 import {structureTool, type StructureResolver} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './src/sanity/schemas'
+import { Book, User, Tag, Layers, Settings, Home, FileText } from 'lucide-react'
+import { studioTheme } from './src/sanity/studio-theme'
+import { StudioLogo } from './src/sanity/studio-logo'
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!
 
 const singletonActions = new Set(["publish", "discardChanges", "restore"])
-const singletonTypes = new Set(["homePage"])
+const singletonTypes = new Set(["homePage", "settings"])
+
+const hiddenDocTypes = ['partner', 'testimonial', 'program', 'impactMetric', 'donationTier', 'post', 'author', 'category', 'reusableBlock']
 
 export const structure: StructureResolver = (S) =>
   S.list()
     .title('Content')
     .items([
-      // Our singleton type has a list item with a custom child
+      S.listItem()
+        .title('Site Settings')
+        .id('settings')
+        .icon(Settings)
+        .child(
+          S.document()
+            .schemaType('settings')
+            .documentId('settings')
+        ),
+      
+      S.divider(),
+
       S.listItem()
         .title('Home Page')
+        .icon(Home)
         .id('homePage')
         .child(
-          // Instead of rendering a list of documents, we render a single
-          // document, specifying the `documentId` manually to ensure
-          // that we're editing the single instance of the document
           S.document()
             .schemaType('homePage')
             .documentId('homePage')
         ),
+      
+      S.documentTypeListItem('page').title('Other Pages').icon(FileText),
+      
+      S.divider(),
 
-      // Regular document types
-      S.documentTypeListItem('page').title('Pages'),
+      S.listItem()
+        .title('Blog Content')
+        .icon(Book)
+        .child(
+          S.list()
+            .title('Blog Content')
+            .items([
+              S.documentTypeListItem('post').title('All Posts'),
+              S.documentTypeListItem('author').title('Authors').icon(User),
+              S.documentTypeListItem('category').title('Categories').icon(Tag),
+            ])
+        ),
 
-      // The rest of our document types
+      S.divider(),
+
+       S.documentTypeListItem('reusableBlock').title('Reusable Content').icon(Layers),
+
+      S.divider(),
+
       ...S.documentTypeListItems().filter(
-        (listItem) => !['homePage', 'page'].includes(listItem.getId() as string)
+        (listItem) => {
+            const id = listItem.getId()
+            if (!id) return false
+            return !singletonTypes.has(id) && !hiddenDocTypes.includes(id) && id !== 'page'
+        }
       ),
     ])
 
@@ -49,17 +86,21 @@ export default defineConfig({
 
   schema: {
     types: schemaTypes,
-    // Filter out singleton types from the global “New document” menu options
-    templates: (templates) =>
-      templates.filter(({ schemaType }) => !singletonTypes.has(schemaType)),
+     templates: (templates) =>
+        templates.filter(({ schemaType }) => !singletonTypes.has(schemaType)),
   },
 
   document: {
-    // For singleton types, filter out actions that are not explicitly included
-    // in the `singletonActions` list defined above
     actions: (input, context) =>
       singletonTypes.has(context.schemaType)
         ? input.filter(({ action }) => action && singletonActions.has(action))
         : input,
   },
+  
+  studio: {
+    theme: studioTheme,
+    components: {
+        logo: StudioLogo
+    }
+  }
 })
