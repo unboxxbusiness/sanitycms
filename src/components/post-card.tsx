@@ -9,7 +9,7 @@ export interface PostCardData {
   _id: string;
   title: string;
   slug: { current: string };
-  excerpt: string;
+  excerpt?: string;
   coverImage: SanityImageSource;
   author: {
     name: string;

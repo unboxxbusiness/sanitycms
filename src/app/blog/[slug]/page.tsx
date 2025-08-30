@@ -14,6 +14,7 @@ import { ArrowLeft } from 'lucide-react';
 import { BlockRenderer } from '@/components/block-renderer';
 import { AuthorBio } from '@/components/author-bio';
 import { PostCard, type PostCardData } from '@/components/post-card';
+import { SocialShare } from '@/components/social-share';
 
 export const revalidate = 60
 
@@ -221,6 +222,7 @@ export default async function BlogPostPage({ params }: PostProps) {
         </article>
       </main>
       <Footer />
+      <SocialShare />
     </div>
   );
 }

@@ -7,24 +7,18 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { cn } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
-import { MoveRight, User } from "lucide-react";
+import { MoveRight, User, ArrowLeft, ArrowRight } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import { PostCard, type PostCardData } from '@/components/post-card';
+import { SocialShare } from '@/components/social-share';
 
-interface SanityPost {
-    _id: string;
-    title: string;
-    slug: { current: string };
+
+interface SanityPost extends PostCardData {
     excerpt: string;
-    coverImage: any;
-    author: {
-        name: string;
-        picture?: any;
-    };
-    categories?: { title: string }[];
-    _createdAt: string;
-    views?: number;
     readTime?: number;
+    views?: number;
 }
 
 interface BlogPost {
@@ -84,7 +78,7 @@ const GridSection = ({
       {backgroundLabel && (
         <span
           className={cn(
-            "absolute -top-10 -z-50 select-none text-[180px] font-extrabold leading-[1] text-black/[0.03] md:text-[250px] lg:text-[400px] text-foreground/[0.025]",
+            "absolute -top-10 -z-50 select-none text-[180px] font-extrabold leading-[1] text-foreground/[0.025] md:text-[250px] lg:text-[400px]",
             backgroundPosition === "left" ? "-left-[18%]" : "-right-[28%]"
           )}
         >
@@ -92,7 +86,7 @@ const GridSection = ({
         </span>
       )}
       
-      <p className="mx-auto max-w-[800px] text-center text-xl !leading-[2] text-foreground/50 md:text-2xl mb-8">
+      <p className="mx-auto max-w-[800px] text-center text-xl !leading-[2] text-muted-foreground md:text-2xl mb-8">
         {description}
       </p>
       
@@ -140,11 +134,6 @@ const GridSection = ({
                         <span>•</span>
                         <span>{views} Views</span>
                     </div>
-                    {readTime && (
-                      <div className="text-xl font-semibold">
-                        {readTime} min read
-                      </div>
-                    )}
                   </div>
                 </div>
                 <MoveRight
@@ -165,26 +154,42 @@ const GridSection = ({
 
 
 export default function BlogIndexPage() {
-    const [posts, setPosts] = useState<BlogPost[]>([]);
+    const [allPosts, setAllPosts] = useState<SanityPost[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const postsPerPage = 9;
     
     useEffect(() => {
         const fetchAndSetPosts = async () => {
             const sanityPosts = await getPosts();
-            const formattedPosts = sanityPosts.map((post, index) => ({
-                id: post._id,
-                title: post.title,
-                category: post.categories?.[0]?.title || 'Insight',
-                imageUrl: post.coverImage ? urlFor(post.coverImage).width(800).height(600).url() : 'https://picsum.photos/800/600',
-                href: `/blog/${post.slug.current}`,
-                views: post.views || Math.floor(Math.random() * 2000) + 100, // Use Sanity data or fallback
-                authorName: post.author?.name || "AmulyaX Team",
-                readTime: post.readTime, // Use Sanity data
-                className: index === 1 ? 'lg:col-start-2' : ''
-            }));
-            setPosts(formattedPosts);
+            setAllPosts(sanityPosts);
         };
         fetchAndSetPosts();
     }, []);
+
+    const featuredPosts: BlogPost[] = allPosts.slice(0, 3).map((post, index) => ({
+        id: post._id,
+        title: post.title,
+        category: post.categories?.[0]?.title || 'Insight',
+        imageUrl: post.coverImage ? urlFor(post.coverImage).width(800).height(600).url() : 'https://picsum.photos/800/600',
+        href: `/blog/${post.slug.current}`,
+        views: post.views || Math.floor(Math.random() * 2000) + 100, // Fallback
+        authorName: post.author?.name || "AmulyaX Team",
+        readTime: post.readTime,
+        className: index === 1 ? 'lg:col-start-2' : ''
+    }));
+
+    const olderPosts = allPosts.slice(3);
+    const totalOlderPosts = olderPosts.length;
+    const totalPages = Math.ceil(totalOlderPosts / postsPerPage);
+    const paginatedPosts = olderPosts.slice((currentPage - 1) * postsPerPage, currentPage * postsPerPage);
+
+    const handleNextPage = () => {
+        setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+    };
+
+    const handlePrevPage = () => {
+        setCurrentPage((prev) => Math.max(prev - 1, 1));
+    };
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -193,11 +198,38 @@ export default function BlogIndexPage() {
                 <GridSection
                     title="Latest Articles"
                     description="Explore our latest articles, insights, and stories. We cover a range of topics from technology to social impact."
-                    posts={posts.slice(0, 3)} // We are only showing 3 posts in this layout
+                    posts={featuredPosts}
                     backgroundLabel="Blog"
                 />
+
+                {olderPosts.length > 0 && (
+                    <section className="py-16 md:py-24">
+                        <div className="container mx-auto px-4">
+                            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Older Posts</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {paginatedPosts.map((post) => (
+                                    <PostCard key={post._id} post={post} />
+                                ))}
+                            </div>
+                            {totalPages > 1 && (
+                                <div className="flex justify-center items-center gap-4 mt-12">
+                                    <Button onClick={handlePrevPage} disabled={currentPage === 1} variant="outline">
+                                        <ArrowLeft className="mr-2 h-4 w-4" /> Previous
+                                    </Button>
+                                    <span className="text-sm text-muted-foreground">
+                                        Page {currentPage} of {totalPages}
+                                    </span>
+                                    <Button onClick={handleNextPage} disabled={currentPage === totalPages} variant="outline">
+                                        Next <ArrowRight className="ml-2 h-4 w-4" />
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
+                    </section>
+                )}
             </main>
             <Footer />
+            <SocialShare />
         </div>
     )
 }
