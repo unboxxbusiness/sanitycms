@@ -14,7 +14,7 @@ import Image from 'next/image';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useTheme } from 'next-themes';
 import { Menu as AnimatedMenu, MenuItem, HoveredLink } from '@/components/ui/navbar-menu';
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 
@@ -98,6 +98,7 @@ export function Header() {
                                         </Button>
                                     </SheetTrigger>
                                     <SheetContent>
+                                        <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                                         <div className="flex flex-col h-full py-6">
                                             <div className="flex flex-col gap-6 text-lg">
                                                 <Accordion type="single" collapsible className="w-full">
@@ -140,7 +141,7 @@ export function Header() {
                         <div className={cn(
                             "w-full flex-col items-center justify-center gap-6 bg-transparent p-6 shadow-none lg:static lg:w-fit lg:flex-row lg:gap-0 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent lg:flex hidden"
                         )}>
-                             <AnimatedMenu setActive={setActive} className={cn('flex-col lg:flex-row lg:space-x-8', isScrolled && 'lg:bg-transparent')}>
+                             <AnimatedMenu setActive={setActive}>
                                 {navLinks.map((item) => (
                                     <React.Fragment key={item._key}>
                                         {item.children && item.children.length > 0 ? (
