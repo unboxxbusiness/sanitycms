@@ -1,4 +1,5 @@
 // src/sanity/schemas/index.ts
+import {defineField, defineType} from 'sanity'
 import page from './page'
 import homePage from './homePage'
 import settings from './settings'
@@ -29,36 +30,36 @@ import category from './documents/category'
 import reusableBlock from './documents/reusableBlock'
 
 // Define navLink and navItem here to be used in settings
-const navLink = {
+const navLink = defineType({
     name: 'navLink',
     title: 'Navigation Link',
     type: 'object',
     fields: [
-        { name: 'text', type: 'string', title: 'Link Text', validation: (Rule: any) => Rule.required() },
-        { name: 'link', type: 'string', title: 'Link URL', validation: (Rule: any) => Rule.required() }
+        defineField({ name: 'text', type: 'string', title: 'Link Text', validation: Rule => Rule.required() }),
+        defineField({ name: 'link', type: 'string', title: 'Link URL', validation: Rule => Rule.required() })
     ]
-};
+});
 
-const navItem = {
+const navItem = defineType({
     name: 'navItem',
     title: 'Navigation Item',
     type: 'object',
     fields: [
-        { name: 'text', type: 'string', title: 'Link Text', validation: (Rule: any) => Rule.required() },
-        { 
+        defineField({ name: 'text', type: 'string', title: 'Link Text', validation: Rule => Rule.required() }),
+        defineField({ 
             name: 'link', 
             type: 'string', 
             title: 'Link URL',
             description: 'Leave blank if this is a dropdown menu for sub-items.'
-        },
-        {
+        }),
+        defineField({
             name: 'children',
             title: 'Sub-menu Items',
             type: 'array',
             of: [{ type: 'navLink' }],
-            hidden: ({parent}: any) => !!parent.link,
+            hidden: ({parent}) => !!parent.link,
             description: 'Add items here to create a dropdown menu.'
-        }
+        })
     ],
     preview: {
         select: {
@@ -73,17 +74,17 @@ const navItem = {
             }
         }
     }
-};
+});
 
 export const schemaTypes = [
     // Document types
     page,
     homePage,
+    settings,
     partner,
     testimonial,
     program,
     impactMetric,
-    settings,
     donationTier,
     post,
     author,

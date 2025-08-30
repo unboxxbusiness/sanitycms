@@ -118,7 +118,7 @@ export function ProgramCardsBlock({ _key, heading, subheading, programs }: Progr
         <div className="mx-auto max-w-5xl space-y-8 px-6 md:space-y-16">
             {heading && (
                 <div className="relative z-10 mx-auto max-w-xl space-y-6 text-center md:space-y-12">
-                    <h2 className="text-balance text-4xl font-medium lg:text-5xl">{heading}</h2>
+                    <h2 className="text-balance text-3xl font-medium md:text-4xl lg:text-5xl">{heading}</h2>
                     {subheading && <p className="text-muted-foreground">{subheading}</p>}
                 </div>
             )}

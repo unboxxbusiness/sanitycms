@@ -33,7 +33,7 @@ export const MenuItem = ({
   const content = (
       <motion.div
         transition={{ duration: 0.3 }}
-        className="cursor-pointer text-foreground/80 hover:text-foreground flex items-center gap-1"
+        className="cursor-pointer text-foreground/80 hover:text-foreground flex items-center gap-1 px-3 py-2"
       >
         <span>{item}</span>
         {hasChildren && <ChevronDown className="h-4 w-4" />}
@@ -82,12 +82,12 @@ export const Menu = ({
   className?: string;
 }) => {
   return (
-    <nav
+    <div
       onMouseLeave={() => setActive(null)} // resets the state
-      className={cn("relative rounded-full border bg-card shadow-input flex justify-center space-x-4 px-8 py-4", className)}
+      className={cn("relative flex justify-center py-4", className)}
     >
       {children}
-    </nav>
+    </div>
   );
 };
 
