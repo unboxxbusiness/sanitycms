@@ -69,6 +69,9 @@ async function getPostData(slug: string): Promise<PostData> {
             "donationTiers": donationTiers[]->{
               ...
             }
+          },
+          _type == 'videoBlock' => {
+            ...
           }
         }
       }
@@ -101,6 +104,8 @@ export async function generateMetadata({ params }: PostProps): Promise<Metadata>
     
     const title = post.seo?.metaTitle || post.title;
     const description = post.seo?.metaDescription || post.excerpt;
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const canonicalUrl = `${siteUrl}/blog/${post.slug.current}`;
 
     const openGraphImages = post.coverImage ? [
         {
@@ -114,11 +119,14 @@ export async function generateMetadata({ params }: PostProps): Promise<Metadata>
     return {
       title,
       description,
+      alternates: {
+        canonical: canonicalUrl,
+      },
       openGraph: {
         title,
         description,
         type: 'article',
-        url: `/blog/${post.slug.current}`,
+        url: canonicalUrl,
         images: openGraphImages,
       }
     };

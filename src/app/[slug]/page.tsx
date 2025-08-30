@@ -6,6 +6,7 @@ import { Footer } from '@/components/layout/footer';
 import { BlockRenderer } from '@/components/block-renderer';
 import type { Metadata } from 'next';
 import { SocialShare } from '@/components/social-share';
+import { urlFor } from '@/lib/sanity-image';
 
 export const revalidate = 60 // revalidate at most every 60 seconds
 
@@ -18,6 +19,7 @@ interface PageData {
     metaDescription: string;
   };
   pageBuilder: any[];
+  heroImage?: any;
 }
 
 interface PageProps {
@@ -32,6 +34,7 @@ async function getPageData(slug: string): Promise<PageData> {
     title,
     slug,
     seo,
+    "heroImage": pageBuilder[_type == "heroBlock"][0].image,
     pageBuilder[]{
       ...,
       _type == 'heroBlock' => {
@@ -89,9 +92,32 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!page) {
     return {};
   }
+
+  const title = page.seo?.metaTitle || page.title;
+  const description = page.seo?.metaDescription;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+
+  const openGraphImages = page.heroImage ? [
+    {
+      url: urlFor(page.heroImage).width(1200).height(630).url(),
+      width: 1200,
+      height: 630,
+      alt: title,
+    }
+  ] : [];
+
   return {
-    title: page.seo?.metaTitle || page.title,
-    description: page.seo?.metaDescription,
+    title,
+    description,
+    alternates: {
+        canonical: `${siteUrl}/${page.slug.current}`,
+    },
+    openGraph: {
+      title,
+      description,
+      url: `${siteUrl}/${page.slug.current}`,
+      images: openGraphImages,
+    }
   };
 }
 
