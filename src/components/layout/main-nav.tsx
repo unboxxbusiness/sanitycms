@@ -52,10 +52,11 @@ export function MainNav({ items }: MainNavProps) {
             <NavigationMenuItem key={item._key}>
               <Link href={item.link} passHref>
                 <NavigationMenuLink 
+                  asChild
                   className={navigationMenuTriggerStyle()}
                   active={pathname === item.link}
                 >
-                  {item.text}
+                  <a>{item.text}</a>
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
