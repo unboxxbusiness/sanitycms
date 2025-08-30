@@ -5,8 +5,9 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { BlockRenderer } from '@/components/block-renderer';
 import type { Metadata } from 'next';
+import { SocialShare } from '@/components/social-share';
 
-export const revalidate = 30 // revalidate at most every 30 seconds
+export const revalidate = 60 // revalidate at most every 60 seconds
 
 interface PageData {
   _id: string;
@@ -85,15 +86,12 @@ async function getPageData(slug: string): Promise<PageData> {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const page = await getPageData(params.slug);
-  if (!page || !page.seo) {
-    return {
-      title: 'AmulyaX India',
-      description: 'Innovative Solutions for India',
-    };
+  if (!page) {
+    return {};
   }
   return {
-    title: page.seo.metaTitle,
-    description: page.seo.metaDescription,
+    title: page.seo?.metaTitle || page.title,
+    description: page.seo?.metaDescription,
   };
 }
 
@@ -111,6 +109,7 @@ export default async function Page({ params }: PageProps) {
         <BlockRenderer blocks={page.pageBuilder} />
       </main>
       <Footer />
+      <SocialShare />
     </div>
   );
 }

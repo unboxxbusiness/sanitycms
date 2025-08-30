@@ -3,7 +3,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { Menu } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Logo } from '@/components/logo';
@@ -12,14 +12,7 @@ import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { urlFor } from '@/lib/sanity-image';
 import Image from 'next/image';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
 import { useTheme } from 'next-themes';
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from "@/components/ui/accordion"
 import { Menu as AnimatedMenu, MenuItem, HoveredLink } from '@/components/ui/navbar-menu';
 
 
@@ -45,8 +38,10 @@ interface Settings {
 export function Header() {
     const [isScrolled, setIsScrolled] = React.useState(false)
     const [settings, setSettings] = React.useState<Settings | null>(null);
-    const { theme } = useTheme();
+    const { resolvedTheme } = useTheme();
     const [active, setActive] = React.useState<string | null>(null);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+
 
     React.useEffect(() => {
         const fetchSettings = async () => {
@@ -61,8 +56,8 @@ export function Header() {
 
     const logo = React.useMemo(() => {
         if (!settings) return null;
-        return theme === 'dark' ? settings.logoDark : settings.logoLight;
-    }, [settings, theme]);
+        return resolvedTheme === 'dark' ? settings.logoDark : settings.logoLight;
+    }, [settings, resolvedTheme]);
 
     React.useEffect(() => {
         const handleScroll = () => {
@@ -91,71 +86,23 @@ export function Header() {
                             </Link>
                             <div className="flex items-center lg:hidden">
                                 <ThemeToggle />
-                                <Sheet>
-                                    <SheetTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="relative z-40 -m-2.5 block cursor-pointer p-2.5 lg:hidden">
-                                            <Menu className="m-auto size-6" />
-                                            <span className="sr-only">Open Menu</span>
-                                        </Button>
-                                    </SheetTrigger>
-                                    <SheetContent side="right" className="w-full max-w-xs bg-background p-6">
-                                        <SheetTitle className="sr-only">Menu</SheetTitle>
-                                        <div className="flex flex-col h-full">
-                                            <div className="flex-1 mt-8">
-                                                <Accordion type="single" collapsible className="w-full">
-                                                {navLinks.map((item) => (
-                                                    <React.Fragment key={item._key}>
-                                                        {item.children && item.children.length > 0 ? (
-                                                            <AccordionItem value={item._key} className="border-b">
-                                                                <AccordionTrigger className="text-base py-4">
-                                                                    {item.text}
-                                                                </AccordionTrigger>
-                                                                <AccordionContent className="pl-4">
-                                                                    <ul className="flex flex-col space-y-4 text-base mt-2">
-                                                                    {item.children.map((child) => (
-                                                                        <li key={child._key}>
-                                                                            <SheetClose asChild>
-                                                                                <Link href={child.link || '#'} className="text-foreground/80 hover:text-foreground block duration-150">
-                                                                                    {child.text}
-                                                                                </Link>
-                                                                            </SheetClose>
-                                                                        </li>
-                                                                    ))}
-                                                                    </ul>
-                                                                </AccordionContent>
-                                                            </AccordionItem>
-                                                        ) : (
-                                                            <div className="border-b">
-                                                                <SheetClose asChild>
-                                                                    <Link href={item.link || '#'} className="text-foreground/80 hover:text-foreground flex items-center py-4 text-base w-full">
-                                                                        {item.text}
-                                                                    </Link>
-                                                                </SheetClose>
-                                                            </div>
-                                                        )}
-                                                    </React.Fragment>
-                                                ))}
-                                                </Accordion>
-                                            </div>
-                                            {settings?.headerCta?.link && (
-                                                <div className="mt-auto">
-                                                    <SheetClose asChild>
-                                                        <Button asChild size="lg" className="w-full">
-                                                            <Link href={settings.headerCta.link}>
-                                                                <span>{settings.headerCta.text || 'Get Started'}</span>
-                                                            </Link>
-                                                        </Button>
-                                                    </SheetClose>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </SheetContent>
-                                </Sheet>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="relative z-40 -m-2.5 block cursor-pointer p-2.5 lg:hidden"
+                                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                                  aria-label="Toggle mobile menu"
+                                >
+                                  {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                                </Button>
                             </div>
                         </div>
-                        <div className={cn("hidden w-full flex-col items-center justify-center gap-6 bg-transparent p-6 shadow-none lg:static lg:w-fit lg:flex-row lg:gap-0 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent lg:flex")}>
+                        <div className={cn(
+                            "w-full flex-col items-center justify-center gap-6 bg-transparent p-6 shadow-none lg:static lg:w-fit lg:flex-row lg:gap-0 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent lg:flex",
+                            isMobileMenuOpen ? 'flex' : 'hidden'
+                        )}>
                              <AnimatedMenu setActive={setActive} className={isScrolled ? '!bg-transparent !shadow-none !border-none' : ''}>
-                                <div className="flex items-center space-x-8">
+                                <div className="flex flex-col lg:flex-row items-center space-y-4 lg:space-y-0 lg:space-x-8">
                                     {navLinks.map((item) => (
                                         <React.Fragment key={item._key}>
                                             {item.children && item.children.length > 0 ? (
@@ -176,14 +123,16 @@ export function Header() {
                                 </div>
                             </AnimatedMenu>
                             
-                            <div className="flex w-full flex-col space-y-3 sm:w-fit sm:flex-row sm:items-center sm:gap-3 sm:space-y-0 pl-8">
+                            <div className="flex w-full flex-col space-y-3 sm:w-fit sm:flex-row sm:items-center sm:gap-3 sm:space-y-0 lg:pl-8">
                                 <div className="hidden lg:flex items-center gap-3">
                                     <ThemeToggle />
                                 </div>
                                 {settings?.headerCta?.link && (
                                     <Button
                                         asChild
-                                        size="sm">
+                                        size="sm"
+                                        className="w-full lg:w-auto"
+                                        >
                                         <Link href={settings.headerCta.link}>
                                             <span>{settings.headerCta.text || 'Get Started'}</span>
                                         </Link>

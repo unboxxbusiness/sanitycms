@@ -14,7 +14,6 @@ import { Button } from '@/components/ui/button';
 import { PostCard, type PostCardData } from '@/components/post-card';
 import { SocialShare } from '@/components/social-share';
 
-
 interface SanityPost extends PostCardData {
     excerpt: string;
     readTime?: number;
@@ -61,7 +60,7 @@ async function getSettings(): Promise<BlogPageSettings> {
         blogPageSubheading
     }`;
     const data = await client.fetch(query);
-    return data;
+    return data || {};
 }
 
 const GridSection = ({
@@ -124,16 +123,22 @@ const GridSection = ({
             <Link
               key={id || index}
               href={href}
-              style={{ backgroundImage: `url(${imageUrl})` }}
               className={cn(
-                "group relative row-span-1 flex size-full cursor-pointer flex-col justify-end overflow-hidden rounded-[20px] bg-cover bg-center bg-no-repeat p-5 text-white max-md:h-[300px] transition-all duration-300 hover:scale-[0.98] hover:rotate-[0.3deg]",
+                "group relative row-span-1 flex size-full cursor-pointer flex-col justify-end overflow-hidden rounded-[20px] bg-white max-md:h-[300px] transition-all duration-300 hover:scale-[0.98] hover:rotate-[0.3deg]",
                 isPrimary && "col-span-1 row-span-1 md:col-span-2 md:row-span-2 lg:col-span-1",
                 postClassName
               )}
             >
+              <Image 
+                src={imageUrl} 
+                alt={postTitle} 
+                fill 
+                className="object-cover object-center"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
               <div className="absolute inset-0 -z-0 h-[130%] w-full bg-gradient-to-t from-black/80 to-transparent transition-all duration-500 group-hover:h-full" />
               
-              <article className="relative z-0 flex items-end">
+              <article className="relative z-0 flex items-end p-5 text-white">
                 <div className="flex flex-1 flex-col gap-3">
                   <h1 className="text-3xl font-semibold md:text-4xl">
                     {postTitle}

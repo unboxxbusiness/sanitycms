@@ -6,7 +6,7 @@ import { Logo } from '@/components/logo'
 import Link from "next/link"
 import { Github, Twitter, Linkedin } from "lucide-react"
 import { client } from "@/lib/sanity"
-import { SanityImageSource } from "@sanity/image-url/lib/types/types"
+import { type SanityImageSource } from "@sanity/image-url/lib/types/types"
 import Image from "next/image"
 import { urlFor } from "@/lib/sanity-image"
 import { AnimatedGroup } from "../ui/animated-group"
@@ -70,7 +70,7 @@ const transitionVariants = {
 
 export function Footer() {
   const [settings, setSettings] = useState<Settings | null>(null);
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -98,8 +98,8 @@ export function Footer() {
 
   const logo = useMemo(() => {
     if (!settings) return null;
-    return theme === 'dark' ? settings.logoDark : settings.logoLight;
-  }, [settings, theme]);
+    return resolvedTheme === 'dark' ? settings.logoDark : settings.logoLight;
+  }, [settings, resolvedTheme]);
 
   return (
     <footer id="contact" className="py-12">
@@ -167,7 +167,7 @@ export function Footer() {
             <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} {settings?.copyrightText || "AmulyaX India. All rights reserved."}</p>
             <div className="flex gap-4 mt-4 md:mt-0">
                 {settings?.footerLegalLinks?.map(link => (
-                  <Link key={link._key} href={link.link} className="text-sm text-muted-foreground hover:text-primary transition-colors">{link.text}</Link>
+                  <li key={link._key}><Link href={link.link} className="text-sm text-muted-foreground hover:text-primary transition-colors">{link.text}</Link></li>
                 ))}
             </div>
         </div>

@@ -51,7 +51,7 @@ export const MenuItem = ({
           transition={transition}
         >
           {active === item && (
-            <div className="absolute top-[calc(100%_+_1.0rem)] left-1/2 transform -translate-x-1/2">
+            <div className="absolute top-[calc(100%_+_1.0rem)] left-1/2 transform -translate-x-1/2 hidden lg:block">
               <motion.div
                 transition={transition}
                 layoutId="active" // layoutId ensures smooth animation

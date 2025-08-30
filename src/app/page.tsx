@@ -5,8 +5,9 @@ import Link from 'next/link';
 import { client } from '@/lib/sanity';
 import { notFound } from 'next/navigation';
 import { BlockRenderer } from '@/components/block-renderer';
+import { SocialShare } from '@/components/social-share';
 
-export const revalidate = 0
+export const revalidate = 60 // revalidate at most every 60 seconds
 
 export interface HomePageData {
   _id: string;
@@ -94,6 +95,7 @@ export default async function Home() {
         <BlockRenderer blocks={data.pageBuilder} />
       </main>
       <Footer />
+      <SocialShare />
     </div>
   );
 }

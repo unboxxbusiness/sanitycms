@@ -6,19 +6,46 @@ import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 import { SocialShare } from '@/components/social-share';
 import { Inter } from 'next/font/google';
+import { client } from '@/lib/sanity';
 
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
 });
 
-export const metadata: Metadata = {
-  title: 'AmulyaX India',
-  description: 'Innovative Solutions for India',
-  icons: {
-    icon: '/favicon.ico', // This can be a placeholder, but tells Next.js what to expect
-  },
-};
+interface Settings {
+  siteTitle?: string;
+  defaultMetaTitle?: string;
+  defaultMetaDescription?: string;
+}
+
+async function getSettings(): Promise<Settings> {
+    const query = `*[_type == "settings"][0]{ 
+      siteTitle,
+      defaultMetaTitle,
+      defaultMetaDescription
+    }`;
+    const data = await client.fetch(query);
+    return data || {};
+}
+
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings();
+  const title = settings.defaultMetaTitle || settings.siteTitle || 'AmulyaX India';
+  const description = settings.defaultMetaDescription || 'Innovative Solutions for India';
+  
+  return {
+    title: {
+      default: title,
+      template: `%s | ${title}`
+    },
+    description: description,
+    icons: {
+      icon: '/favicon.ico',
+    },
+  };
+}
 
 export default function RootLayout({
   children,
@@ -36,7 +63,6 @@ export default function RootLayout({
         >
           {children}
           <Toaster />
-          <SocialShare />
         </ThemeProvider>
       </body>
     </html>
