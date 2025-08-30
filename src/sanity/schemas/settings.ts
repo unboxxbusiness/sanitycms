@@ -49,10 +49,23 @@ export default defineType({
       description: 'The primary navigation links that appear in the website header.',
       of: [{ 
         type: 'object',
-        name: 'navLink',
+        name: 'navItem',
         fields: [
-          { name: 'text', type: 'string', title: 'Link Text', validation: (Rule) => Rule.required() },
-          { name: 'link', type: 'string', title: 'Link URL', validation: (Rule) => Rule.required() }
+          defineField({ name: 'text', type: 'string', title: 'Link Text', validation: (Rule) => Rule.required() }),
+          defineField({ name: 'link', type: 'string', title: 'Link URL', validation: (Rule) => Rule.required() }),
+          defineField({
+            name: 'submenu',
+            title: 'Submenu',
+            type: 'array',
+            of: [{
+                type: 'object',
+                name: 'subNavItem',
+                fields: [
+                    { name: 'text', type: 'string', title: 'Link Text', validation: (Rule) => Rule.required() },
+                    { name: 'link', type: 'string', title: 'Link URL', validation: (Rule) => Rule.required() }
+                ]
+            }]
+          })
         ]
       }],
     }),

@@ -1,13 +1,11 @@
-
 // src/components/layout/footer.tsx
-'use client'
-
 import Link from "next/link"
 import { Github, Twitter, Linkedin } from "lucide-react"
 import { SanityImageSource } from "@sanity/image-url/lib/types/types"
 import Image from "next/image"
 import { urlFor } from "@/lib/sanity-image"
 import { MembershipDialog } from "../membership-dialog"
+import { client } from "@/lib/sanity"
 
 interface NavLink {
   _key: string;
@@ -39,20 +37,45 @@ interface FooterSettings {
   membershipDialogDescription?: string;
 }
 
-interface FooterProps {
-    settings: FooterSettings | null;
-}
-
 const iconMap = {
   github: <Github className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />,
   twitter: <Twitter className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />,
   linkedin: <Linkedin className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />,
 }
 
-export function Footer({ settings }: FooterProps) {
-  if (!settings) {
-    return null; // Don't render anything if there are no settings
-  }
+async function getFooterSettings(): Promise<FooterSettings> {
+    const query = `*[_type == "settings"][0]{ 
+        siteTitle,
+        logoLight,
+        logoDark, 
+        footerDescription,
+        footerProductLinks, 
+        footerCompanyLinks, 
+        footerLegalLinks, 
+        socialLinks,
+        copyrightText,
+        showMembershipCta,
+        membershipCtaText,
+        membershipDialogTitle,
+        membershipDialogDescription,
+        newsletterHeadline,
+        newsletterSupportingText
+    }`;
+    try {
+        const data = await client.fetch(query, {}, {
+            next: {
+                tags: ['settings']
+            }
+        });
+        return data || {};
+    } catch (error) {
+        console.error("Failed to fetch footer settings:", error);
+        return {};
+    }
+}
+
+export async function Footer() {
+  const settings = await getFooterSettings();
 
   return (
     <footer id="contact" className="py-12 bg-secondary/30">
