@@ -14,6 +14,8 @@ import Image from 'next/image';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useTheme } from 'next-themes';
 import { Menu as AnimatedMenu, MenuItem, HoveredLink } from '@/components/ui/navbar-menu';
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 
 interface NavLink {
@@ -40,7 +42,6 @@ export function Header() {
     const [settings, setSettings] = useState<Settings | null>(null);
     const { resolvedTheme } = useTheme();
     const [active, setActive] = useState<string | null>(null);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     useEffect(() => {
         const fetchSettings = async () => {
@@ -85,20 +86,59 @@ export function Header() {
                             </Link>
                             <div className="flex items-center lg:hidden">
                                 <ThemeToggle />
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="relative z-40 -m-2.5 block cursor-pointer p-2.5 lg:hidden"
-                                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                                  aria-label="Toggle mobile menu"
-                                >
-                                  {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-                                </Button>
+                                <Sheet>
+                                    <SheetTrigger asChild>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="relative z-40 -m-2.5 block cursor-pointer p-2.5"
+                                          aria-label="Toggle mobile menu"
+                                        >
+                                          <Menu className="h-6 w-6" />
+                                        </Button>
+                                    </SheetTrigger>
+                                    <SheetContent>
+                                        <div className="flex flex-col h-full py-6">
+                                            <div className="flex flex-col gap-6 text-lg">
+                                                <Accordion type="single" collapsible className="w-full">
+                                                    {navLinks.map((item) => (
+                                                        <React.Fragment key={item._key}>
+                                                            {item.children && item.children.length > 0 ? (
+                                                                <AccordionItem value={item.text} className="border-b-0">
+                                                                    <AccordionTrigger className="py-2 hover:no-underline text-lg font-semibold">{item.text}</AccordionTrigger>
+                                                                    <AccordionContent className="pl-4">
+                                                                        <div className="flex flex-col gap-4 mt-2">
+                                                                            {item.children.map((child) => (
+                                                                                <SheetClose key={child._key} asChild>
+                                                                                    <Link href={child.link || '#'} className="text-muted-foreground hover:text-foreground">{child.text}</Link>
+                                                                                </SheetClose>
+                                                                            ))}
+                                                                        </div>
+                                                                    </AccordionContent>
+                                                                </AccordionItem>
+                                                            ) : (
+                                                                <SheetClose asChild>
+                                                                    <Link href={item.link || '#'} className="py-2 text-lg font-semibold">{item.text}</Link>
+                                                                </SheetClose>
+                                                            )}
+                                                        </React.Fragment>
+                                                    ))}
+                                                </Accordion>
+                                            </div>
+                                            {settings?.headerCta?.link && (
+                                                <div className="mt-auto">
+                                                    <Button asChild size="lg" className="w-full">
+                                                        <Link href={settings.headerCta.link}>{settings.headerCta.text || 'Get Started'}</Link>
+                                                    </Button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </SheetContent>
+                                </Sheet>
                             </div>
                         </div>
                         <div className={cn(
-                            "w-full flex-col items-center justify-center gap-6 bg-transparent p-6 shadow-none lg:static lg:w-fit lg:flex-row lg:gap-0 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent lg:flex",
-                            isMobileMenuOpen ? 'flex' : 'hidden'
+                            "w-full flex-col items-center justify-center gap-6 bg-transparent p-6 shadow-none lg:static lg:w-fit lg:flex-row lg:gap-0 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent lg:flex hidden"
                         )}>
                              <AnimatedMenu setActive={setActive} className={cn('flex-col lg:flex-row lg:space-x-8 lg:border lg:bg-card lg:shadow-input', isScrolled && 'lg:border-none lg:bg-transparent lg:shadow-none')}>
                                 {navLinks.map((item) => (
