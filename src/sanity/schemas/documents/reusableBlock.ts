@@ -54,6 +54,12 @@ export default defineType({
         },
         {
           type: 'ctaBlock'
+        },
+        {
+          type: 'videoBlock'
+        },
+        {
+          type: 'donationBlock'
         }
       ],
     }),

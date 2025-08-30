@@ -57,11 +57,16 @@ async function getPostData(slug: string): Promise<PostData> {
       ...,
       _type == 'reference' => @->{
         ...,
-        // Dereference any nested blocks within the reusable block
         content[]{
           ...,
           _type == 'ctaBlock' => {
             ...
+          },
+          _type == 'donationBlock' => {
+            ...,
+            "donationTiers": donationTiers[]->{
+              ...
+            }
           }
         }
       }
@@ -116,6 +121,12 @@ const portableTextComponents = {
           }
           // The reusableBlock content is an array of blocks, so we render it with our main block renderer.
           return <BlockRenderer blocks={value.content} />;
+        },
+        videoBlock: ({ value }: any) => {
+            return <BlockRenderer blocks={[value]} />;
+        },
+        donationBlock: ({ value }: any) => {
+            return <BlockRenderer blocks={[value]} />;
         }
     },
     block: {
