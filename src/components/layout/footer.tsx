@@ -25,13 +25,13 @@ interface SocialLink {
 }
 
 interface Settings {
-  logoLight: SanityImageSource;
-  logoDark: SanityImageSource;
-  footerDescription: string;
-  footerProductLinks: NavLink[];
-  footerCompanyLinks: NavLink[];
-  footerLegalLinks: NavLink[];
-  socialLinks: SocialLink[];
+  logoLight?: SanityImageSource;
+  logoDark?: SanityImageSource;
+  footerDescription?: string;
+  footerProductLinks?: NavLink[];
+  footerCompanyLinks?: NavLink[];
+  footerLegalLinks?: NavLink[];
+  socialLinks?: SocialLink[];
   newsletterHeadline?: string;
   newsletterSupportingText?: string;
   copyrightText?: string;
@@ -41,15 +41,9 @@ interface Settings {
   membershipDialogDescription?: string;
 }
 
-const iconMap = {
-  github: <Github className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />,
-  twitter: <Twitter className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />,
-  linkedin: <Linkedin className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" />,
-}
-
 const getSettings = () => {
     return sanityFetch<Settings>({
-        query: `*[_type == "settings"][0]{ 
+        query: `*[_type == "siteSettings"][0]{ 
             logoLight,
             logoDark, 
             footerDescription,
@@ -65,7 +59,7 @@ const getSettings = () => {
             membershipDialogTitle,
             membershipDialogDescription
         }`,
-        tags: ['settings']
+        tags: ['siteSettings']
     })
 }
 
@@ -83,7 +77,12 @@ export function Footer() {
 
   const logo = useMemo(() => {
     if (!settings) return null;
-    return resolvedTheme === 'dark' ? settings.logoDark : settings.logoLight;
+    const logoToUse = resolvedTheme === 'dark' ? settings.logoDark : settings.logoLight;
+    if (!logoToUse) {
+        // Fallback to the other logo if one is not set
+        return settings.logoLight || settings.logoDark;
+    }
+    return logoToUse;
   }, [settings, resolvedTheme]);
 
   return (

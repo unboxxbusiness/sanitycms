@@ -36,15 +36,15 @@ interface Cta {
 }
 
 interface Settings {
-  logoLight: SanityImageSource;
-  logoDark: SanityImageSource;
-  mainNavigation: NavItem[];
-  headerCta: Cta;
+  logoLight?: SanityImageSource;
+  logoDark?: SanityImageSource;
+  mainNavigation?: NavItem[];
+  headerCta?: Cta;
 }
 
 const getSettings = () => {
     return sanityFetch<Settings>({
-        query: `*[_type == "settings"][0]{ 
+        query: `*[_type == "siteSettings"][0]{ 
             logoLight, 
             logoDark, 
             mainNavigation[]{
@@ -53,20 +53,20 @@ const getSettings = () => {
             }, 
             headerCta 
         }`,
-        tags: ['settings']
+        tags: ['siteSettings']
     })
 }
 
 export function Header() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [settings, setSettings] = useState<Settings | null>(null);
+    const [settings, setSettings] = useState<Settings>({});
     const { resolvedTheme } = useTheme();
     const [active, setActive] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchAndSetData = async () => {
             const sanitySettings = await getSettings();
-            setSettings(sanitySettings);
+            setSettings(sanitySettings || {});
         }
         fetchAndSetData();
     }, []);
@@ -75,7 +75,12 @@ export function Header() {
 
     const logo = useMemo(() => {
         if (!settings) return null;
-        return resolvedTheme === 'dark' ? settings.logoDark : settings.logoLight;
+        const logoToUse = resolvedTheme === 'dark' ? settings.logoDark : settings.logoLight;
+        if (!logoToUse) {
+            // Fallback to the other logo if one is not set
+            return settings.logoLight || settings.logoDark;
+        }
+        return logoToUse;
     }, [settings, resolvedTheme]);
 
     
