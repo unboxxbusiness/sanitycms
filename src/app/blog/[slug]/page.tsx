@@ -12,6 +12,7 @@ import type { Metadata } from 'next';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { BlockRenderer } from '@/components/block-renderer';
+import { AuthorBio } from '@/components/author-bio';
 
 export const revalidate = 60
 
@@ -23,6 +24,7 @@ interface PostData {
   author: {
     name: string;
     picture?: any;
+    bio?: string;
   };
   categories: { title: string }[];
   _createdAt: string;
@@ -45,7 +47,7 @@ async function getPostData(slug: string): Promise<PostData> {
     title,
     slug,
     coverImage,
-    author->{name, picture},
+    author->{name, picture, bio},
     "categories": categories[]->{title},
     _createdAt,
     content[]{
@@ -185,6 +187,13 @@ export default async function BlogPostPage({ params }: PostProps) {
             )}>
                 <PortableText value={post.content} components={portableTextComponents} />
             </div>
+
+            {post.author?.bio && (
+              <>
+                <hr className="my-12" />
+                <AuthorBio author={post.author} />
+              </>
+            )}
         </article>
       </main>
       <Footer />
