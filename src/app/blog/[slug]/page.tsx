@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { BlockRenderer } from '@/components/block-renderer';
 import { AuthorBio } from '@/components/author-bio';
+import { PostCard, type PostCardData } from '@/components/post-card';
 
 export const revalidate = 60
 
@@ -32,7 +33,8 @@ interface PostData {
   seo: {
     metaTitle?: string;
     metaDescription?: string;
-  }
+  };
+  recommendedPosts: PostCardData[];
 }
 
 interface PostProps {
@@ -63,7 +65,18 @@ async function getPostData(slug: string): Promise<PostData> {
         }
       }
     },
-    seo
+    seo,
+    // Fetch 2 most recent posts that are not the current post
+    "recommendedPosts": *[_type == "post" && slug.current != $slug] | order(_createdAt desc)[0...2]{
+      _id,
+      title,
+      slug,
+      excerpt,
+      coverImage,
+      author->{name, picture},
+      "categories": categories[]->{title},
+      _createdAt
+    }
   }`;
 
   const data = await client.fetch(query, { slug });
@@ -193,6 +206,17 @@ export default async function BlogPostPage({ params }: PostProps) {
                 <hr className="my-12" />
                 <AuthorBio author={post.author} />
               </>
+            )}
+
+            {post.recommendedPosts?.length > 0 && (
+                <aside className="mt-16 pt-12 border-t">
+                    <h2 className="text-3xl font-bold mb-8 text-center">Read Next</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {post.recommendedPosts.map(recPost => (
+                            <PostCard key={recPost._id} post={recPost} />
+                        ))}
+                    </div>
+                </aside>
             )}
         </article>
       </main>
