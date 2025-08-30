@@ -53,11 +53,11 @@ const getPosts = () => {
 
 const getSettings = () => {
     return sanityFetch<BlogPageSettings>({
-        query: `*[_type == "settings"][0]{
+        query: `*[_type == "siteSettings"][0]{
             blogPageHeading,
             blogPageSubheading
         }`,
-        tags: ['settings'],
+        tags: ['siteSettings'],
     });
 };
 
