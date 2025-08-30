@@ -1,5 +1,5 @@
 // src/app/blog/[slug]/page.tsx
-import { client } from '@/lib/sanity';
+import { sanityFetch } from '@/lib/sanity';
 import { urlFor } from '@/lib/sanity-image';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
@@ -15,8 +15,6 @@ import { BlockRenderer } from '@/components/block-renderer';
 import { AuthorBio } from '@/components/author-bio';
 import { PostCard, type PostCardData } from '@/components/post-card';
 import { SocialShare } from '@/components/social-share';
-
-export const revalidate = 60
 
 interface PostData {
   _id: string;
@@ -45,54 +43,55 @@ interface PostProps {
   };
 }
 
-async function getPostData(slug: string): Promise<PostData> {
-  const query = `*[_type == "post" && slug.current == $slug][0]{
-    _id,
-    title,
-    slug,
-    coverImage,
-    author->{name, picture, bio},
-    "categories": categories[]->{title},
-    _createdAt,
-    excerpt,
-    content[]{
-      ...,
-      _type == 'reference' => @->{
-        ...,
-        content[]{
-          ...,
-          _type == 'ctaBlock' => {
-            ...
-          },
-          _type == 'donationBlock' => {
-            ...,
-            "donationTiers": donationTiers[]->{
-              ...
+const getPostData = (slug: string) => {
+    return sanityFetch<PostData>({
+        query: `*[_type == "post" && slug.current == $slug][0]{
+            _id,
+            title,
+            slug,
+            coverImage,
+            author->{name, picture, bio},
+            "categories": categories[]->{title},
+            _createdAt,
+            excerpt,
+            content[]{
+              ...,
+              _type == 'reference' => @->{
+                ...,
+                content[]{
+                  ...,
+                  _type == 'ctaBlock' => {
+                    ...
+                  },
+                  _type == 'donationBlock' => {
+                    ...,
+                    "donationTiers": donationTiers[]->{
+                      ...
+                    }
+                  },
+                  _type == 'videoBlock' => {
+                    ...
+                  }
+                }
+              }
+            },
+            seo,
+            // Fetch 2 most recent posts that are not the current post
+            "recommendedPosts": *[_type == "post" && slug.current != $slug] | order(_createdAt desc)[0...2]{
+              _id,
+              title,
+              slug,
+              excerpt,
+              coverImage,
+              author->{name, picture},
+              "categories": categories[]->{title},
+              _createdAt
             }
-          },
-          _type == 'videoBlock' => {
-            ...
-          }
-        }
-      }
-    },
-    seo,
-    // Fetch 2 most recent posts that are not the current post
-    "recommendedPosts": *[_type == "post" && slug.current != $slug] | order(_createdAt desc)[0...2]{
-      _id,
-      title,
-      slug,
-      excerpt,
-      coverImage,
-      author->{name, picture},
-      "categories": categories[]->{title},
-      _createdAt
-    }
-  }`;
-
-  const data = await client.fetch(query, { slug });
-  return data;
-}
+          }`,
+        params: { slug },
+        tags: [`post:${slug}`],
+    });
+};
 
 export async function generateMetadata({ params }: PostProps): Promise<Metadata> {
     const post = await getPostData(params.slug);

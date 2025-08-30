@@ -7,7 +7,7 @@ import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Logo } from '@/components/logo';
-import { client } from '@/lib/sanity'
+import { sanityFetch } from '@/lib/sanity'
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { urlFor } from '@/lib/sanity-image';
 import Image from 'next/image';
@@ -37,6 +37,13 @@ interface Settings {
   headerCta: Cta;
 }
 
+const getSettings = () => {
+    return sanityFetch<Settings>({
+        query: `*[_type == "settings"][0]{ logoLight, logoDark, mainNavigation, headerCta }`,
+        tags: ['settings']
+    })
+}
+
 export function Header() {
     const [isScrolled, setIsScrolled] = useState(false)
     const [settings, setSettings] = useState<Settings | null>(null);
@@ -44,12 +51,11 @@ export function Header() {
     const [active, setActive] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchSettings = async () => {
-          const query = `*[_type == "settings"][0]{ logoLight, logoDark, mainNavigation, headerCta }`;
-          const data = await client.fetch(query);
-          setSettings(data);
-        };
-        fetchSettings();
+        const fetchAndSetData = async () => {
+            const sanitySettings = await getSettings();
+            setSettings(sanitySettings);
+        }
+        fetchAndSetData();
     }, []);
 
     const navLinks = settings?.mainNavigation || [];

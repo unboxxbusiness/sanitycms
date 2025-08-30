@@ -2,12 +2,10 @@
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import Link from 'next/link';
-import { client } from '@/lib/sanity';
+import { sanityFetch } from '@/lib/sanity';
 import { notFound } from 'next/navigation';
 import { BlockRenderer } from '@/components/block-renderer';
 import { SocialShare } from '@/components/social-share';
-
-export const revalidate = 60 // revalidate at most every 60 seconds
 
 export interface HomePageData {
   _id: string;
@@ -15,60 +13,62 @@ export interface HomePageData {
   pageBuilder: any[];
 }
 
-async function getHomePageData(): Promise<HomePageData> {
-  const query = `*[_type == "homePage"][0]{
-    _id,
-    title,
-    pageBuilder[]{
-      ...,
-      _type == 'heroBlock' => {
-        ...,
-        image {
-          ...,
-          asset->
-        }
-      },
-      _type == 'testimonialsBlock' => {
-        ...,
-        "testimonials": testimonials[]->{
-          ...,
-          image {
-            ...,
-            asset->
-          }
-        }
-      },
-      _type == 'programCardsBlock' => {
-        ...,
-        "programs": programs[]->{
-          ...
-        }
-      },
-      _type == 'partnerLogoBlock' => {
-        ...,
-        "partners": partners[]->{
-          ...,
-          logo {
-            ...,
-            asset->
-          }
-        }
-      },
-      _type == 'impactMetricsBlock' => {
-        ...,
-        "metrics": metrics[]->
-      },
-      _type == 'donationBlock' => {
-        ...,
-        "donationTiers": donationTiers[]->{
-          ...
-        }
-      }
-    }
-  }`;
-  const data = await client.fetch(query);
-  return data;
-}
+const getHomePageData = () => {
+    return sanityFetch<HomePageData>({
+        query: `*[_type == "homePage"][0]{
+            _id,
+            title,
+            pageBuilder[]{
+              ...,
+              _type == 'heroBlock' => {
+                ...,
+                image {
+                  ...,
+                  asset->
+                }
+              },
+              _type == 'testimonialsBlock' => {
+                ...,
+                "testimonials": testimonials[]->{
+                  ...,
+                  image {
+                    ...,
+                    asset->
+                  }
+                }
+              },
+              _type == 'programCardsBlock' => {
+                ...,
+                "programs": programs[]->{
+                  ...
+                }
+              },
+              _type == 'partnerLogoBlock' => {
+                ...,
+                "partners": partners[]->{
+                  ...,
+                  logo {
+                    ...,
+                    asset->
+                  }
+                }
+              },
+              _type == 'impactMetricsBlock' => {
+                ...,
+                "metrics": metrics[]->
+              },
+              _type == 'donationBlock' => {
+                ...,
+                "donationTiers": donationTiers[]->{
+                  ...
+                }
+              }
+            }
+        }`,
+        tags: ['homePage'],
+    });
+};
+
 
 export default async function Home() {
   const data = await getHomePageData();

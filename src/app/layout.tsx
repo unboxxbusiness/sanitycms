@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 import { SocialShare } from '@/components/social-share';
 import { Inter } from 'next/font/google';
-import { client } from '@/lib/sanity';
+import { sanityFetch } from '@/lib/sanity';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -19,14 +19,15 @@ interface Settings {
   defaultMetaDescription?: string;
 }
 
-async function getSettings(): Promise<Settings> {
-    const query = `*[_type == "settings"][0]{ 
-      siteTitle,
-      defaultMetaTitle,
-      defaultMetaDescription
-    }`;
-    const data = await client.fetch(query);
-    return data || {};
+const getSettings = () => {
+    return sanityFetch<Settings>({
+        query: `*[_type == "settings"][0]{ 
+          siteTitle,
+          defaultMetaTitle,
+          defaultMetaDescription
+        }`,
+        tags: ['settings'],
+    });
 }
 
 

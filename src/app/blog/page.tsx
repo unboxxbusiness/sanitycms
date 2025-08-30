@@ -1,7 +1,7 @@
 // src/app/blog/page.tsx
 'use client'
 
-import { client } from '@/lib/sanity';
+import { sanityFetch } from '@/lib/sanity';
 import { urlFor } from '@/lib/sanity-image';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -37,31 +37,35 @@ interface BlogPageSettings {
     blogPageSubheading?: string;
 }
 
-async function getPosts(): Promise<SanityPost[]> {
-    const query = `*[_type == "post"] | order(_createdAt desc){
-        _id,
-        title,
-        slug,
-        excerpt,
-        coverImage,
-        author->{name, picture},
-        "categories": categories[]->{title},
-        _createdAt,
-        views,
-        readTime
-    }`;
-    const data = await client.fetch(query);
-    return data;
-}
+const getPosts = () => {
+    return sanityFetch<SanityPost[]>({
+        query: `*[_type == "post"] | order(_createdAt desc){
+            _id,
+            title,
+            slug,
+            excerpt,
+            coverImage,
+            author->{name, picture},
+            "categories": categories[]->{title},
+            _createdAt,
+            views,
+            readTime
+        }`,
+        tags: ['post'],
+    });
+};
 
-async function getSettings(): Promise<BlogPageSettings> {
-    const query = `*[_type == "settings"][0]{
-        blogPageHeading,
-        blogPageSubheading
-    }`;
-    const data = await client.fetch(query);
-    return data || {};
-}
+
+const getSettings = () => {
+    return sanityFetch<BlogPageSettings>({
+        query: `*[_type == "settings"][0]{
+            blogPageHeading,
+            blogPageSubheading
+        }`,
+        tags: ['settings'],
+    });
+};
+
 
 const GridSection = ({
     title,

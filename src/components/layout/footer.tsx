@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from "react"
 import { Logo } from '@/components/logo'
 import Link from "next/link"
 import { Github, Twitter, Linkedin } from "lucide-react"
-import { client } from "@/lib/sanity"
+import { sanityFetch } from "@/lib/sanity"
 import { type SanityImageSource } from "@sanity/image-url/lib/types/types"
 import Image from "next/image"
 import { urlFor } from "@/lib/sanity-image"
@@ -68,32 +68,38 @@ const transitionVariants = {
     },
 }
 
+const getSettings = () => {
+    return sanityFetch<Settings>({
+        query: `*[_type == "settings"][0]{ 
+            logoLight,
+            logoDark, 
+            footerDescription,
+            footerProductLinks, 
+            footerCompanyLinks, 
+            footerLegalLinks, 
+            socialLinks,
+            newsletterHeadline,
+            newsletterSupportingText,
+            copyrightText,
+            showMembershipCta,
+            membershipCtaText,
+            membershipDialogTitle,
+            membershipDialogDescription
+        }`,
+        tags: ['settings']
+    })
+}
+
 export function Footer() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const { resolvedTheme } = useTheme();
 
   useEffect(() => {
-    const fetchSettings = async () => {
-      const query = `*[_type == "settings"][0]{ 
-        logoLight,
-        logoDark, 
-        footerDescription,
-        footerProductLinks, 
-        footerCompanyLinks, 
-        footerLegalLinks, 
-        socialLinks,
-        newsletterHeadline,
-        newsletterSupportingText,
-        copyrightText,
-        showMembershipCta,
-        membershipCtaText,
-        membershipDialogTitle,
-        membershipDialogDescription
-      }`;
-      const data = await client.fetch(query);
-      setSettings(data);
-    };
-    fetchSettings();
+    const fetchAndSetData = async () => {
+        const sanitySettings = await getSettings();
+        setSettings(sanitySettings);
+    }
+    fetchAndSetData();
   }, []);
 
   const logo = useMemo(() => {

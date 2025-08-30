@@ -1,5 +1,5 @@
 // src/app/[slug]/page.tsx
-import { client } from '@/lib/sanity';
+import { sanityFetch } from '@/lib/sanity';
 import { notFound } from 'next/navigation';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -7,8 +7,6 @@ import { BlockRenderer } from '@/components/block-renderer';
 import type { Metadata } from 'next';
 import { SocialShare } from '@/components/social-share';
 import { urlFor } from '@/lib/sanity-image';
-
-export const revalidate = 60 // revalidate at most every 60 seconds
 
 interface PageData {
   _id: string;
@@ -28,64 +26,65 @@ interface PageProps {
   };
 }
 
-async function getPageData(slug: string): Promise<PageData> {
-  const query = `*[_type == "page" && slug.current == $slug][0]{
-    _id,
-    title,
-    slug,
-    seo,
-    "heroImage": pageBuilder[_type == "heroBlock"][0].image,
-    pageBuilder[]{
-      ...,
-      _type == 'heroBlock' => {
-        ...,
-        image {
-          ...,
-          asset->
-        }
-      },
-      _type == 'testimonialsBlock' => {
-        ...,
-        "testimonials": testimonials[]->{
-          ...,
-          image {
-            ...,
-            asset->
-          }
-        }
-      },
-      _type == 'programCardsBlock' => {
-        ...,
-        "programs": programs[]->{
-          ...
-        }
-      },
-      _type == 'partnerLogoBlock' => {
-        ...,
-        "partners": partners[]->{
-          ...,
-          logo {
-            ...,
-            asset->
-          }
-        }
-      },
-      _type == 'impactMetricsBlock' => {
-        ...,
-        "metrics": metrics[]->
-      },
-      _type == 'donationBlock' => {
-        ...,
-        "donationTiers": donationTiers[]->{
-          ...
-        }
-      }
-    }
-  }`;
-
-  const data = await client.fetch(query, { slug });
-  return data;
-}
+const getPageData = (slug: string) => {
+    return sanityFetch<PageData>({
+        query: `*[_type == "page" && slug.current == $slug][0]{
+            _id,
+            title,
+            slug,
+            seo,
+            "heroImage": pageBuilder[_type == "heroBlock"][0].image,
+            pageBuilder[]{
+              ...,
+              _type == 'heroBlock' => {
+                ...,
+                image {
+                  ...,
+                  asset->
+                }
+              },
+              _type == 'testimonialsBlock' => {
+                ...,
+                "testimonials": testimonials[]->{
+                  ...,
+                  image {
+                    ...,
+                    asset->
+                  }
+                }
+              },
+              _type == 'programCardsBlock' => {
+                ...,
+                "programs": programs[]->{
+                  ...
+                }
+              },
+              _type == 'partnerLogoBlock' => {
+                ...,
+                "partners": partners[]->{
+                  ...,
+                  logo {
+                    ...,
+                    asset->
+                  }
+                }
+              },
+              _type == 'impactMetricsBlock' => {
+                ...,
+                "metrics": metrics[]->
+              },
+              _type == 'donationBlock' => {
+                ...,
+                "donationTiers": donationTiers[]->{
+                  ...
+                }
+              }
+            }
+        }`,
+        params: { slug },
+        tags: [`page:${slug}`],
+    });
+};
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const page = await getPageData(params.slug);
