@@ -28,6 +28,52 @@ import author from './documents/author'
 import category from './documents/category'
 import reusableBlock from './documents/reusableBlock'
 
+// Define navLink and navItem here to be used in settings
+const navLink = {
+    name: 'navLink',
+    title: 'Navigation Link',
+    type: 'object',
+    fields: [
+        { name: 'text', type: 'string', title: 'Link Text', validation: (Rule: any) => Rule.required() },
+        { name: 'link', type: 'string', title: 'Link URL', validation: (Rule: any) => Rule.required() }
+    ]
+};
+
+const navItem = {
+    name: 'navItem',
+    title: 'Navigation Item',
+    type: 'object',
+    fields: [
+        { name: 'text', type: 'string', title: 'Link Text', validation: (Rule: any) => Rule.required() },
+        { 
+            name: 'link', 
+            type: 'string', 
+            title: 'Link URL',
+            description: 'Leave blank if this is a dropdown menu for sub-items.'
+        },
+        {
+            name: 'children',
+            title: 'Sub-menu Items',
+            type: 'array',
+            of: [{ type: 'navLink' }],
+            hidden: ({parent}: any) => !!parent.link,
+            description: 'Add items here to create a dropdown menu.'
+        }
+    ],
+    preview: {
+        select: {
+            title: 'text',
+            children: 'children'
+        },
+        prepare({title, children}: {title: string, children: any[]}) {
+            const hasChildren = children && children.length > 0;
+            return {
+                title: title,
+                subtitle: hasChildren ? `${children.length} sub-item(s)` : 'Simple Link'
+            }
+        }
+    }
+};
 
 export const schemaTypes = [
     // Document types
@@ -43,6 +89,10 @@ export const schemaTypes = [
     author,
     category,
     reusableBlock,
+
+    // Reusable object types
+    navLink,
+    navItem,
 
     // Block Schemas
     ctaBlock,

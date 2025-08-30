@@ -3,7 +3,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { Menu } from 'lucide-react'
+import { Menu, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Logo } from '@/components/logo';
@@ -14,12 +14,24 @@ import Image from 'next/image';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
 import { useTheme } from 'next-themes';
-
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion"
 
 interface NavLink {
   _key: string;
   text: string;
-  link: string;
+  link?: string;
+  children?: NavLink[];
 }
 
 interface Cta {
@@ -62,6 +74,7 @@ export function Header() {
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
+    
     return (
         <header key="header">
             <nav
@@ -91,20 +104,41 @@ export function Header() {
                                     <SheetContent side="right" className="w-full max-w-xs bg-background p-6">
                                         <SheetTitle className="sr-only">Menu</SheetTitle>
                                         <div className="flex flex-col h-full">
-                                            <div className="flex-1">
-                                                <ul className="flex flex-col items-start space-y-6 text-base mt-8">
-                                                    {navLinks.map((item) => (
-                                                        <li key={item._key}>
-                                                            <SheetClose asChild>
-                                                                <Link
-                                                                    href={item.link}
-                                                                    className="text-foreground/80 hover:text-foreground block duration-150">
-                                                                    <span>{item.text}</span>
-                                                                </Link>
-                                                            </SheetClose>
-                                                        </li>
-                                                    ))}
-                                                </ul>
+                                            <div className="flex-1 mt-8">
+                                                <Accordion type="single" collapsible className="w-full">
+                                                {navLinks.map((item) => (
+                                                    <React.Fragment key={item._key}>
+                                                        {item.children && item.children.length > 0 ? (
+                                                            <AccordionItem value={item._key} className="border-b">
+                                                                <AccordionTrigger className="text-base py-4">
+                                                                    {item.text}
+                                                                </AccordionTrigger>
+                                                                <AccordionContent className="pl-4">
+                                                                    <ul className="flex flex-col space-y-4 text-base mt-2">
+                                                                    {item.children.map((child) => (
+                                                                        <li key={child._key}>
+                                                                            <SheetClose asChild>
+                                                                                <Link href={child.link || '#'} className="text-foreground/80 hover:text-foreground block duration-150">
+                                                                                    {child.text}
+                                                                                </Link>
+                                                                            </SheetClose>
+                                                                        </li>
+                                                                    ))}
+                                                                    </ul>
+                                                                </AccordionContent>
+                                                            </AccordionItem>
+                                                        ) : (
+                                                            <div className="border-b">
+                                                                <SheetClose asChild>
+                                                                    <Link href={item.link || '#'} className="text-foreground/80 hover:text-foreground flex items-center py-4 text-base w-full">
+                                                                        {item.text}
+                                                                    </Link>
+                                                                </SheetClose>
+                                                            </div>
+                                                        )}
+                                                    </React.Fragment>
+                                                ))}
+                                                </Accordion>
                                             </div>
                                             {settings?.headerCta?.link && (
                                                 <div className="mt-auto">
@@ -125,13 +159,29 @@ export function Header() {
                         <div className={cn("hidden w-full flex-col items-center justify-center gap-6 bg-background p-6 shadow-2xl shadow-zinc-300/20 dark:shadow-none lg:static lg:w-fit lg:flex-row lg:gap-0 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent lg:flex")}>
                             <div className="absolute inset-0 m-auto hidden size-fit lg:block">
                                 <ul className="flex gap-8 text-sm">
-                                    {navLinks.map((item, index) => (
-                                        <li key={index}>
-                                            <Link
-                                                href={item.link}
-                                                className="text-foreground/80 hover:text-foreground block duration-150">
-                                                <span>{item.text}</span>
-                                            </Link>
+                                    {navLinks.map((item) => (
+                                        <li key={item._key}>
+                                            {item.children && item.children.length > 0 ? (
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger className="flex items-center gap-1 text-foreground/80 hover:text-foreground focus:outline-none">
+                                                        <span>{item.text}</span>
+                                                        <ChevronDown className="h-4 w-4" />
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent>
+                                                        {item.children.map((child) => (
+                                                            <DropdownMenuItem key={child._key} asChild>
+                                                                <Link href={child.link || '#'}>{child.text}</Link>
+                                                            </DropdownMenuItem>
+                                                        ))}
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            ) : (
+                                                <Link
+                                                    href={item.link || '#'}
+                                                    className="text-foreground/80 hover:text-foreground block duration-150">
+                                                    <span>{item.text}</span>
+                                                </Link>
+                                            )}
                                         </li>
                                     ))}
                                 </ul>

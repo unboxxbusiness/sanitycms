@@ -2,6 +2,52 @@
 import {defineField, defineType} from 'sanity'
 import { Cog } from 'lucide-react'
 
+const navLink = defineType({
+    name: 'navLink',
+    title: 'Navigation Link',
+    type: 'object',
+    fields: [
+        defineField({ name: 'text', type: 'string', title: 'Link Text', validation: Rule => Rule.required() }),
+        defineField({ name: 'link', type: 'string', title: 'Link URL', validation: Rule => Rule.required() })
+    ]
+})
+
+const navItem = defineType({
+    name: 'navItem',
+    title: 'Navigation Item',
+    type: 'object',
+    fields: [
+        defineField({ name: 'text', type: 'string', title: 'Link Text', validation: Rule => Rule.required() }),
+        defineField({ 
+            name: 'link', 
+            type: 'string', 
+            title: 'Link URL',
+            description: 'Leave blank if this is a dropdown menu for sub-items.'
+        }),
+        defineField({
+            name: 'children',
+            title: 'Sub-menu Items',
+            type: 'array',
+            of: [{ type: 'navLink' }],
+            hidden: ({parent}) => !!parent.link,
+            description: 'Add items here to create a dropdown menu.'
+        })
+    ],
+    preview: {
+        select: {
+            title: 'text',
+            children: 'children'
+        },
+        prepare({title, children}) {
+            const hasChildren = children && children.length > 0;
+            return {
+                title: title,
+                subtitle: hasChildren ? `${children.length} sub-item(s)` : 'Simple Link'
+            }
+        }
+    }
+})
+
 export default defineType({
   name: 'settings',
   title: 'Site Settings',
@@ -41,13 +87,7 @@ export default defineType({
       title: 'Main Navigation',
       type: 'array',
       group: 'header',
-      of: [{ 
-        type: 'object',
-        fields: [
-          { name: 'text', type: 'string', title: 'Link Text' },
-          { name: 'link', type: 'string', title: 'Link URL' }
-        ]
-      }],
+      of: [{ type: 'navItem' }],
     }),
     defineField({
       name: 'headerCta',
@@ -114,39 +154,21 @@ export default defineType({
       title: 'Footer Product Links',
       type: 'array',
       group: 'footer',
-      of: [{ 
-        type: 'object',
-        fields: [
-          { name: 'text', type: 'string', title: 'Link Text' },
-          { name: 'link', type: 'string', title: 'Link URL' }
-        ]
-      }],
+      of: [{ type: 'navLink' }],
     }),
     defineField({
       name: 'footerCompanyLinks',
       title: 'Footer Company Links',
       type: 'array',
       group: 'footer',
-      of: [{ 
-        type: 'object',
-        fields: [
-          { name: 'text', type: 'string', title: 'Link Text' },
-          { name: 'link', type: 'string', title: 'Link URL' }
-        ]
-      }],
+      of: [{ type: 'navLink' }],
     }),
     defineField({
       name: 'footerLegalLinks',
       title: 'Footer Legal Links',
       type: 'array',
       group: 'footer',
-      of: [{ 
-        type: 'object',
-        fields: [
-          { name: 'text', type: 'string', title: 'Link Text' },
-          { name: 'link', type: 'string', title: 'Link URL' }
-        ]
-      }],
+      of: [{ type: 'navLink' }],
     }),
     defineField({
       name: 'socialLinks',
