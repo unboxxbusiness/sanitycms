@@ -65,14 +65,26 @@ export function SocialShare() {
     });
   };
 
-  const handleNativeShare = () => {
+  const handleNativeShare = async () => {
     if (navigator.share) {
-      navigator.share({
-        title: shareTitle,
-        url: currentUrl,
-      }).catch(console.error);
+      try {
+        await navigator.share({
+          title: shareTitle,
+          url: currentUrl,
+        });
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+          // User cancelled the share dialog, do nothing.
+        } else {
+            toast({
+                title: "Could not share",
+                description: "Sharing was blocked or failed. Please try again.",
+                variant: "destructive",
+            });
+        }
+      }
     } else {
-        toast({ title: "Share not supported", description: "Your browser does not support native sharing.", variant: "destructive" });
+        toast({ title: "Share not supported", description: "Your browser does not support this feature.", variant: "destructive" });
     }
   };
 
