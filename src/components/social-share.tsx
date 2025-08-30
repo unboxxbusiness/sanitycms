@@ -65,7 +65,6 @@ export function SocialShare() {
     });
   };
 
-<<<<<<< HEAD
   const handleNativeShare = async () => {
     if (navigator.share) {
       try {
@@ -99,8 +98,6 @@ export function SocialShare() {
     )
   }
 
-=======
->>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
   return (
     <div className="fixed bottom-4 right-4 z-50">
         <TooltipProvider>

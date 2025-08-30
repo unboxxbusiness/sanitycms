@@ -1,10 +1,8 @@
-// src/app/blog/page.tsx
-'use client'
 
+// src/app/blog/page.tsx
 import { sanityFetch } from '@/lib/sanity';
 import { urlFor } from '@/lib/sanity-image';
 import { cn } from "@/lib/utils";
-import React, { useEffect, useState } from "react";
 import { MoveRight, User, ArrowLeft, ArrowRight } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
@@ -173,20 +171,8 @@ const GridSection = ({
 };
 
 
-export default function BlogIndexPage() {
-    const [allPosts, setAllPosts] = useState<SanityPost[]>([]);
-    const [settings, setSettings] = useState<BlogPageSettings>({});
-    const [currentPage, setCurrentPage] = useState(1);
-    const postsPerPage = 9;
-    
-    useEffect(() => {
-        const fetchAndSetData = async () => {
-            const [sanityPosts, sanitySettings] = await Promise.all([getPosts(), getSettings()]);
-            setAllPosts(sanityPosts);
-            setSettings(sanitySettings);
-        };
-        fetchAndSetData();
-    }, []);
+export default async function BlogIndexPage() {
+    const [allPosts, settings] = await Promise.all([getPosts(), getSettings()]);
 
     const featuredPosts: BlogPost[] = allPosts.slice(0, 3).map((post, index) => ({
         id: post._id,
@@ -201,17 +187,6 @@ export default function BlogIndexPage() {
     }));
 
     const olderPosts = allPosts.slice(3);
-    const totalOlderPosts = olderPosts.length;
-    const totalPages = Math.ceil(totalOlderPosts / postsPerPage);
-    const paginatedPosts = olderPosts.slice((currentPage - 1) * postsPerPage, currentPage * postsPerPage);
-
-    const handleNextPage = () => {
-        setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-    };
-
-    const handlePrevPage = () => {
-        setCurrentPage((prev) => Math.max(prev - 1, 1));
-    };
 
     return (
         <main className="flex-1 w-full">
@@ -227,23 +202,10 @@ export default function BlogIndexPage() {
                     <div className="container mx-auto px-4">
                         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Older Posts</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {paginatedPosts.map((post) => (
+                            {olderPosts.map((post) => (
                                 <PostCard key={post._id} post={post} />
                             ))}
                         </div>
-                        {totalPages > 1 && (
-                            <div className="flex justify-center items-center gap-4 mt-12">
-                                <Button onClick={handlePrevPage} disabled={currentPage === 1} variant="outline">
-                                    <ArrowLeft className="mr-2 h-4 w-4" /> Previous
-                                </Button>
-                                <span className="text-sm text-muted-foreground">
-                                    Page {currentPage} of {totalPages}
-                                </span>
-                                <Button onClick={handleNextPage} disabled={currentPage === totalPages} variant="outline">
-                                    Next <ArrowRight className="ml-2 h-4 w-4" />
-                                </Button>
-                            </div>
-                        )}
                     </div>
                 </section>
             )}

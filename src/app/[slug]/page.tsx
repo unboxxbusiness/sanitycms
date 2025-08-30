@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { BlockRenderer } from '@/components/block-renderer';
 import type { Metadata } from 'next';
 import { urlFor } from '@/lib/sanity-image';
+import { client } from '@/lib/sanity';
 
 interface PageData {
   _id: string;
@@ -85,6 +86,7 @@ const getPageData = (slug: string) => {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const page = await getPageData(params.slug);
+  
   if (!page) {
     return {};
   }

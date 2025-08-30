@@ -52,21 +52,9 @@ export default defineType({
           type: 'image',
           options: {hotspot: true}
         },
-<<<<<<< HEAD
-        {
-          type: 'ctaBlock'
-        },
-        {
-          type: 'donationBlock'
-        },
-        {
-            type: 'videoBlock'
-        }
-=======
         { type: 'ctaBlock' },
         { type: 'videoBlock' },
         { type: 'donationBlock' },
->>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
       ],
     }),
   ],

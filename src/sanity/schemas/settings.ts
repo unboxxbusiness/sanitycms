@@ -11,11 +11,7 @@ export default defineType({
     { name: 'general', title: 'General', default: true },
     { name: 'header', title: 'Header' },
     { name: 'footer', title: 'Footer' },
-<<<<<<< HEAD
     { name: 'blog', title: 'Blog Page' },
-=======
-    { name: 'blog', title: 'Blog' },
->>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
     { name: 'seo', title: 'Default SEO' },
   ],
   fields: [
@@ -32,19 +28,8 @@ export default defineType({
       title: 'Logo (Light Mode)',
       type: 'image',
       group: 'general',
-<<<<<<< HEAD
-      description: 'Upload the logo to be used on light backgrounds.'
-    }),
-    defineField({
-      name: 'logoDark',
-      title: 'Logo (Dark Mode)',
-      type: 'image',
-      group: 'general',
-      description: 'Upload the logo to be used on dark backgrounds.'
-=======
       description: 'Upload the logo to be displayed on light backgrounds. Recommended size: 400x100px.',
       options: { hotspot: true },
->>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
     }),
     defineField({
       name: 'logoDark',
@@ -61,32 +46,8 @@ export default defineType({
       title: 'Main Navigation',
       type: 'array',
       group: 'header',
-<<<<<<< HEAD
-      of: [{ type: 'navItem' }],
-=======
       description: 'The primary navigation links that appear in the website header.',
-      of: [{ 
-        type: 'object',
-        name: 'navItem',
-        fields: [
-          defineField({ name: 'text', type: 'string', title: 'Link Text', validation: (Rule) => Rule.required() }),
-          defineField({ name: 'link', type: 'string', title: 'Link URL', validation: (Rule) => Rule.required() }),
-          defineField({
-            name: 'submenu',
-            title: 'Submenu',
-            type: 'array',
-            of: [{
-                type: 'object',
-                name: 'subNavItem',
-                fields: [
-                    { name: 'text', type: 'string', title: 'Link Text', validation: (Rule) => Rule.required() },
-                    { name: 'link', type: 'string', title: 'Link URL', validation: (Rule) => Rule.required() }
-                ]
-            }]
-          })
-        ]
-      }],
->>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
+      of: [{ type: 'navItem' }],
     }),
     defineField({
       name: 'headerCta',
@@ -148,36 +109,21 @@ export default defineType({
       title: 'Footer "Product" Links',
       type: 'array',
       group: 'footer',
-      of: [{ 
-        type: 'object', name: 'footerLink', fields: [
-          { name: 'text', type: 'string', title: 'Link Text' },
-          { name: 'link', type: 'string', title: 'Link URL' }
-        ]
-      }],
+      of: [{ type: 'navLink' }],
     }),
     defineField({
       name: 'footerCompanyLinks',
       title: 'Footer "Company" Links',
       type: 'array',
       group: 'footer',
-      of: [{ 
-        type: 'object', name: 'footerLink', fields: [
-          { name: 'text', type: 'string', title: 'Link Text' },
-          { name: 'link', type: 'string', title: 'Link URL' }
-        ]
-      }],
+      of: [{ type: 'navLink' }],
     }),
     defineField({
       name: 'footerLegalLinks',
       title: 'Footer "Legal" Links',
       type: 'array',
       group: 'footer',
-      of: [{ 
-        type: 'object', name: 'footerLink', fields: [
-          { name: 'text', type: 'string', title: 'Link Text' },
-          { name: 'link', type: 'string', title: 'Link URL' }
-        ]
-      }],
+      of: [{ type: 'navLink' }],
     }),
      defineField({
         name: 'newsletterHeadline',
@@ -231,92 +177,17 @@ export default defineType({
         title: 'Blog Page Heading',
         type: 'string',
         group: 'blog',
-        initialValue: 'Our Blog'
+        initialValue: 'Latest Articles'
     }),
     defineField({
         name: 'blogPageSubheading',
         title: 'Blog Page Subheading',
         type: 'text',
-<<<<<<< HEAD
-        group: 'footer',
-    }),
-    defineField({
-      name: 'footerProductLinks',
-      title: 'Footer Product Links',
-      type: 'array',
-      group: 'footer',
-      of: [{ type: 'navLink' }],
-    }),
-    defineField({
-      name: 'footerCompanyLinks',
-      title: 'Footer Company Links',
-      type: 'array',
-      group: 'footer',
-      of: [{ type: 'navLink' }],
-    }),
-    defineField({
-      name: 'footerLegalLinks',
-      title: 'Footer Legal Links',
-      type: 'array',
-      group: 'footer',
-      of: [{ type: 'navLink' }],
-    }),
-    defineField({
-      name: 'socialLinks',
-      title: 'Social Media Links',
-      type: 'array',
-      group: 'footer',
-      of: [{
-        type: 'object',
-        fields: [
-          defineField({
-            name: 'platform',
-            title: 'Platform',
-            type: 'string',
-            options: {
-              list: [
-                {title: 'GitHub', value: 'github'},
-                {title: 'Twitter', value: 'twitter'},
-                {title: 'LinkedIn', value: 'linkedin'},
-              ]
-            }
-          }),
-          defineField({
-            name: 'url',
-            title: 'URL',
-            type: 'url'
-          })
-        ]
-      }]
-    }),
-    defineField({
-        name: 'copyrightText',
-        title: 'Copyright Text',
-        type: 'string',
-        group: 'footer',
-        initialValue: 'AmulyaX India. All rights reserved.'
-    }),
-     defineField({
-      name: 'blogPageHeading',
-      title: 'Blog Page Heading',
-      type: 'string',
-      group: 'blog',
-      initialValue: 'Latest Articles'
-    }),
-    defineField({
-      name: 'blogPageSubheading',
-      title: 'Blog Page Subheading',
-      type: 'text',
-      group: 'blog',
-      initialValue: 'Explore our latest articles, insights, and stories. We cover a range of topics from technology to social impact.'
-    }),
-=======
         group: 'blog',
-        initialValue: 'Latest news, insights, and stories from our mission to empower students across India.'
+        initialValue: 'Explore our latest articles, insights, and stories. We cover a range of topics from technology to social impact.'
     }),
 
     // SEO Settings
->>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
     defineField({
       name: 'defaultMetaTitle',
       title: 'Default Meta Title',
