@@ -14,7 +14,7 @@ import Image from 'next/image';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useTheme } from 'next-themes';
 import { Menu as AnimatedMenu, MenuItem, HoveredLink } from '@/components/ui/navbar-menu';
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 
@@ -98,6 +98,9 @@ export function Header() {
                                         </Button>
                                     </SheetTrigger>
                                     <SheetContent>
+                                        <SheetHeader>
+                                            <SheetTitle className="sr-only">Main Menu</SheetTitle>
+                                        </SheetHeader>
                                         <div className="flex flex-col h-full py-6">
                                             <div className="flex flex-col gap-6 text-lg">
                                                 <Accordion type="single" collapsible className="w-full">
