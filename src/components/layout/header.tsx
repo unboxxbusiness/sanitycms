@@ -15,6 +15,7 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { useTheme } from 'next-themes';
 import { Menu as AnimatedMenu, MenuItem, HoveredLink } from '@/components/ui/navbar-menu';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 
 interface NavLink {
@@ -103,20 +104,26 @@ export function Header() {
                                             <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                                         </SheetHeader>
                                         <div className="flex flex-col h-full py-6">
-                                            <div className="flex flex-col items-start space-y-4">
+                                            <div className="flex flex-col items-start space-y-2">
                                                 {navLinks.map((item) => (
                                                     <React.Fragment key={item._key}>
                                                         {item.children && item.children.length > 0 ? (
-                                                            <div className="w-full">
-                                                                <p className="font-semibold text-foreground/80 px-4 py-2">{item.text}</p>
-                                                                <div className="flex flex-col space-y-2 pl-8">
-                                                                    {item.children.map((child) => (
-                                                                        <Link key={child._key} href={child.link || '#'} onClick={() => setIsMobileMenuOpen(false)} className="text-muted-foreground hover:text-foreground">{child.text}</Link>
-                                                                    ))}
-                                                                </div>
-                                                            </div>
+                                                            <Accordion type="single" collapsible className="w-full">
+                                                                <AccordionItem value={item._key} className="border-b-0">
+                                                                    <AccordionTrigger className="text-foreground/80 hover:text-foreground font-semibold py-2 px-4 hover:no-underline">
+                                                                        {item.text}
+                                                                    </AccordionTrigger>
+                                                                    <AccordionContent>
+                                                                        <div className="flex flex-col space-y-2 pl-8 pt-2">
+                                                                            {item.children.map((child) => (
+                                                                                <Link key={child._key} href={child.link || '#'} onClick={() => setIsMobileMenuOpen(false)} className="text-muted-foreground hover:text-foreground">{child.text}</Link>
+                                                                            ))}
+                                                                        </div>
+                                                                    </AccordionContent>
+                                                                </AccordionItem>
+                                                            </Accordion>
                                                         ) : (
-                                                            <Link href={item.link || '#'} onClick={() => setIsMobileMenuOpen(false)} className="text-foreground/80 hover:text-foreground px-4 py-2">
+                                                            <Link href={item.link || '#'} onClick={() => setIsMobileMenuOpen(false)} className="text-foreground/80 hover:text-foreground px-4 py-2 font-semibold">
                                                                 {item.text}
                                                             </Link>
                                                         )}
