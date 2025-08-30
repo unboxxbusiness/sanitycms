@@ -29,6 +29,7 @@ export function ContactForm() {
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    // In a real app, you would send this to a server
     console.log("Contact Form Submitted:", values)
     toast({
       title: "Message Sent!",
@@ -42,7 +43,7 @@ export function ContactForm() {
         <div className="container mx-auto px-4">
             <Card className="max-w-2xl mx-auto">
                 <CardHeader>
-                    <CardTitle>Contact Us</CardTitle>
+                    <CardTitle className="text-2xl md:text-3xl">Contact Us</CardTitle>
                     <CardDescription>Have a question or want to work with us? Fill out the form below.</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -68,7 +69,7 @@ export function ContactForm() {
                             <FormItem>
                             <FormLabel>Email Address</FormLabel>
                             <FormControl>
-                                <Input placeholder="your.email@example.com" {...field} />
+                                <Input type="email" placeholder="your.email@example.com" {...field} />
                             </FormControl>
                             <FormMessage />
                             </FormItem>
@@ -87,7 +88,7 @@ export function ContactForm() {
                             </FormItem>
                         )}
                         />
-                        <Button type="submit" className="w-full">Send Message</Button>
+                        <Button type="submit" className="w-full" size="lg">Send Message</Button>
                     </form>
                     </Form>
                 </CardContent>
