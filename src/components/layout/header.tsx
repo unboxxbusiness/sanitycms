@@ -8,12 +8,13 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Logo } from '@/components/logo';
 import { client } from '@/lib/sanity'
-import { SanityImageSource } from '@sanity/image-url/lib/types/types';
+import { type SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { urlFor } from '@/lib/sanity-image';
 import Image from 'next/image';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useTheme } from 'next-themes';
 import { Menu as AnimatedMenu, MenuItem, HoveredLink } from '@/components/ui/navbar-menu';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
 
 interface NavLink {
@@ -86,21 +87,61 @@ export function Header() {
                             </Link>
                             <div className="flex items-center lg:hidden">
                                 <ThemeToggle />
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="relative z-40 -m-2.5 block cursor-pointer p-2.5 lg:hidden"
-                                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                                  aria-label="Toggle mobile menu"
-                                >
-                                  {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-                                </Button>
+                                <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+                                    <SheetTrigger asChild>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="relative z-40 -m-2.5 block cursor-pointer p-2.5 lg:hidden"
+                                          aria-label="Toggle mobile menu"
+                                        >
+                                          <Menu className="h-6 w-6" />
+                                        </Button>
+                                    </SheetTrigger>
+                                    <SheetContent side="left" className="w-[80vw]">
+                                        <SheetHeader>
+                                            <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
+                                        </SheetHeader>
+                                        <div className="flex flex-col h-full py-6">
+                                            <div className="flex flex-col items-start space-y-4">
+                                                {navLinks.map((item) => (
+                                                    <React.Fragment key={item._key}>
+                                                        {item.children && item.children.length > 0 ? (
+                                                            <div className="w-full">
+                                                                <p className="font-semibold text-foreground/80 px-4 py-2">{item.text}</p>
+                                                                <div className="flex flex-col space-y-2 pl-8">
+                                                                    {item.children.map((child) => (
+                                                                        <Link key={child._key} href={child.link || '#'} onClick={() => setIsMobileMenuOpen(false)} className="text-muted-foreground hover:text-foreground">{child.text}</Link>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <Link href={item.link || '#'} onClick={() => setIsMobileMenuOpen(false)} className="text-foreground/80 hover:text-foreground px-4 py-2">
+                                                                {item.text}
+                                                            </Link>
+                                                        )}
+                                                    </React.Fragment>
+                                                ))}
+                                            </div>
+                                            <div className="mt-auto">
+                                            {settings?.headerCta?.link && (
+                                                <Button
+                                                    asChild
+                                                    size="sm"
+                                                    className="w-full"
+                                                    >
+                                                    <Link href={settings.headerCta.link}>
+                                                        <span>{settings.headerCta.text || 'Get Started'}</span>
+                                                    </Link>
+                                                </Button>
+                                            )}
+                                            </div>
+                                        </div>
+                                    </SheetContent>
+                                </Sheet>
                             </div>
                         </div>
-                        <div className={cn(
-                            "w-full flex-col items-center justify-center gap-6 bg-transparent p-6 shadow-none lg:static lg:w-fit lg:flex-row lg:gap-0 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent lg:flex",
-                            isMobileMenuOpen ? 'flex' : 'hidden'
-                        )}>
+                        <div className="hidden w-full flex-col items-center justify-center gap-6 bg-transparent p-6 shadow-none lg:static lg:w-fit lg:flex-row lg:gap-0 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent lg:flex">
                              <AnimatedMenu setActive={setActive} className={isScrolled ? '!bg-transparent !shadow-none !border-none' : ''}>
                                 <div className="flex flex-col lg:flex-row items-center space-y-4 lg:space-y-0 lg:space-x-8">
                                     {navLinks.map((item) => (
