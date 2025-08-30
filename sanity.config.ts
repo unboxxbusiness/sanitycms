@@ -11,7 +11,7 @@ const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!
 
 const singletonActions = new Set(["publish", "discardChanges", "restore"])
-const singletonTypes = new Set(["homePage", "settings"])
+const singletonTypes = new Set(["settings", "homePage"])
 
 export const structure: StructureResolver = (S) =>
   S.list()
@@ -68,10 +68,10 @@ export const structure: StructureResolver = (S) =>
             const id = listItem.getId()
             if (!id) return false
             const hiddenDocTypes = [
-                'page', 'post', 'author', 'category', 'reusableBlock',
+                'page', 'post', 'author', 'category', 'reusableBlock', 'settings', 'homePage',
                 'partner', 'testimonial', 'program', 'impactMetric', 'donationTier'
             ];
-            return !singletonTypes.has(id) && !hiddenDocTypes.includes(id);
+            return !hiddenDocTypes.includes(id);
         }
       ),
     ])

@@ -7,6 +7,8 @@ export default defineType({
   title: 'Site Settings',
   type: 'document',
   icon: Cog,
+  // This will prevent users from creating new settings documents or deleting the existing one
+  __experimental_actions: [/*'create',*/ 'update', /*'delete',*/ 'publish'],
   groups: [
     { name: 'general', title: 'General', default: true },
     { name: 'header', title: 'Header' },
