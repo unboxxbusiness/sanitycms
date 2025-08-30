@@ -148,7 +148,7 @@ export default async function BlogPostPage({ params }: PostProps) {
       <main className="flex-1 py-24 md:py-32">
         <article className="container mx-auto px-4 max-w-4xl">
             <div className="mb-8">
-              <Button asChild variant="ghost" className="pl-0">
+              <Button asChild variant="ghost">
                 <Link href="/blog" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground">
                   <ArrowLeft className="h-4 w-4" />
                   <span>Back to all posts</span>
