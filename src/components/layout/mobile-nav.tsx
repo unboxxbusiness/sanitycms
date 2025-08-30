@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import type { HeaderSettings } from './header';
 
 interface MobileNavProps {
@@ -26,6 +26,9 @@ export function MobileNav({ mainNavItems, cta }: MobileNavProps) {
           </Button>
         </SheetTrigger>
         <SheetContent side="right" className="w-full max-w-xs bg-background p-6">
+          <SheetHeader>
+            <SheetTitle className="sr-only">Main Menu</SheetTitle>
+          </SheetHeader>
           <div className="flex h-full flex-col">
             <div className="flex-1">
               <ul className="flex flex-col items-start space-y-6 text-base mt-8">
