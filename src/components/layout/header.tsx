@@ -154,24 +154,24 @@ export function Header() {
                             </div>
                         </div>
                         <div className={cn("hidden w-full flex-col items-center justify-center gap-6 bg-transparent p-6 shadow-none lg:static lg:w-fit lg:flex-row lg:gap-0 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent lg:flex")}>
-                            <AnimatedMenu setActive={setActive} className={isScrolled ? '!bg-transparent !shadow-none !border-none' : ''}>
+                             <AnimatedMenu setActive={setActive} className={isScrolled ? '!bg-transparent !shadow-none !border-none' : ''}>
                                 <div className="flex items-center space-x-8">
                                     {navLinks.map((item) => (
-                                        <MenuItem key={item._key} setActive={setActive} active={active} item={item.text}>
+                                        <React.Fragment key={item._key}>
                                             {item.children && item.children.length > 0 ? (
-                                                <div className="flex flex-col space-y-4 text-sm">
-                                                    {item.children.map((child) => (
-                                                        <HoveredLink key={child._key} href={child.link || '#'}>{child.text}</HoveredLink>
-                                                    ))}
-                                                </div>
-                                            ) : item.link ? (
-                                                <Link href={item.link} className="block text-foreground/80 hover:text-foreground">
-                                                  {item.text}
-                                                </Link>
+                                                <MenuItem setActive={setActive} active={active} item={item.text}>
+                                                    <div className="flex flex-col space-y-4 text-sm">
+                                                        {item.children.map((child) => (
+                                                            <HoveredLink key={child._key} href={child.link || '#'}>{child.text}</HoveredLink>
+                                                        ))}
+                                                    </div>
+                                                </MenuItem>
                                             ) : (
-                                                <span className="cursor-default text-foreground/80">{item.text}</span>
+                                                <Link href={item.link || '#'} className="cursor-pointer text-foreground/80 hover:text-foreground">
+                                                    {item.text}
+                                                </Link>
                                             )}
-                                        </MenuItem>
+                                        </React.Fragment>
                                     ))}
                                 </div>
                             </AnimatedMenu>
