@@ -3,7 +3,7 @@ import {defineConfig} from 'sanity'
 import {structureTool, type StructureResolver} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {schemaTypes} from './src/sanity/schemas'
-import { Book, User, Tag, Layers, Settings, Home, FileText } from 'lucide-react'
+import { Book, User, Tag, Layers, Settings, Home, FileText, Handshake, MessageSquare, GraduationCap, BarChart, Award } from 'lucide-react'
 import { studioTheme } from './src/sanity/studio-theme'
 import { StudioLogo } from './src/sanity/studio-logo'
 
@@ -12,12 +12,6 @@ const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!
 
 const singletonActions = new Set(["publish", "discardChanges", "restore"])
 const singletonTypes = new Set(["settings", "homePage"])
-
-// Define the document types that are handled manually
-const manuallyHandledDocTypes = [
-    'page', 'post', 'author', 'category', 'reusableBlock', 'settings', 'homePage',
-    'partner', 'testimonial', 'program', 'impactMetric', 'donationTier'
-];
 
 export const structure: StructureResolver = (S) =>
   S.list()
@@ -61,21 +55,32 @@ export const structure: StructureResolver = (S) =>
               S.documentTypeListItem('category').title('Categories').icon(Tag),
             ])
         ),
+      
+      S.divider(),
+
+      S.listItem()
+        .title('Reusable Content')
+        .icon(Layers)
+        .child(
+          S.documentTypeList('reusableBlock').title('Reusable Content')
+        ),
 
       S.divider(),
 
-       S.documentTypeListItem('reusableBlock').title('Reusable Content').icon(Layers),
-
-      S.divider(),
-
-      // Filter out singleton types and other specific types from the main list
-      ...S.documentTypeListItems().filter(
-        (listItem) => {
-            const id = listItem.getId()
-            if (!id) return false
-            return !manuallyHandledDocTypes.includes(id);
-        }
-      ),
+      S.listItem()
+        .title('Organization Data')
+        .icon(Handshake)
+        .child(
+          S.list()
+            .title('Organization Data')
+            .items([
+                S.documentTypeListItem('partner').title('Partners').icon(Handshake),
+                S.documentTypeListItem('testimonial').title('Testimonials').icon(MessageSquare),
+                S.documentTypeListItem('program').title('Programs').icon(GraduationCap),
+                S.documentTypeListItem('impactMetric').title('Impact Metrics').icon(BarChart),
+                S.documentTypeListItem('donationTier').title('Donation Tiers').icon(Award),
+            ])
+        ),
     ])
 
 
