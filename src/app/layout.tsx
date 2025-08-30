@@ -1,14 +1,15 @@
-
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { client } from '@/lib/sanity';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
-import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { SocialShare } from '@/components/social-share';
-import type { Metadata } from 'next';
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 interface SettingsData {
   siteTitle?: string;
@@ -16,19 +17,23 @@ interface SettingsData {
   defaultMetaDescription?: string;
 }
 
-// This function now only fetches data needed for metadata
 async function getSeoSettings(): Promise<SettingsData> {
     const query = `*[_type == "settings"][0]{ 
         siteTitle,
         defaultMetaTitle,
         defaultMetaDescription
     }`;
-    const data = await client.fetch(query, {}, {
+    try {
+      const data = await client.fetch(query, {}, {
         next: {
             tags: ['settings']
         }
     });
-    return data || {};
+      return data || {};
+    } catch (error) {
+      console.error("Failed to fetch SEO settings:", error);
+      return {};
+    }
 }
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -49,7 +54,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn("font-body antialiased min-h-screen bg-background flex flex-col")} suppressHydrationWarning>
+      <body className={cn("min-h-screen bg-background font-sans antialiased", inter.variable)} suppressHydrationWarning>
         <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -57,7 +62,7 @@ export default function RootLayout({
             disableTransitionOnChange
             >
             <Header />
-            <main className="flex-1">
+            <main className="flex-1 pt-16">
                 {children}
             </main>
             <Footer />
