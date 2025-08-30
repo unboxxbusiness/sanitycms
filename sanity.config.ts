@@ -13,10 +13,12 @@ const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!
 const singletonActions = new Set(["publish", "discardChanges", "restore"])
 const singletonTypes = new Set(["settings", "homePage"])
 
+// This is the most robust way to define the structure for Sanity Studio
 export const structure: StructureResolver = (S) =>
   S.list()
     .title('Content')
     .items([
+      // Singleton document for Site Settings
       S.listItem()
         .title('Site Settings')
         .id('settings')
@@ -26,9 +28,7 @@ export const structure: StructureResolver = (S) =>
             .schemaType('settings')
             .documentId('settings')
         ),
-      
-      S.divider(),
-
+      // Singleton document for Home Page
       S.listItem()
         .title('Home Page')
         .icon(Home)
@@ -38,49 +38,24 @@ export const structure: StructureResolver = (S) =>
             .schemaType('homePage')
             .documentId('homePage')
         ),
-      
-      S.documentTypeListItem('page').title('Other Pages').icon(FileText),
-      
-      S.divider(),
 
-      S.listItem()
-        .title('Blog Content')
-        .icon(Book)
-        .child(
-          S.list()
-            .title('Blog Content')
-            .items([
-              S.documentTypeListItem('post').title('All Posts'),
-              S.documentTypeListItem('author').title('Authors').icon(User),
-              S.documentTypeListItem('category').title('Categories').icon(Tag),
-            ])
-        ),
+      S.divider(),
+      
+      // Standard document types
+      S.documentTypeListItem('page').title('Pages').icon(FileText),
+      S.documentTypeListItem('post').title('Blog Posts').icon(Book),
+      S.documentTypeListItem('author').title('Authors').icon(User),
+      S.documentTypeListItem('category').title('Categories').icon(Tag),
       
       S.divider(),
 
-      S.listItem()
-        .title('Reusable Content')
-        .icon(Layers)
-        .child(
-          S.documentTypeList('reusableBlock').title('Reusable Content')
-        ),
-
-      S.divider(),
-
-      S.listItem()
-        .title('Organization Data')
-        .icon(Handshake)
-        .child(
-          S.list()
-            .title('Organization Data')
-            .items([
-                S.documentTypeListItem('partner').title('Partners').icon(Handshake),
-                S.documentTypeListItem('testimonial').title('Testimonials').icon(MessageSquare),
-                S.documentTypeListItem('program').title('Programs').icon(GraduationCap),
-                S.documentTypeListItem('impactMetric').title('Impact Metrics').icon(BarChart),
-                S.documentTypeListItem('donationTier').title('Donation Tiers').icon(Award),
-            ])
-        ),
+      // Other data types
+      S.documentTypeListItem('partner').title('Partners').icon(Handshake),
+      S.documentTypeListItem('testimonial').title('Testimonials').icon(MessageSquare),
+      S.documentTypeListItem('program').title('Programs').icon(GraduationCap),
+      S.documentTypeListItem('impactMetric').title('Impact Metrics').icon(BarChart),
+      S.documentTypeListItem('donationTier').title('Donation Tiers').icon(Award),
+      S.documentTypeListItem('reusableBlock').title('Reusable Blocks').icon(Layers),
     ])
 
 
