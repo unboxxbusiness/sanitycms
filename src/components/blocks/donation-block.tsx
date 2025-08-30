@@ -1,7 +1,7 @@
 // src/components/blocks/donation-block.tsx
 'use client'
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useId, useState, useMemo, useEffect } from "react";
 import { Award, BookOpenCheck, GraduationCap, HandCoins, HeartHandshake, Leaf, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from "@/components/ui/slider"
@@ -25,6 +25,7 @@ interface DonationBlockProps {
     donationTiers: DonationTier[];
     primaryCtaText?: string;
     primaryCtaLink?: string;
+    className?: string;
 }
 
 const iconMap: { [key: string]: React.ReactNode } = {
@@ -52,8 +53,10 @@ export function DonationBlock({
     donationTiers,
     primaryCtaText = "Donate Now",
     primaryCtaLink = "#",
+    className
 }: DonationBlockProps) {
     const [donationAmount, setDonationAmount] = useState(minAmount);
+    const id = useId();
     
     // Defer state initialization to client-side to avoid hydration mismatch
     useEffect(() => {
@@ -65,7 +68,26 @@ export function DonationBlock({
     }, [donationTiers]);
 
     const presetAmounts = useMemo(() => {
-        return sortedTiers.map(tier => tier.amount).filter(a => a >= minAmount && a <= maxAmount).slice(0, 3);
+        // Create 3 preset amounts: min, a value in the middle, and max
+        if (maxAmount <= minAmount) return [minAmount];
+        const midPoint = minAmount + (maxAmount - minAmount) / 2;
+        const middleTier = sortedTiers.reduce((prev, curr) => {
+            return (Math.abs(curr.amount - midPoint) < Math.abs(prev.amount - midPoint) ? curr : prev);
+        });
+        
+        let amounts = [minAmount, middleTier.amount, maxAmount];
+        
+        if (minAmount > 5000) {
+            // find a tier around 5000 and replace minAmount if it is too high
+            const fiveKtier = sortedTiers.reduce((prev, curr) => {
+                return (Math.abs(curr.amount - 5000) < Math.abs(prev.amount - 5000) ? curr : prev);
+            });
+            if (fiveKtier) amounts[0] = fiveKtier.amount;
+        }
+
+        // Ensure unique values and sort them
+        return [...new Set(amounts)].sort((a, b) => a - b).slice(0,3);
+
     }, [sortedTiers, minAmount, maxAmount]);
 
     const activeTier = useMemo(() => {
@@ -109,7 +131,7 @@ export function DonationBlock({
     }
 
     return (
-        <section className="py-20 md:py-28 bg-secondary/20">
+        <section className={cn("py-20 md:py-28 bg-secondary/20", className)}>
             <div className="container mx-auto px-4">
                 <div className="text-center max-w-4xl mx-auto">
                     <h2 className="text-3xl md:text-4xl font-bold">{heading}</h2>
@@ -117,7 +139,7 @@ export function DonationBlock({
                 </div>
 
                 <div className="max-w-4xl mx-auto mt-12 bg-card rounded-2xl shadow-lg p-8 md:p-12">
-                    <div className="grid md:grid-cols-2 gap-8 items-center">
+                    <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
                         <div className="text-center md:text-left">
                             <div className="mb-4">
                                 {activeTier?.icon && (
@@ -126,7 +148,7 @@ export function DonationBlock({
                                    </div>
                                 )}
                                 <p className="text-sm font-semibold uppercase tracking-wider text-primary">{activeTier?.title || 'Supporter'}</p>
-                                <p className="text-4xl md:text-5xl font-bold text-foreground mt-2">{formatCurrency(donationAmount)}</p>
+                                <p id={id} className="text-4xl md:text-5xl font-bold text-foreground mt-2">{formatCurrency(donationAmount)}</p>
                             </div>
                             <div className="mt-4 text-muted-foreground text-lg">
                                 Your contribution can provide <span className="font-bold text-primary">{studentsImpacted}</span> {activeTier?.impactUnitLabel || 'students with support'}.
@@ -140,6 +162,8 @@ export function DonationBlock({
                                         key={amount}
                                         variant={donationAmount === amount ? "default" : "outline"}
                                         onClick={() => setDonationAmount(amount)}
+                                        size="sm"
+                                        className="text-xs sm:text-sm"
                                     >
                                         {formatCurrency(amount)}
                                     </Button>
@@ -152,6 +176,7 @@ export function DonationBlock({
                                 max={maxAmount}
                                 step={(maxAmount - minAmount) / 100}
                                 className="w-full"
+                                aria-labelledby={id}
                             />
                             <div className="flex justify-between text-xs text-muted-foreground mt-2">
                                 <span>{formatCurrency(minAmount)}</span>

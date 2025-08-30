@@ -1,6 +1,5 @@
-// src/components/layout/header.tsx
-'use client';
 
+<<<<<<< HEAD
 import React, { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
@@ -9,27 +8,52 @@ import { cn } from '@/lib/utils'
 import { Logo } from '@/components/logo';
 import { sanityFetch } from '@/lib/sanity'
 import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
+=======
+// src/components/layout/header.tsx
+import Link from 'next/link'
+import { client } from '@/lib/sanity';
+>>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
 import { urlFor } from '@/lib/sanity-image';
 import Image from 'next/image';
+import { MainNav } from './main-nav';
+import { MobileNav } from './mobile-nav';
 import { ThemeToggle } from '@/components/theme-toggle';
+<<<<<<< HEAD
 import { useTheme } from 'next-themes';
 import { Menu as AnimatedMenu, MenuItem, HoveredLink } from '@/components/ui/navbar-menu';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+=======
+import { Button } from '@/components/ui/button';
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
+>>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
 
-
-interface NavLink {
+interface NavItem {
   _key: string;
   text: string;
+<<<<<<< HEAD
   link?: string;
   children?: NavLink[];
+=======
+  link: string;
+  submenu?: NavItem[];
 }
 
 interface Cta {
-    text: string;
-    link:string;
+  text: string;
+  link: string;
+>>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
 }
 
+export interface HeaderSettings {
+  siteTitle?: string;
+  logoLight?: SanityImageSource;
+  logoDark?: SanityImageSource;
+  mainNavigation?: NavItem[];
+  headerCta?: Cta;
+}
+
+<<<<<<< HEAD
 interface Settings {
   logoLight: SanityImageSource;
   logoDark: SanityImageSource;
@@ -73,17 +97,50 @@ export function Header() {
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
     
+=======
+async function getHeaderSettings(): Promise<HeaderSettings> {
+  const query = `*[_type == "settings"][0]{ 
+    siteTitle,
+    logoLight,
+    logoDark, 
+    mainNavigation[]{
+      ...,
+      submenu[]{...}
+    }, 
+    headerCta
+  }`;
+  try {
+      const data = await client.fetch(query, {}, {
+          next: {
+              tags: ['settings']
+          }
+      });
+      return data;
+  } catch (error) {
+      console.error("Failed to fetch settings:", error);
+      return {};
+  }
+}
+
+export async function Header() {
+    const settings = await getHeaderSettings();
+    const navItems = settings?.mainNavigation || [];
+
+>>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
     return (
         <header key="header">
             <nav
-                className="fixed z-50 group w-full px-2">
-                <div className={cn('mx-auto mt-2 max-w-6xl px-6 transition-all duration-300 lg:px-12', isScrolled && 'bg-background/50 max-w-4xl rounded-2xl border backdrop-blur-lg lg:px-5')}>
-                    <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
-                        <div className="relative z-30 flex w-full justify-between lg:w-auto">
+                aria-label="Main navigation"
+                className="fixed top-0 z-50 w-full transition-all duration-300 bg-background/80 backdrop-blur-lg border-b"
+            >
+                <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="relative flex h-16 items-center justify-between">
+                        <div className="flex-shrink-0">
                             <Link
                                 href="/"
                                 aria-label="home"
                                 className="flex items-center space-x-2">
+<<<<<<< HEAD
                                 {logo ? (
                                     <Image src={urlFor(logo).height(20).url()} alt="Logo" width={78} height={20} className="h-5 w-auto" />
                                 ) : (
@@ -185,6 +242,33 @@ export function Header() {
                                     </Button>
                                 )}
                             </div>
+=======
+                                {settings?.logoLight && (
+                                    <>
+                                        <Image src={urlFor(settings.logoLight).height(24).url()} alt={settings.siteTitle || 'Logo'} width={94} height={24} className="h-6 w-auto dark:hidden" priority />
+                                        <Image src={urlFor(settings.logoDark || settings.logoLight).height(24).url()} alt={settings.siteTitle || 'Logo'} width={94} height={24} className="h-6 w-auto hidden dark:block" priority />
+                                    </>
+                                )}
+                            </Link>
+                        </div>
+                        
+                        <div className="hidden lg:flex lg:items-center lg:space-x-8">
+                           <MainNav items={navItems} />
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                           <ThemeToggle />
+                           <div className="hidden lg:flex">
+                             {settings?.headerCta?.link && (
+                                <Button asChild>
+                                    <Link href={settings.headerCta.link}>
+                                        {settings.headerCta.text || 'Get Started'}
+                                    </Link>
+                                </Button>
+                            )}
+                           </div>
+                           <MobileNav mainNavItems={navItems} cta={settings?.headerCta} />
+>>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
                         </div>
                     </div>
                 </div>

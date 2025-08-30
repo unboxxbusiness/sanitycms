@@ -80,11 +80,11 @@ export const schemaTypes = [
     // Document types
     page,
     homePage,
+    settings,
     partner,
     testimonial,
     program,
     impactMetric,
-    settings,
     donationTier,
     post,
     author,

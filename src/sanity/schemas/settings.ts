@@ -11,10 +11,15 @@ export default defineType({
     { name: 'general', title: 'General', default: true },
     { name: 'header', title: 'Header' },
     { name: 'footer', title: 'Footer' },
+<<<<<<< HEAD
     { name: 'blog', title: 'Blog Page' },
+=======
+    { name: 'blog', title: 'Blog' },
+>>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
     { name: 'seo', title: 'Default SEO' },
   ],
   fields: [
+    // General Settings
     defineField({
         name: 'siteTitle',
         title: 'Site Title',
@@ -27,6 +32,7 @@ export default defineType({
       title: 'Logo (Light Mode)',
       type: 'image',
       group: 'general',
+<<<<<<< HEAD
       description: 'Upload the logo to be used on light backgrounds.'
     }),
     defineField({
@@ -35,37 +41,164 @@ export default defineType({
       type: 'image',
       group: 'general',
       description: 'Upload the logo to be used on dark backgrounds.'
+=======
+      description: 'Upload the logo to be displayed on light backgrounds. Recommended size: 400x100px.',
+      options: { hotspot: true },
+>>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
     }),
+    defineField({
+      name: 'logoDark',
+      title: 'Logo (Dark Mode)',
+      type: 'image',
+      group: 'general',
+      description: 'Upload the logo for dark backgrounds. If empty, the light logo is used.',
+      options: { hotspot: true },
+    }),
+
+    // Header Settings
     defineField({
       name: 'mainNavigation',
       title: 'Main Navigation',
       type: 'array',
       group: 'header',
+<<<<<<< HEAD
       of: [{ type: 'navItem' }],
+=======
+      description: 'The primary navigation links that appear in the website header.',
+      of: [{ 
+        type: 'object',
+        name: 'navItem',
+        fields: [
+          defineField({ name: 'text', type: 'string', title: 'Link Text', validation: (Rule) => Rule.required() }),
+          defineField({ name: 'link', type: 'string', title: 'Link URL', validation: (Rule) => Rule.required() }),
+          defineField({
+            name: 'submenu',
+            title: 'Submenu',
+            type: 'array',
+            of: [{
+                type: 'object',
+                name: 'subNavItem',
+                fields: [
+                    { name: 'text', type: 'string', title: 'Link Text', validation: (Rule) => Rule.required() },
+                    { name: 'link', type: 'string', title: 'Link URL', validation: (Rule) => Rule.required() }
+                ]
+            }]
+          })
+        ]
+      }],
+>>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
     }),
     defineField({
       name: 'headerCta',
       title: 'Header CTA Button',
       type: 'object',
       group: 'header',
+      description: 'The main call-to-action button in the header.',
       fields: [
-        { name: 'text', type: 'string', title: 'Button Text' },
+        { name: 'text', type: 'string', title: 'Button Text', initialValue: 'Get Started' },
         { name: 'link', type: 'string', title: 'Button Link' }
       ]
     }),
+
+    // Footer Settings
     defineField({
         name: 'footerDescription',
         title: 'Footer Description',
         type: 'text',
         group: 'footer',
+        description: 'A short description of your organization for the footer.',
+        rows: 3
+    }),
+    defineField({
+        name: 'copyrightText',
+        title: 'Copyright Text',
+        type: 'string',
+        group: 'footer',
+        description: 'The copyright notice. The current year is automatically added.',
+        initialValue: 'AmulyaX India. All rights reserved.'
+    }),
+    defineField({
+      name: 'socialLinks',
+      title: 'Social Media Links',
+      type: 'array',
+      group: 'footer',
+      description: 'Links to your social media profiles.',
+      of: [{
+        type: 'object',
+        name: 'socialLink',
+        fields: [
+          defineField({
+            name: 'platform',
+            title: 'Platform',
+            type: 'string',
+            options: {
+              list: [
+                {title: 'GitHub', value: 'github'},
+                {title: 'Twitter', value: 'twitter'},
+                {title: 'LinkedIn', value: 'linkedin'},
+              ]
+            }
+          }),
+          defineField({ name: 'url', title: 'URL', type: 'url' })
+        ]
+      }]
+    }),
+    defineField({
+      name: 'footerProductLinks',
+      title: 'Footer "Product" Links',
+      type: 'array',
+      group: 'footer',
+      of: [{ 
+        type: 'object', name: 'footerLink', fields: [
+          { name: 'text', type: 'string', title: 'Link Text' },
+          { name: 'link', type: 'string', title: 'Link URL' }
+        ]
+      }],
+    }),
+    defineField({
+      name: 'footerCompanyLinks',
+      title: 'Footer "Company" Links',
+      type: 'array',
+      group: 'footer',
+      of: [{ 
+        type: 'object', name: 'footerLink', fields: [
+          { name: 'text', type: 'string', title: 'Link Text' },
+          { name: 'link', type: 'string', title: 'Link URL' }
+        ]
+      }],
+    }),
+    defineField({
+      name: 'footerLegalLinks',
+      title: 'Footer "Legal" Links',
+      type: 'array',
+      group: 'footer',
+      of: [{ 
+        type: 'object', name: 'footerLink', fields: [
+          { name: 'text', type: 'string', title: 'Link Text' },
+          { name: 'link', type: 'string', title: 'Link URL' }
+        ]
+      }],
+    }),
+     defineField({
+        name: 'newsletterHeadline',
+        title: 'Newsletter Headline',
+        type: 'string',
+        group: 'footer',
+        initialValue: 'Stay Updated',
+    }),
+    defineField({
+        name: 'newsletterSupportingText',
+        title: 'Newsletter Supporting Text',
+        type: 'text',
+        group: 'footer',
+        initialValue: 'Subscribe to our newsletter to get the latest updates.',
     }),
     defineField({
       name: 'showMembershipCta',
-      title: 'Show Membership CTA',
+      title: 'Show Membership CTA in Footer',
       type: 'boolean',
       initialValue: true,
       group: 'footer',
-      description: 'If enabled, shows the membership popup button in the newsletter section.'
     }),
     defineField({
         name: 'membershipCtaText',
@@ -91,16 +224,20 @@ export default defineType({
         group: 'footer',
         hidden: ({parent}) => !parent?.showMembershipCta,
     }),
+    
+    // Blog Settings
     defineField({
-        name: 'newsletterHeadline',
-        title: 'Newsletter Headline',
+        name: 'blogPageHeading',
+        title: 'Blog Page Heading',
         type: 'string',
-        group: 'footer',
+        group: 'blog',
+        initialValue: 'Our Blog'
     }),
     defineField({
-        name: 'newsletterSupportingText',
-        title: 'Newsletter Supporting Text',
+        name: 'blogPageSubheading',
+        title: 'Blog Page Subheading',
         type: 'text',
+<<<<<<< HEAD
         group: 'footer',
     }),
     defineField({
@@ -173,6 +310,13 @@ export default defineType({
       group: 'blog',
       initialValue: 'Explore our latest articles, insights, and stories. We cover a range of topics from technology to social impact.'
     }),
+=======
+        group: 'blog',
+        initialValue: 'Latest news, insights, and stories from our mission to empower students across India.'
+    }),
+
+    // SEO Settings
+>>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
     defineField({
       name: 'defaultMetaTitle',
       title: 'Default Meta Title',
