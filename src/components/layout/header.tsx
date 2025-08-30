@@ -3,7 +3,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { Menu, ChevronDown } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Logo } from '@/components/logo';
@@ -15,17 +15,13 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
 import { useTheme } from 'next-themes';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
+import { Menu as AnimatedMenu, MenuItem, HoveredLink } from '@/components/ui/navbar-menu';
+
 
 interface NavLink {
   _key: string;
@@ -50,6 +46,7 @@ export function Header() {
     const [isScrolled, setIsScrolled] = React.useState(false)
     const [settings, setSettings] = React.useState<Settings | null>(null);
     const { theme } = useTheme();
+    const [active, setActive] = React.useState<string | null>(null);
 
     React.useEffect(() => {
         const fetchSettings = async () => {
@@ -156,38 +153,30 @@ export function Header() {
                                 </Sheet>
                             </div>
                         </div>
-                        <div className={cn("hidden w-full flex-col items-center justify-center gap-6 bg-background p-6 shadow-2xl shadow-zinc-300/20 dark:shadow-none lg:static lg:w-fit lg:flex-row lg:gap-0 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent lg:flex")}>
-                            <div className="absolute inset-0 m-auto hidden size-fit lg:block">
-                                <ul className="flex gap-8 text-sm">
+                        <div className={cn("hidden w-full flex-col items-center justify-center gap-6 bg-transparent p-6 shadow-none lg:static lg:w-fit lg:flex-row lg:gap-0 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent lg:flex")}>
+                            <AnimatedMenu setActive={setActive} className={isScrolled ? '!bg-transparent !shadow-none !border-none' : ''}>
+                                <div className="flex items-center space-x-8">
                                     {navLinks.map((item) => (
-                                        <li key={item._key}>
+                                        <MenuItem key={item._key} setActive={setActive} active={active} item={item.text}>
                                             {item.children && item.children.length > 0 ? (
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger className="flex items-center gap-1 text-foreground/80 hover:text-foreground focus:outline-none">
-                                                        <span>{item.text}</span>
-                                                        <ChevronDown className="h-4 w-4" />
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent>
-                                                        {item.children.map((child) => (
-                                                            <DropdownMenuItem key={child._key} asChild>
-                                                                <Link href={child.link || '#'}>{child.text}</Link>
-                                                            </DropdownMenuItem>
-                                                        ))}
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            ) : (
-                                                <Link
-                                                    href={item.link || '#'}
-                                                    className="text-foreground/80 hover:text-foreground block duration-150">
-                                                    <span>{item.text}</span>
+                                                <div className="flex flex-col space-y-4 text-sm">
+                                                    {item.children.map((child) => (
+                                                        <HoveredLink key={child._key} href={child.link || '#'}>{child.text}</HoveredLink>
+                                                    ))}
+                                                </div>
+                                            ) : item.link ? (
+                                                <Link href={item.link} className="block text-foreground/80 hover:text-foreground">
+                                                  {item.text}
                                                 </Link>
+                                            ) : (
+                                                <span className="cursor-default text-foreground/80">{item.text}</span>
                                             )}
-                                        </li>
+                                        </MenuItem>
                                     ))}
-                                </ul>
-                            </div>
+                                </div>
+                            </AnimatedMenu>
                             
-                            <div className="flex w-full flex-col space-y-3 sm:w-fit sm:flex-row sm:items-center sm:gap-3 sm:space-y-0">
+                            <div className="flex w-full flex-col space-y-3 sm:w-fit sm:flex-row sm:items-center sm:gap-3 sm:space-y-0 pl-8">
                                 <div className="hidden lg:flex items-center gap-3">
                                     <ThemeToggle />
                                 </div>
