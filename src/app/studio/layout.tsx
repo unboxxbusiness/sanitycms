@@ -1,13 +1,15 @@
-// This file is no longer needed and can be removed.
-// The logic has been moved to src/app/layout.tsx to conditionally render the header and footer.
+// src/app/studio/layout.tsx
+// This layout ensures that the Sanity Studio pages do not inherit the main application's header and footer.
 export default function StudioLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-    <>
-        {children}
-    </>
+    <html lang="en">
+        <body>
+            {children}
+        </body>
+    </html>
   )
 }
