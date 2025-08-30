@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Button } from "./ui/button";
 import { usePathname } from "next/navigation";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 
 const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -35,6 +36,7 @@ export function SocialShare() {
   const [isOpen, setIsOpen] = useState(false);
   const [currentUrl, setCurrentUrl] = useState("");
   const [shareTitle, setShareTitle] = useState("");
+  const isMobile = useIsMobile();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -73,6 +75,16 @@ export function SocialShare() {
         toast({ title: "Share not supported", description: "Your browser does not support native sharing.", variant: "destructive" });
     }
   };
+
+  if (isMobile) {
+    return (
+        <div className="fixed bottom-4 right-4 z-50">
+            <Button size="icon" className="rounded-full h-14 w-14 shadow-lg" onClick={handleNativeShare}>
+                <Share2 className="h-6 w-6" />
+            </Button>
+        </div>
+    )
+  }
 
   return (
     <div className="fixed bottom-4 right-4 z-50">

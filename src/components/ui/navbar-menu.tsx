@@ -82,12 +82,12 @@ export const Menu = ({
   className?: string;
 }) => {
   return (
-    <nav
+    <div
       onMouseLeave={() => setActive(null)} // resets the state
-      className={cn("relative rounded-full border bg-card shadow-input flex justify-center space-x-4 px-8 py-4", className)}
+      className={cn("relative flex justify-center py-4", className)}
     >
       {children}
-    </nav>
+    </div>
   );
 };
 

@@ -1,14 +1,14 @@
 // src/components/layout/header.tsx
 'use client';
 
-import React from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Logo } from '@/components/logo';
 import { client } from '@/lib/sanity'
-import { SanityImageSource } from '@sanity/image-url/lib/types/types';
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
 import { urlFor } from '@/lib/sanity-image';
 import Image from 'next/image';
 import { ThemeToggle } from '@/components/theme-toggle';
@@ -36,14 +36,13 @@ interface Settings {
 }
 
 export function Header() {
-    const [isScrolled, setIsScrolled] = React.useState(false)
-    const [settings, setSettings] = React.useState<Settings | null>(null);
+    const [isScrolled, setIsScrolled] = useState(false)
+    const [settings, setSettings] = useState<Settings | null>(null);
     const { resolvedTheme } = useTheme();
-    const [active, setActive] = React.useState<string | null>(null);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+    const [active, setActive] = useState<string | null>(null);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-
-    React.useEffect(() => {
+    useEffect(() => {
         const fetchSettings = async () => {
           const query = `*[_type == "settings"][0]{ logoLight, logoDark, mainNavigation, headerCta }`;
           const data = await client.fetch(query);
@@ -54,12 +53,12 @@ export function Header() {
 
     const navLinks = settings?.mainNavigation || [];
 
-    const logo = React.useMemo(() => {
+    const logo = useMemo(() => {
         if (!settings) return null;
         return resolvedTheme === 'dark' ? settings.logoDark : settings.logoLight;
     }, [settings, resolvedTheme]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 50)
         }
@@ -101,26 +100,24 @@ export function Header() {
                             "w-full flex-col items-center justify-center gap-6 bg-transparent p-6 shadow-none lg:static lg:w-fit lg:flex-row lg:gap-0 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent lg:flex",
                             isMobileMenuOpen ? 'flex' : 'hidden'
                         )}>
-                             <AnimatedMenu setActive={setActive} className={isScrolled ? '!bg-transparent !shadow-none !border-none' : ''}>
-                                <div className="flex flex-col lg:flex-row items-center space-y-4 lg:space-y-0 lg:space-x-8">
-                                    {navLinks.map((item) => (
-                                        <React.Fragment key={item._key}>
-                                            {item.children && item.children.length > 0 ? (
-                                                <MenuItem setActive={setActive} active={active} item={item.text}>
-                                                    <div className="flex flex-col space-y-4 text-sm">
-                                                        {item.children.map((child) => (
-                                                            <HoveredLink key={child._key} href={child.link || '#'}>{child.text}</HoveredLink>
-                                                        ))}
-                                                    </div>
-                                                </MenuItem>
-                                            ) : (
-                                                <Link href={item.link || '#'} className="cursor-pointer text-foreground/80 hover:text-foreground">
-                                                    {item.text}
-                                                </Link>
-                                            )}
-                                        </React.Fragment>
-                                    ))}
-                                </div>
+                             <AnimatedMenu setActive={setActive} className={cn('flex-col lg:flex-row lg:space-x-8 lg:border lg:bg-card lg:shadow-input', isScrolled && 'lg:border-none lg:bg-transparent lg:shadow-none')}>
+                                {navLinks.map((item) => (
+                                    <React.Fragment key={item._key}>
+                                        {item.children && item.children.length > 0 ? (
+                                            <MenuItem setActive={setActive} active={active} item={item.text}>
+                                                <div className="flex flex-col space-y-4 text-sm">
+                                                    {item.children.map((child) => (
+                                                        <HoveredLink key={child._key} href={child.link || '#'}>{child.text}</HoveredLink>
+                                                    ))}
+                                                </div>
+                                            </MenuItem>
+                                        ) : (
+                                            <Link href={item.link || '#'} className="cursor-pointer text-foreground/80 hover:text-foreground">
+                                                {item.text}
+                                            </Link>
+                                        )}
+                                    </React.Fragment>
+                                ))}
                             </AnimatedMenu>
                             
                             <div className="flex w-full flex-col space-y-3 sm:w-fit sm:flex-row sm:items-center sm:gap-3 sm:space-y-0 lg:pl-8">
