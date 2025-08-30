@@ -22,9 +22,21 @@ export const structure: StructureResolver = (S) =>
         .id('settings')
         .icon(Settings)
         .child(
-          S.document()
-            .schemaType('settings')
-            .documentId('settings')
+          // Instead of a single document, we're creating a list
+          // to handle the case where the document doesn't exist yet
+          S.list()
+            .title('Settings Documents')
+            .items([
+              S.listItem()
+                .title('Site Settings')
+                .icon(Settings)
+                .child(
+                  S.document()
+                    .schemaType('settings')
+                    .documentId('settings')
+                )
+                .showIcon(false),
+            ])
         ),
       
       S.divider(),
@@ -102,6 +114,16 @@ export default defineConfig({
       singletonTypes.has(context.schemaType)
         ? input.filter(({ action }) => action && singletonActions.has(action))
         : input,
+    
+    // This part is important for creating new singleton documents
+    newDocumentOptions: (prev, { creationContext }) => {
+        if (creationContext.type === 'global') {
+          return prev.filter(
+            (templateItem) => !singletonTypes.has(templateItem.templateId)
+          )
+        }
+        return prev
+      },
   },
   
   studio: {
