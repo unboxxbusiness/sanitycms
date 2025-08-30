@@ -52,15 +52,14 @@ export default defineType({
           type: 'image',
           options: {hotspot: true}
         },
-        // We reference the schema name for blocks, not the type name
         {
           type: 'ctaBlock'
         },
         {
-          type: 'videoBlock'
+          type: 'donationBlock'
         },
         {
-          type: 'donationBlock'
+            type: 'videoBlock'
         }
       ],
     }),
