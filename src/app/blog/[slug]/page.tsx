@@ -4,69 +4,45 @@ import { urlFor } from '@/lib/sanity-image';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-<<<<<<< HEAD
-import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
-=======
->>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
 import { PortableText } from '@portabletext/react';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-<<<<<<< HEAD
 import { BlockRenderer } from '@/components/block-renderer';
 import { AuthorBio } from '@/components/author-bio';
 import { PostCard, type PostCardData } from '@/components/post-card';
-import { SocialShare } from '@/components/social-share';
-=======
-import { PostCard, type Post } from '@/components/post-card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { CtaBlock } from '@/components/blocks/cta-block';
-import { VideoBlock } from '@/components/blocks/video-block';
-import { DonationBlock } from '@/components/blocks/donation-block';
+import { SanityImageSource } from '@sanity/image-url/lib/types/types';
 
-export const revalidate = 60; // Revalidate posts every 60 seconds
->>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
+interface Author {
+  name: string;
+  picture?: SanityImageSource;
+  bio?: string;
+}
 
 interface PostData {
   _id: string;
   title: string;
   slug: { current: string };
-  coverImage: any;
-  excerpt: string;
-  author: {
-    name: string;
-    picture?: any;
-    bio?: string;
-  };
+  coverImage: SanityImageSource;
+  excerpt?: string;
+  author: Author;
   categories: { title: string }[];
   _createdAt: string;
   content: any[];
-<<<<<<< HEAD
-  excerpt?: string;
-  seo: {
-=======
   seo?: {
->>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
     metaTitle?: string;
     metaDescription?: string;
   };
   recommendedPosts: PostCardData[];
 }
 
-interface PageData {
-    post: PostData;
-    morePosts: Post[];
-}
-
-interface PostProps {
+interface PageProps {
   params: {
     slug: string;
   };
 }
 
-<<<<<<< HEAD
 const getPostData = (slug: string) => {
     return sanityFetch<PostData>({
         query: `*[_type == "post" && slug.current == $slug][0]{
@@ -116,71 +92,14 @@ const getPostData = (slug: string) => {
         tags: [`post:${slug}`],
     });
 };
-=======
-// Function to generate static paths
-export async function generateStaticParams() {
-    const posts = await client.fetch<Pick<PostData, 'slug'>[]>(`*[_type == "post" && defined(slug.current)]{ "slug": slug.current }`);
-    return posts.map(post => ({
-        slug: post.slug,
-    }));
-}
 
-
-async function getPostData(slug: string): Promise<PageData> {
-  const query = `{
-    "post": *[_type == "post" && slug.current == $slug][0]{
-        _id,
-        title,
-        slug,
-        coverImage,
-        excerpt,
-        author->{name, picture, bio},
-        "categories": categories[]->{title},
-        _createdAt,
-        content[]{
-          ...,
-          _type == 'reference' => @->{
-            _id,
-            _type,
-            name,
-            content[]{
-              ...,
-              _type == 'donationBlock' => {
-                ...,
-                "donationTiers": donationTiers[]->{
-                  ...
-                }
-              }
-            }
-          }
-        },
-        seo
-    },
-    "morePosts": *[_type == "post" && slug.current != $slug] | order(_createdAt desc)[0...2]{
-        _id,
-        title,
-        slug,
-        excerpt,
-        coverImage,
-        author->{name, picture},
-        "categories": categories[]->{title},
-        _createdAt
-    }
-  }`;
-
-  const data = await client.fetch(query, { slug });
-  return data;
-}
->>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
-
-export async function generateMetadata({ params }: PostProps): Promise<Metadata> {
-    const { post } = await getPostData(params.slug);
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const post = await getPostData(params.slug);
     if (!post) {
       return {
         title: 'Post Not Found',
       }
     }
-<<<<<<< HEAD
     
     const title = post.seo?.metaTitle || post.title;
     const description = post.seo?.metaDescription || post.excerpt;
@@ -208,23 +127,9 @@ export async function generateMetadata({ params }: PostProps): Promise<Metadata>
         type: 'article',
         url: canonicalUrl,
         images: openGraphImages,
-      }
-=======
-    const metaTitle = post.seo?.metaTitle || post.title;
-    const metaDescription = post.seo?.metaDescription || post.excerpt;
-
-    return {
-      title: metaTitle,
-      description: metaDescription,
-      openGraph: {
-        title: metaTitle,
-        description: metaDescription,
-        images: post.coverImage ? [urlFor(post.coverImage).width(1200).height(630).url()] : [],
-        type: 'article',
-        publishedTime: post._createdAt,
         authors: post.author?.name ? [post.author.name] : [],
-      },
->>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
+        publishedTime: post._createdAt,
+      }
     };
 }
 
@@ -242,7 +147,6 @@ const portableTextComponents: any = {
             </div>
         ),
         reusableBlock: ({ value }: any) => {
-<<<<<<< HEAD
           if (!value?.content) {
             return null;
           }
@@ -254,28 +158,6 @@ const portableTextComponents: any = {
         },
         donationBlock: ({ value }: any) => {
             return <BlockRenderer blocks={[value]} />;
-=======
-          if (!value?.content) return null;
-
-          return value.content.map((block: any) => {
-            switch(block._type) {
-              case 'ctaBlock':
-                return <CtaBlock key={block._key} {...block} className="my-8" />;
-              case 'videoBlock':
-                return <VideoBlock key={block._key} {...block} className="my-8" />;
-              case 'donationBlock':
-                return <DonationBlock key={block._key} {...block} className="my-8" />;
-              case 'block':
-                return (
-                    <div className="prose prose-lg max-w-none dark:prose-invert my-8" key={block._key}>
-                        <PortableText value={[block]} components={portableTextComponents} />
-                    </div>
-                );
-              default:
-                return <p key={block._key}>Unsupported reusable block type: {block._type}</p>;
-            }
-          });
->>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
         }
     },
     block: {
@@ -296,165 +178,91 @@ const portableTextComponents: any = {
     }
 };
 
-export default async function BlogPostPage({ params }: PostProps) {
-  const { post, morePosts } = await getPostData(params.slug);
+export default async function BlogPostPage({ params }: PageProps) {
+  const post = await getPostData(params.slug);
 
   if (!post) {
     notFound();
   }
 
   return (
-<<<<<<< HEAD
-    <div className="flex flex-col min-h-screen">
-      <Header />
-      <main className="flex-1 py-24 md:py-32">
-        <article className="container mx-auto px-4 max-w-4xl">
-            <div className="mb-8">
-              <Button asChild variant="ghost">
-                <Link href="/blog" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground">
-                  <ArrowLeft className="h-4 w-4" />
-                  <span>Back to all posts</span>
-                </Link>
-              </Button>
-            </div>
-            {post.coverImage && (
-                <div className="relative w-full h-64 md:h-96 mb-8 rounded-lg overflow-hidden shadow-lg">
-                    <Image
-                        src={urlFor(post.coverImage).url()}
-                        alt={post.title}
-                        fill
-                        className="object-cover"
-                        priority
-                        sizes="(max-width: 768px) 100vw, 896px"
-                    />
-=======
-    <div className="py-16 md:py-24">
-        <div className="container mx-auto px-4 max-w-4xl">
-            <div className="mb-8">
-                <Button asChild variant="ghost">
-                    <Link href="/blog">
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Back to all posts
-                    </Link>
-                </Button>
-            </div>
-            <article>
-                {post.coverImage && (
-                    <div className="relative w-full h-56 md:h-96 mb-8 rounded-lg overflow-hidden shadow-lg">
-                        <Image
-                            src={urlFor(post.coverImage).width(1200).height(630).url()}
-                            alt={post.title}
-                            fill
-                            className="object-cover"
-                            priority
-                        />
-                    </div>
-                )}
-                
-                <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">{post.title}</h1>
-                
-                <div className="flex flex-wrap items-center text-sm text-muted-foreground mb-8 gap-x-4 gap-y-2">
-                    {post.author?.picture && (
-                         <Image
-                            src={urlFor(post.author.picture).width(40).height(40).url()}
-                            alt={post.author.name}
-                            width={40}
-                            height={40}
-                            className="rounded-full"
-                        />
-                    )}
-                    <span>By {post.author?.name || 'AmulyaX India Team'}</span>
-                    <span className="hidden sm:inline">|</span>
-                    <span>{new Date(post._createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                    {post.categories && post.categories.length > 0 && (
-                        <>
-                            <span className="hidden sm:inline">|</span>
-                            <div className="flex gap-2">
-                                {post.categories.map(cat => (
-                                    <span key={cat.title} className="bg-secondary text-secondary-foreground text-xs font-medium px-2 py-1 rounded-full">{cat.title}</span>
-                                ))}
-                            </div>
-                        </>
-                    )}
-                </div>
+    <main className="flex-1 py-24 md:py-32">
+      <article className="container mx-auto px-4 max-w-4xl">
+          <div className="mb-8">
+            <Button asChild variant="ghost">
+              <Link href="/blog" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground">
+                <ArrowLeft className="h-4 w-4" />
+                <span>Back to all posts</span>
+              </Link>
+            </Button>
+          </div>
 
-                <div className={cn(
-                    "prose prose-lg max-w-none dark:prose-invert",
-                    "prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary prose-strong:text-foreground prose-ol:text-muted-foreground prose-ul:text-muted-foreground prose-li:text-muted-foreground"
-                )}>
-                    <PortableText value={post.content} components={portableTextComponents} />
-                </div>
-            </article>
+          <header className="mb-12">
+              <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">{post.title}</h1>
+              <div className="flex flex-wrap items-center text-sm text-muted-foreground gap-x-4 gap-y-2">
+                  {post.author?.picture && (
+                      <Image
+                      src={urlFor(post.author.picture).width(40).height(40).url()}
+                      alt={post.author.name}
+                      width={40}
+                      height={40}
+                      className="rounded-full"
+                      />
+                  )}
+                  <span>By {post.author?.name || 'AmulyaX India Team'}</span>
+                  <span className="hidden sm:inline">|</span>
+                  <span>{new Date(post._createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                  {post.categories && post.categories.length > 0 && (
+                      <>
+                          <span className="hidden sm:inline">|</span>
+                          <div className="flex gap-2">
+                              {post.categories.map(cat => (
+                                  <span key={cat.title} className="bg-secondary text-secondary-foreground text-xs font-medium px-2 py-1 rounded-full">{cat.title}</span>
+                              ))}
+                          </div>
+                      </>
+                  )}
+              </div>
+          </header>
+          
+          {post.coverImage && (
+              <div className="relative w-full h-64 md:h-96 mb-8 rounded-lg overflow-hidden shadow-lg">
+                  <Image
+                      src={urlFor(post.coverImage).url()}
+                      alt={post.title}
+                      fill
+                      className="object-cover"
+                      priority
+                      sizes="(max-width: 768px) 100vw, 896px"
+                  />
+              </div>
+          )}
 
-            {post.author && (
-                <div className="mt-16 pt-12 border-t">
-                    <div className="flex flex-col sm:flex-row items-start gap-6 bg-secondary/50 p-6 rounded-lg">
-                        <Avatar className="h-16 w-16">
-                            {post.author.picture ? (
-                               <AvatarImage src={urlFor(post.author.picture).width(64).height(64).url()} alt={post.author.name} />
-                            ) : (
-                                <AvatarImage src={`https://ui-avatars.com/api/?name=${post.author.name}&size=64`} alt={post.author.name} />
-                            )}
-                            <AvatarFallback>{post.author.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <p className="text-sm text-muted-foreground uppercase tracking-wide">About the author</p>
-                            <h3 className="text-xl font-bold mt-1">{post.author.name}</h3>
-                            {post.author.bio && <p className="text-muted-foreground mt-2">{post.author.bio}</p>}
-                        </div>
-                    </div>
->>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
-                </div>
-            )}
+          <div className={cn(
+              "prose prose-lg max-w-none dark:prose-invert",
+              "prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary prose-strong:text-foreground prose-ol:text-muted-foreground prose-ul:text-muted-foreground prose-li:text-muted-foreground"
+          )}>
+              <PortableText value={post.content} components={portableTextComponents} />
+          </div>
 
-            {morePosts && morePosts.length > 0 && (
-                <div className="mt-24">
-                    <div className="border-t pt-12">
-                        <h2 className="text-3xl font-bold text-center mb-12">Read Next</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            {morePosts.map(p => (
-                                <PostCard key={p._id} post={p} />
-                            ))}
-                        </div>
-<<<<<<< HEAD
-                    </>
-                )}
-            </div>
+          {post.author?.bio && (
+            <>
+              <hr className="my-12" />
+              <AuthorBio author={post.author} />
+            </>
+          )}
 
-            <div className={cn(
-                "prose prose-lg max-w-none dark:prose-invert",
-                "prose-headings:text-foreground prose-p:text-muted-foreground prose-a:text-primary prose-strong:text-foreground prose-ol:text-muted-foreground prose-ul:text-muted-foreground prose-li:text-muted-foreground"
-            )}>
-                <PortableText value={post.content} components={portableTextComponents} />
-            </div>
-
-            {post.author?.bio && (
-              <>
-                <hr className="my-12" />
-                <AuthorBio author={post.author} />
-              </>
-            )}
-
-            {post.recommendedPosts?.length > 0 && (
-                <aside className="mt-16 pt-12 border-t">
-                    <h2 className="text-3xl font-bold mb-8 text-center">Read Next</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {post.recommendedPosts.map(recPost => (
-                            <PostCard key={recPost._id} post={recPost} />
-                        ))}
-                    </div>
-                </aside>
-            )}
-        </article>
-      </main>
-      <Footer />
-      <SocialShare />
-=======
-                    </div>
-                </div>
-            )}
-        </div>
->>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
-    </div>
+          {post.recommendedPosts?.length > 0 && (
+              <aside className="mt-16 pt-12 border-t">
+                  <h2 className="text-3xl font-bold mb-8 text-center">Read Next</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      {post.recommendedPosts.map(recPost => (
+                          <PostCard key={recPost._id} post={recPost} />
+                      ))}
+                  </div>
+              </aside>
+          )}
+      </article>
+    </main>
   );
 }

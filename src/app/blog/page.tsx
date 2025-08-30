@@ -1,11 +1,8 @@
 // src/app/blog/page.tsx
-<<<<<<< HEAD
 'use client'
 
 import { sanityFetch } from '@/lib/sanity';
 import { urlFor } from '@/lib/sanity-image';
-import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
 import { cn } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
 import { MoveRight, User, ArrowLeft, ArrowRight } from "lucide-react";
@@ -13,7 +10,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { PostCard, type PostCardData } from '@/components/post-card';
-import { SocialShare } from '@/components/social-share';
 
 interface SanityPost extends PostCardData {
     excerpt: string;
@@ -218,133 +214,39 @@ export default function BlogIndexPage() {
     };
 
     return (
-        <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-1 w-full">
-                <GridSection
-                    title={settings?.blogPageHeading || "Latest Articles"}
-                    description={settings?.blogPageSubheading || "Explore our latest articles, insights, and stories. We cover a range of topics from technology to social impact."}
-                    posts={featuredPosts}
-                    backgroundLabel="Blog"
-                />
+        <main className="flex-1 w-full">
+            <GridSection
+                title={settings?.blogPageHeading || "Latest Articles"}
+                description={settings?.blogPageSubheading || "Explore our latest articles, insights, and stories. We cover a range of topics from technology to social impact."}
+                posts={featuredPosts}
+                backgroundLabel="Blog"
+            />
 
-                {olderPosts.length > 0 && (
-                    <section className="py-16 md:py-24">
-                        <div className="container mx-auto px-4">
-                            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Older Posts</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {paginatedPosts.map((post) => (
-                                    <PostCard key={post._id} post={post} />
-                                ))}
-                            </div>
-                            {totalPages > 1 && (
-                                <div className="flex justify-center items-center gap-4 mt-12">
-                                    <Button onClick={handlePrevPage} disabled={currentPage === 1} variant="outline">
-                                        <ArrowLeft className="mr-2 h-4 w-4" /> Previous
-                                    </Button>
-                                    <span className="text-sm text-muted-foreground">
-                                        Page {currentPage} of {totalPages}
-                                    </span>
-                                    <Button onClick={handleNextPage} disabled={currentPage === totalPages} variant="outline">
-                                        Next <ArrowRight className="ml-2 h-4 w-4" />
-                                    </Button>
-                                </div>
-                            )}
+            {olderPosts.length > 0 && (
+                <section className="py-16 md:py-24">
+                    <div className="container mx-auto px-4">
+                        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Older Posts</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {paginatedPosts.map((post) => (
+                                <PostCard key={post._id} post={post} />
+                            ))}
                         </div>
-                    </section>
-                )}
-            </main>
-            <Footer />
-            <SocialShare />
-=======
-import { client } from '@/lib/sanity';
-import { PostCard, type Post } from '@/components/post-card';
-import type { Metadata } from 'next';
-
-const POSTS_PER_PAGE = 9;
-
-interface BlogPageData {
-    posts: Post[];
-    total: number;
-    heading?: string;
-    subheading?: string;
-}
-
-async function getPaginatedPosts(page: number): Promise<BlogPageData> {
-    const start = (page - 1) * POSTS_PER_PAGE;
-    const end = start + POSTS_PER_PAGE;
-    
-    const query = `{
-        "posts": *[_type == "post"] | order(_createdAt desc)[${start}...${end}]{
-            _id,
-            title,
-            slug,
-            excerpt,
-            coverImage,
-            author->{name, picture},
-            "categories": categories[]->{title},
-            _createdAt
-        },
-        "total": count(*[_type == "post"]),
-        "heading": *[_type == "settings"][0].blogPageHeading,
-        "subheading": *[_type == "settings"][0].blogPageSubheading
-    }`;
-    const data = await client.fetch(query);
-    return data;
-}
-
-export async function generateMetadata(): Promise<Metadata> {
-    const settings = await client.fetch(`*[_type == "settings"][0]{ blogPageHeading, blogPageSubheading }`);
-    return {
-        title: settings?.blogPageHeading || 'Blog',
-        description: settings?.blogPageSubheading || 'Latest news, insights, and stories.',
-    };
-}
-
-export default async function BlogIndexPage() {
-    const { posts, total, heading, subheading } = await getPaginatedPosts(1);
-
-    const featuredPost = posts.length > 0 ? posts[0] : null;
-    const otherPosts = posts.length > 1 ? posts.slice(1) : [];
-
-    return (
-        <div className="flex flex-col min-h-screen">
-            <main className="flex-1 w-full py-20 lg:py-32">
-                <div className="container mx-auto flex flex-col gap-12 px-4">
-                    <div className="flex w-full flex-col text-center items-center gap-4">
-                        <h1 className="text-4xl md:text-6xl tracking-tighter max-w-3xl font-bold">
-                            {heading || 'Our Blog'}
-                        </h1>
-                        <p className="text-lg max-w-2xl text-muted-foreground">
-                           {subheading || 'Latest news, insights, and stories from our mission to empower students across India.'}
-                        </p>
+                        {totalPages > 1 && (
+                            <div className="flex justify-center items-center gap-4 mt-12">
+                                <Button onClick={handlePrevPage} disabled={currentPage === 1} variant="outline">
+                                    <ArrowLeft className="mr-2 h-4 w-4" /> Previous
+                                </Button>
+                                <span className="text-sm text-muted-foreground">
+                                    Page {currentPage} of {totalPages}
+                                </span>
+                                <Button onClick={handleNextPage} disabled={currentPage === totalPages} variant="outline">
+                                    Next <ArrowRight className="ml-2 h-4 w-4" />
+                                </Button>
+                            </div>
+                        )}
                     </div>
-                    
-                    {posts.length === 0 ? (
-                        <p className="text-center text-muted-foreground">No blog posts found.</p>
-                    ) : (
-                        <>
-                            {featuredPost && (
-                                <>
-                                    <div className="w-full">
-                                        <PostCard post={featuredPost} featured={true} />
-                                    </div>
-                                    <div className="w-full border-b my-8" />
-                                </>
-                            )}
-                            
-                            {otherPosts.length > 0 && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-                                    {otherPosts.map((post) => (
-                                       <PostCard key={post._id} post={post} />
-                                    ))}
-                                </div>
-                            )}
-                        </>
-                    )}
-                </div>
-            </main>
->>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
-        </div>
+                </section>
+            )}
+        </main>
     )
 }
