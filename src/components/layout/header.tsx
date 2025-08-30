@@ -98,7 +98,7 @@ export function Header() {
                                           <Menu className="h-6 w-6" />
                                         </Button>
                                     </SheetTrigger>
-                                    <SheetContent side="left" className="w-[80vw]">
+                                    <SheetContent side="right" className="w-[80vw]">
                                         <SheetHeader>
                                             <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                                         </SheetHeader>
