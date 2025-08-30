@@ -52,6 +52,7 @@ export default defineType({
           type: 'image',
           options: {hotspot: true}
         },
+        // We reference the schema name for blocks, not the type name
         {
           type: 'ctaBlock'
         },
