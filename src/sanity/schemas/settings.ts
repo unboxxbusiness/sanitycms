@@ -22,10 +22,18 @@ export default defineType({
         description: 'The overall title of the website, used in browser tabs and search results.'
     }),
     defineField({
-      name: 'logo',
-      title: 'Brand Logo',
+      name: 'logoLight',
+      title: 'Logo (Light Mode)',
       type: 'image',
       group: 'general',
+      description: 'Upload the logo to be used on light backgrounds.'
+    }),
+    defineField({
+      name: 'logoDark',
+      title: 'Logo (Dark Mode)',
+      type: 'image',
+      group: 'general',
+      description: 'Upload the logo to be used on dark backgrounds.'
     }),
     defineField({
       name: 'mainNavigation',

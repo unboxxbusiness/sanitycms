@@ -1,7 +1,7 @@
 // src/components/layout/footer.tsx
 'use client'
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { Logo } from '@/components/logo'
 import Link from "next/link"
 import { Github, Twitter, Linkedin } from "lucide-react"
@@ -11,6 +11,7 @@ import Image from "next/image"
 import { urlFor } from "@/lib/sanity-image"
 import { AnimatedGroup } from "../ui/animated-group"
 import { MembershipDialog } from "../membership-dialog"
+import { useTheme } from "next-themes"
 
 interface NavLink {
   _key: string;
@@ -25,7 +26,8 @@ interface SocialLink {
 }
 
 interface Settings {
-  logo: SanityImageSource;
+  logoLight: SanityImageSource;
+  logoDark: SanityImageSource;
   footerDescription: string;
   footerProductLinks: NavLink[];
   footerCompanyLinks: NavLink[];
@@ -68,11 +70,13 @@ const transitionVariants = {
 
 export function Footer() {
   const [settings, setSettings] = useState<Settings | null>(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const fetchSettings = async () => {
       const query = `*[_type == "settings"][0]{ 
-        logo, 
+        logoLight,
+        logoDark, 
         footerDescription,
         footerProductLinks, 
         footerCompanyLinks, 
@@ -92,6 +96,11 @@ export function Footer() {
     fetchSettings();
   }, []);
 
+  const logo = useMemo(() => {
+    if (!settings) return null;
+    return theme === 'dark' ? settings.logoDark : settings.logoLight;
+  }, [settings, theme]);
+
   return (
     <footer id="contact" className="py-12">
        <AnimatedGroup 
@@ -110,8 +119,8 @@ export function Footer() {
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="space-y-4">
-            {settings?.logo ? (
-                <Image src={urlFor(settings.logo).height(20).url()} alt="Logo" width={78} height={20} className="h-5 w-auto" />
+            {logo ? (
+                <Image src={urlFor(logo).height(20).url()} alt="Logo" width={78} height={20} className="h-5 w-auto" />
             ) : (
                 <Logo />
             )}

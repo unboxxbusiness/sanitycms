@@ -13,6 +13,7 @@ import { urlFor } from '@/lib/sanity-image';
 import Image from 'next/image';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
+import { useTheme } from 'next-themes';
 
 
 interface NavLink {
@@ -27,7 +28,8 @@ interface Cta {
 }
 
 interface Settings {
-  logo: SanityImageSource;
+  logoLight: SanityImageSource;
+  logoDark: SanityImageSource;
   mainNavigation: NavLink[];
   headerCta: Cta;
 }
@@ -35,10 +37,11 @@ interface Settings {
 export function Header() {
     const [isScrolled, setIsScrolled] = React.useState(false)
     const [settings, setSettings] = React.useState<Settings | null>(null);
+    const { theme } = useTheme();
 
     React.useEffect(() => {
         const fetchSettings = async () => {
-          const query = `*[_type == "settings"][0]{ logo, mainNavigation, headerCta }`;
+          const query = `*[_type == "settings"][0]{ logoLight, logoDark, mainNavigation, headerCta }`;
           const data = await client.fetch(query);
           setSettings(data);
         };
@@ -47,6 +50,10 @@ export function Header() {
 
     const navLinks = settings?.mainNavigation || [];
 
+    const logo = React.useMemo(() => {
+        if (!settings) return null;
+        return theme === 'dark' ? settings.logoDark : settings.logoLight;
+    }, [settings, theme]);
 
     React.useEffect(() => {
         const handleScroll = () => {
@@ -66,8 +73,8 @@ export function Header() {
                                 href="/"
                                 aria-label="home"
                                 className="flex items-center space-x-2">
-                                {settings?.logo ? (
-                                    <Image src={urlFor(settings.logo).height(20).url()} alt="Logo" width={78} height={20} className="h-5 w-auto" />
+                                {logo ? (
+                                    <Image src={urlFor(logo).height(20).url()} alt="Logo" width={78} height={20} className="h-5 w-auto" />
                                 ) : (
                                     <Logo />
                                 )}
