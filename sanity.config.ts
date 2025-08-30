@@ -13,6 +13,12 @@ const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!
 const singletonActions = new Set(["publish", "discardChanges", "restore"])
 const singletonTypes = new Set(["settings", "homePage"])
 
+// Define the document types that are handled manually
+const manuallyHandledDocTypes = [
+    'page', 'post', 'author', 'category', 'reusableBlock', 'settings', 'homePage',
+    'partner', 'testimonial', 'program', 'impactMetric', 'donationTier'
+];
+
 export const structure: StructureResolver = (S) =>
   S.list()
     .title('Content')
@@ -67,11 +73,7 @@ export const structure: StructureResolver = (S) =>
         (listItem) => {
             const id = listItem.getId()
             if (!id) return false
-            const hiddenDocTypes = [
-                'page', 'post', 'author', 'category', 'reusableBlock', 'settings', 'homePage',
-                'partner', 'testimonial', 'program', 'impactMetric', 'donationTier'
-            ];
-            return !hiddenDocTypes.includes(id);
+            return !manuallyHandledDocTypes.includes(id);
         }
       ),
     ])
