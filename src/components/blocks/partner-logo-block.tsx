@@ -198,16 +198,8 @@ export function PartnerLogoBlock({ heading, subheading, partners }: PartnerLogoB
                     {heading && <h2 className="text-3xl md:text-4xl font-bold">{heading}</h2>}
                     {subheading && <p className="text-muted-foreground max-w-2xl mx-auto">{subheading}</p>}
                 </div>
-<<<<<<< HEAD
-                <div className="hidden md:flex justify-center">
-                    <LogoCarousel logos={formattedLogos} columnCount={4} />
-                </div>
-                <div className="flex md:hidden justify-center">
-                    <LogoCarousel logos={formattedLogos} columnCount={2} />
-=======
                 <div className="flex justify-center">
                     <LogoCarousel logos={formattedLogos} columnCount={isMobile ? 2 : 4} />
->>>>>>> eee916f394eb714f19abe46c8560bb48a9176e33
                 </div>
             </div>
         </section>
