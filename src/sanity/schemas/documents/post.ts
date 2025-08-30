@@ -19,7 +19,7 @@ export default defineType({
       group: 'content',
       validation: (Rule) => Rule.required(),
     }),
-    defineFiel({
+    defineField({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
