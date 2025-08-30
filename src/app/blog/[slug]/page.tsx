@@ -3,11 +3,14 @@ import { client } from '@/lib/sanity';
 import { urlFor } from '@/lib/sanity-image';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { PortableText } from '@portabletext/react';
 import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 export const revalidate = 60
 
@@ -109,6 +112,14 @@ export default async function BlogPostPage({ params }: PostProps) {
       <Header />
       <main className="flex-1 py-24 md:py-32">
         <article className="container mx-auto px-4 max-w-4xl">
+            <div className="mb-8">
+              <Button asChild variant="ghost" className="pl-0">
+                <Link href="/blog" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground">
+                  <ArrowLeft className="h-4 w-4" />
+                  <span>Back to all posts</span>
+                </Link>
+              </Button>
+            </div>
             {post.coverImage && (
                 <div className="relative w-full h-64 md:h-96 mb-8 rounded-lg overflow-hidden shadow-lg">
                     <Image
