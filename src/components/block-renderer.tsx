@@ -39,12 +39,23 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
 
   return (
     <>
-      {blocks.map((block: any) => {
+      {blocks.map((block: any, index: number) => {
+        // The key for the block should be unique, using _key is good, but fallback to index if not available
+        const blockKey = block._key || `block-${index}`;
         const Component = componentMap[block._type];
+
         if (Component) {
-          return <Component key={block._key} {...block} />;
+          return <Component key={blockKey} {...block} />;
         }
-        return <p key={block._key}>Component for "{block._type}" not found.</p>;
+        // This handles standard Portable Text blocks that might be mixed in, especially in reusable content.
+        if (block._type === 'block') {
+            // We can add a simple renderer here if needed, but for now we assume TextBlock handles this.
+            // For now, let's just log a warning if we encounter a raw block where we don't expect it.
+             console.warn(`Direct rendering of a raw 'block' type is not fully supported here. Consider wrapping in a Text Block. Block key: ${blockKey}`);
+             return null;
+        }
+
+        return <p key={blockKey}>Component for "{block._type}" not found.</p>;
       })}
     </>
   );

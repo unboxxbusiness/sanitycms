@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import type { Metadata } from 'next';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { BlockRenderer } from '@/components/block-renderer';
 
 export const revalidate = 60
 
@@ -47,7 +48,19 @@ async function getPostData(slug: string): Promise<PostData> {
     author->{name, picture},
     "categories": categories[]->{title},
     _createdAt,
-    content,
+    content[]{
+      ...,
+      _type == 'reference' => @->{
+        ...,
+        // Dereference any nested blocks within the reusable block
+        content[]{
+          ...,
+          _type == 'ctaBlock' => {
+            ...
+          }
+        }
+      }
+    },
     seo
   }`;
 
@@ -80,7 +93,14 @@ const portableTextComponents = {
                     className="rounded-lg mx-auto"
                 />
             </div>
-        )
+        ),
+        reusableBlock: ({ value }: any) => {
+          if (!value?.content) {
+            return null;
+          }
+          // The reusableBlock content is an array of blocks, so we render it with our main block renderer.
+          return <BlockRenderer blocks={value.content} />;
+        }
     },
     block: {
       h2: ({ children }: any) => <h2 className="text-3xl font-bold mt-12 mb-4">{children}</h2>,
