@@ -3,7 +3,7 @@ import {defineField, defineType} from 'sanity'
 import { Cog } from 'lucide-react'
 
 export default defineType({
-  name: 'settings',
+  name: 'siteSettings',
   title: 'Site Settings',
   type: 'document',
   icon: Cog,

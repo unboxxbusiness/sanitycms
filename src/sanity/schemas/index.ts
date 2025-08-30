@@ -2,7 +2,7 @@
 import {defineField, defineType} from 'sanity'
 import page from './page'
 import homePage from './homePage'
-import settings from './settings'
+import siteSettings from './settings'
 
 // Block Schemas
 import ctaBlock from './blocks/ctaBlock'
@@ -80,7 +80,7 @@ export const schemaTypes = [
     // Document types
     page,
     homePage,
-    settings,
+    siteSettings,
     partner,
     testimonial,
     program,

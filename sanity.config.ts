@@ -11,7 +11,7 @@ const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!
 
 const singletonActions = new Set(["publish", "discardChanges", "restore"])
-const singletonTypes = new Set(["settings", "homePage"])
+const singletonTypes = new Set(["siteSettings", "homePage"])
 
 // This is the most robust way to define the structure for Sanity Studio
 export const structure: StructureResolver = (S) =>
@@ -21,12 +21,12 @@ export const structure: StructureResolver = (S) =>
       // Singleton document for Site Settings
       S.listItem()
         .title('Site Settings')
-        .id('settings')
+        .id('siteSettings')
         .icon(Settings)
         .child(
           S.document()
-            .schemaType('settings')
-            .documentId('settings')
+            .schemaType('siteSettings')
+            .documentId('siteSettings')
         ),
       // Singleton document for Home Page
       S.listItem()
