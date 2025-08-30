@@ -11,6 +11,7 @@ export default defineType({
     { name: 'general', title: 'General', default: true },
     { name: 'header', title: 'Header' },
     { name: 'footer', title: 'Footer' },
+    { name: 'blog', title: 'Blog Page' },
     { name: 'seo', title: 'Default SEO' },
   ],
   fields: [
@@ -181,6 +182,20 @@ export default defineType({
         type: 'string',
         group: 'footer',
         initialValue: 'AmulyaX India. All rights reserved.'
+    }),
+     defineField({
+      name: 'blogPageHeading',
+      title: 'Blog Page Heading',
+      type: 'string',
+      group: 'blog',
+      initialValue: 'Latest Articles'
+    }),
+    defineField({
+      name: 'blogPageSubheading',
+      title: 'Blog Page Subheading',
+      type: 'text',
+      group: 'blog',
+      initialValue: 'Explore our latest articles, insights, and stories. We cover a range of topics from technology to social impact.'
     }),
     defineField({
       name: 'defaultMetaTitle',

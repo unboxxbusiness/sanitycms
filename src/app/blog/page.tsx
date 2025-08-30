@@ -33,6 +33,11 @@ interface BlogPost {
   className?: string;
 }
 
+interface BlogPageSettings {
+    blogPageHeading?: string;
+    blogPageSubheading?: string;
+}
+
 async function getPosts(): Promise<SanityPost[]> {
     const query = `*[_type == "post"] | order(_createdAt desc){
         _id,
@@ -45,6 +50,15 @@ async function getPosts(): Promise<SanityPost[]> {
         _createdAt,
         views,
         readTime
+    }`;
+    const data = await client.fetch(query);
+    return data;
+}
+
+async function getSettings(): Promise<BlogPageSettings> {
+    const query = `*[_type == "settings"][0]{
+        blogPageHeading,
+        blogPageSubheading
     }`;
     const data = await client.fetch(query);
     return data;
@@ -155,15 +169,17 @@ const GridSection = ({
 
 export default function BlogIndexPage() {
     const [allPosts, setAllPosts] = useState<SanityPost[]>([]);
+    const [settings, setSettings] = useState<BlogPageSettings>({});
     const [currentPage, setCurrentPage] = useState(1);
     const postsPerPage = 9;
     
     useEffect(() => {
-        const fetchAndSetPosts = async () => {
-            const sanityPosts = await getPosts();
+        const fetchAndSetData = async () => {
+            const [sanityPosts, sanitySettings] = await Promise.all([getPosts(), getSettings()]);
             setAllPosts(sanityPosts);
+            setSettings(sanitySettings);
         };
-        fetchAndSetPosts();
+        fetchAndSetData();
     }, []);
 
     const featuredPosts: BlogPost[] = allPosts.slice(0, 3).map((post, index) => ({
@@ -196,8 +212,8 @@ export default function BlogIndexPage() {
             <Header />
             <main className="flex-1 w-full">
                 <GridSection
-                    title="Latest Articles"
-                    description="Explore our latest articles, insights, and stories. We cover a range of topics from technology to social impact."
+                    title={settings?.blogPageHeading || "Latest Articles"}
+                    description={settings?.blogPageSubheading || "Explore our latest articles, insights, and stories. We cover a range of topics from technology to social impact."}
                     posts={featuredPosts}
                     backgroundLabel="Blog"
                 />
