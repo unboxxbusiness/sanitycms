@@ -7,7 +7,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { cn } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
-import { MoveRight, Star } from "lucide-react";
+import { MoveRight, User } from "lucide-react";
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -35,7 +35,7 @@ interface BlogPost {
   href: string;
   views: number;
   readTime?: number;
-  rating?: number;
+  authorName: string;
   className?: string;
 }
 
@@ -106,7 +106,7 @@ const GridSection = ({
             href,
             views,
             readTime,
-            rating = 4,
+            authorName,
             className: postClassName
           } = post;
           
@@ -132,21 +132,13 @@ const GridSection = ({
                   </h1>
                   <div className="flex flex-col gap-3">
                     <span className="text-base capitalize py-px px-2 rounded-md bg-white/40 w-fit text-white backdrop-blur-md">{category}</span>
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-0.5">
-                        {Array.from({ length: 5 }).map((_, idx) => (
-                          <Star
-                            width={20}
-                            height={20}
-                            key={idx}
-                            stroke={idx < rating ? "#ffa534" : "#B9B8B8aa"}
-                            fill={idx < rating ? "#ffa534" : "#B9B8B8aa"}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-lg font-thin">
-                        ({views} Views)
-                      </span>
+                    <div className="flex items-center gap-4 text-lg font-thin">
+                        <div className="flex items-center gap-2">
+                            <User className="w-5 h-5" />
+                            <span>{authorName}</span>
+                        </div>
+                        <span>•</span>
+                        <span>{views} Views</span>
                     </div>
                     {readTime && (
                       <div className="text-xl font-semibold">
@@ -185,7 +177,7 @@ export default function BlogIndexPage() {
                 imageUrl: post.coverImage ? urlFor(post.coverImage).width(800).height(600).url() : 'https://picsum.photos/800/600',
                 href: `/blog/${post.slug.current}`,
                 views: post.views || Math.floor(Math.random() * 2000) + 100, // Use Sanity data or fallback
-                rating: Math.floor(Math.random() * 2) + 3.5, // Placeholder
+                authorName: post.author?.name || "AmulyaX Team",
                 readTime: post.readTime, // Use Sanity data
                 className: index === 1 ? 'lg:col-start-2' : ''
             }));
