@@ -31,6 +31,7 @@ interface PostData {
   categories: { title: string }[];
   _createdAt: string;
   content: any[];
+  excerpt?: string;
   seo: {
     metaTitle?: string;
     metaDescription?: string;
@@ -53,6 +54,7 @@ async function getPostData(slug: string): Promise<PostData> {
     author->{name, picture, bio},
     "categories": categories[]->{title},
     _createdAt,
+    excerpt,
     content[]{
       ...,
       _type == 'reference' => @->{
@@ -96,9 +98,29 @@ export async function generateMetadata({ params }: PostProps): Promise<Metadata>
         title: 'Post Not Found',
       }
     }
+    
+    const title = post.seo?.metaTitle || post.title;
+    const description = post.seo?.metaDescription || post.excerpt;
+
+    const openGraphImages = post.coverImage ? [
+        {
+          url: urlFor(post.coverImage).width(1200).height(630).url(),
+          width: 1200,
+          height: 630,
+          alt: title,
+        }
+      ] : [];
+
     return {
-      title: post.seo?.metaTitle || post.title,
-      description: post.seo?.metaDescription,
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        type: 'article',
+        url: `/blog/${post.slug.current}`,
+        images: openGraphImages,
+      }
     };
 }
 
@@ -175,6 +197,7 @@ export default async function BlogPostPage({ params }: PostProps) {
                         fill
                         className="object-cover"
                         priority
+                        sizes="(max-width: 768px) 100vw, 896px"
                     />
                 </div>
             )}
