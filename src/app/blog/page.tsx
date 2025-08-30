@@ -5,7 +5,6 @@ import { client } from '@/lib/sanity';
 import { urlFor } from '@/lib/sanity-image';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
-import type { Metadata } from 'next';
 import { cn } from "@/lib/utils";
 import React, { useEffect, useState } from "react";
 import { MoveRight, Star } from "lucide-react";
@@ -24,6 +23,8 @@ interface SanityPost {
     };
     categories?: { title: string }[];
     _createdAt: string;
+    views?: number;
+    readTime?: number;
 }
 
 interface BlogPost {
@@ -47,7 +48,9 @@ async function getPosts(): Promise<SanityPost[]> {
         coverImage,
         author->{name, picture},
         "categories": categories[]->{title},
-        _createdAt
+        _createdAt,
+        views,
+        readTime
     }`;
     const data = await client.fetch(query);
     return data;
@@ -181,9 +184,9 @@ export default function BlogIndexPage() {
                 category: post.categories?.[0]?.title || 'Insight',
                 imageUrl: post.coverImage ? urlFor(post.coverImage).width(800).height(600).url() : 'https://picsum.photos/800/600',
                 href: `/blog/${post.slug.current}`,
-                views: Math.floor(Math.random() * 2000) + 100, // Placeholder
+                views: post.views || Math.floor(Math.random() * 2000) + 100, // Use Sanity data or fallback
                 rating: Math.floor(Math.random() * 2) + 3.5, // Placeholder
-                readTime: Math.floor(post.excerpt.length / 200), // Placeholder
+                readTime: post.readTime, // Use Sanity data
                 className: index === 1 ? 'lg:col-start-2' : ''
             }));
             setPosts(formattedPosts);

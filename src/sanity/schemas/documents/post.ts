@@ -19,7 +19,7 @@ export default defineType({
       group: 'content',
       validation: (Rule) => Rule.required(),
     }),
-    defineField({
+    defineFiel({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
@@ -71,6 +71,20 @@ export default defineType({
         options: {
           layout: 'tags'
         }
+    }),
+    defineField({
+      name: 'readTime',
+      title: 'Read Time (minutes)',
+      type: 'number',
+      group: 'content',
+      description: 'The estimated time it takes to read the article.',
+    }),
+    defineField({
+      name: 'views',
+      title: 'Views',
+      type: 'number',
+      group: 'content',
+      description: 'An optional field to display view count.',
     }),
     defineField({
       name: 'content',
