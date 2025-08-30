@@ -33,7 +33,7 @@ export const MenuItem = ({
   const content = (
       <motion.div
         transition={{ duration: 0.3 }}
-        className="cursor-pointer text-foreground/80 hover:text-foreground flex items-center gap-1"
+        className="cursor-pointer text-foreground/80 hover:text-foreground flex items-center gap-1 px-3 py-2"
       >
         <span>{item}</span>
         {hasChildren && <ChevronDown className="h-4 w-4" />}

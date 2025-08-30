@@ -149,7 +149,7 @@ export function Header() {
                         <div className={cn(
                             "w-full flex-col items-center justify-center gap-6 bg-transparent p-6 shadow-none lg:static lg:w-fit lg:flex-row lg:gap-0 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none dark:lg:bg-transparent lg:flex hidden"
                         )}>
-                             <AnimatedMenu setActive={setActive} className={cn('flex-col lg:flex-row lg:space-x-8 lg:border lg:bg-card lg:shadow-input', isScrolled && 'lg:border-none lg:bg-transparent lg:shadow-none')}>
+                             <AnimatedMenu setActive={setActive} className={cn('flex-col lg:flex-row lg:space-x-2 lg:border lg:bg-card lg:shadow-input', isScrolled && 'lg:border-none lg:bg-transparent lg:shadow-none')}>
                                 {navLinks.map((item) => (
                                     <React.Fragment key={item._key}>
                                         {item.children && item.children.length > 0 ? (
@@ -161,7 +161,7 @@ export function Header() {
                                                 </div>
                                             </MenuItem>
                                         ) : (
-                                            <Link href={item.link || '#'} className="cursor-pointer text-foreground/80 hover:text-foreground">
+                                            <Link href={item.link || '#'} className="cursor-pointer text-foreground/80 hover:text-foreground px-3 py-2">
                                                 {item.text}
                                             </Link>
                                         )}
