@@ -31,7 +31,7 @@ export function MainNav({ items }: MainNavProps) {
     <NavigationMenu>
       <NavigationMenuList>
         {items.map((item) =>
-          item.submenu ? (
+          item.submenu && item.submenu.length > 0 ? (
             <NavigationMenuItem key={item._key}>
               <NavigationMenuTrigger>{item.text}</NavigationMenuTrigger>
               <NavigationMenuContent>
@@ -50,13 +50,12 @@ export function MainNav({ items }: MainNavProps) {
             </NavigationMenuItem>
           ) : (
             <NavigationMenuItem key={item._key}>
-              <Link href={item.link} passHref>
-                <NavigationMenuLink 
-                  asChild
+              <Link href={item.link} legacyBehavior passHref>
+                <NavigationMenuLink
                   className={navigationMenuTriggerStyle()}
                   active={pathname === item.link}
                 >
-                  <a>{item.text}</a>
+                  {item.text}
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
